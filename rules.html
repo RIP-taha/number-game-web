@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>راهنما - Number Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <div class="nav-links">
+            <a href="index.html">خانه</a>
+            <a href="rules.html">راهنما</a>
+            <span id="nav-username" class="nav-user hidden">👤 کاربر</span>
+            <a href="#" onclick="logout()" class="btn-nav hidden" id="logout-btn">خروج</a>
+            <a href="login.html" class="btn-nav" id="login-btn">ورود / ثبت‌نام</a>
+        </div>
+    </nav>
+
+    <main class="rules-page">
+        <h1 class="page-title">📖 راهنمای بازی</h1>
+        <p class="page-subtitle">همه چیز درباره قوانین و نحوه بازی</p>
+
+        <div class="rules-container" id="rules-container">
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">🎯</div>
+                    <h2>هدف بازی</h2>
+                </div>
+                <div class="rule-body">
+                    <p>هر دست، یه عدد بین ۱ تا ۲۰ انتخاب کن. گروهی که تعدادش کمتره، امتیاز می‌گیره!</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">🔢</div>
+                    <h2>گروه‌بندی</h2>
+                </div>
+                <div class="rule-body">
+                    <p>اعداد به دو گروه تقسیم می‌شن: یک‌رقمی (۱ تا ۹) و دورقمی (۱۰ تا ۲۰).</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">🏆</div>
+                    <h2>امتیاز گروه کمتر</h2>
+                </div>
+                <div class="rule-body">
+                    <p>گروهی که تعداد کمتری داره، هر نفرش ۳ امتیاز می‌گیره. اگه مساوی باشن، هیچ‌کس امتیاز نمی‌گیره.</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">⭐</div>
+                    <h2>امتیاز عدد منحصربه‌فرد</h2>
+                </div>
+                <div class="rule-body">
+                    <p>اگه عددی که انتخاب کردی، هیچ‌کس دیگه‌ای انتخاب نکرده باشه، ۱ امتیاز اضافه می‌گیری.</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">📝</div>
+                    <h2>سوال ریاضی</h2>
+                </div>
+                <div class="rule-body">
+                    <p>بعضی دست‌ها یه سوال ریاضی زمان‌دار دارن. جواب درست توی زمان → ۲ امتیاز!</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">🎚️</div>
+                    <h2>سطح سوال</h2>
+                </div>
+                <div class="rule-body">
+                    <p>آسان (جمع، ۷ ثانیه) | متوسط (تفریق، ۱۰ ثانیه) | سخت (ضرب، ۱۵ ثانیه)</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">📊</div>
+                    <h2>جدول و رتبه‌بندی</h2>
+                </div>
+                <div class="rule-body">
+                    <p>بعد هر دست، جدول بر اساس امتیاز سورت می‌شه. آخر بازی، نفر اول تا آخر مشخص می‌شن.</p>
+                </div>
+            </div>
+
+            <div class="rule-card" onclick="toggleRule(this)">
+                <div class="rule-header">
+                    <div class="rule-icon">🎮</div>
+                    <h2>حالت‌های بازی</h2>
+                </div>
+                <div class="rule-body">
+                    <p>می‌تونی با بات بازی کنی، به مچ رندوم بری، یا اتاق بسازی و دوستات رو دعوت کنی.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="rules-cta">
+            <button class="btn-primary" onclick="goToGame()">🚀 بریم بازی!</button>
+            <button class="btn-secondary" onclick="location.href='index.html'" style="margin-right: 10px;">🏠 خانه</button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>🎮 Number Game | ورژن 1.0.0</p>
+            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروفایل - Number Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <div class="nav-links">
+            <a href="index.html">خانه</a>
+            <a href="lobby.html">لابی</a>
+            <a href="rules.html">راهنما</a>
+            <span id="nav-username" class="nav-user">👤 کاربر</span>
+            <a href="#" onclick="logout()" class="btn-nav">خروج</a>
+        </div>
+    </nav>
+
+    <main class="profile-page">
+
+        <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">👤</div>
+            <div class="profile-info">
+                <h1 id="profile-username">کاربر</h1>
+                <p id="profile-email">email@example.com</p>
+            </div>
+        </div>
+
+        <div class="profile-stats" id="profile-stats">
+            <div class="stat-card">
+                <div class="stat-icon">🎮</div>
+                <div class="stat-value" id="stat-games">۰</div>
+                <div class="stat-label">بازی</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value" id="stat-wins">۰</div>
+                <div class="stat-label">برد</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-avg">۰</div>
+                <div class="stat-label">میانگین امتیاز</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="stat-best">۰</div>
+                <div class="stat-label">بهترین امتیاز</div>
+            </div>
+        </div>
+
+        <div class="profile-history">
+            <h2>📜 تاریخچه بازی‌ها</h2>
+            <div id="history-list" class="history-list">
+                <p class="empty-history">هنوز بازی نکردی!</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn-primary" onclick="location.href='lobby.html'">🎮 بریم بازی</button>
+            <button class="btn-secondary" onclick="logout()">🚪 خروج از حساب</button>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>🎮 Number Game | ورژن 1.0.0</p>
+            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

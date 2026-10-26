@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی - Number Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <div class="nav-links">
+            <span id="nav-username" class="nav-user">👤 کاربر</span>
+            <a href="#" onclick="confirmExit()" class="btn-nav">خروج از بازی</a>
+        </div>
+    </nav>
+
+    <main class="game-page">
+        <div class="game-header">
+            <div class="game-round" id="game-round">دست ۱ از ۵</div>
+            <div class="game-turn" id="game-turn">نوبت: بازیکن</div>
+        </div>
+
+        <div class="game-layout">
+            <div class="game-table-area">
+                <table class="game-table" id="game-table">
+                    <thead id="game-thead"></thead>
+                    <tbody id="game-tbody"></tbody>
+                </table>
+            </div>
+
+            <div class="game-side-panel">
+                <div class="side-card question-card hidden" id="question-card">
+                    <div class="question-label">📝 سوال ریاضی</div>
+                    <div class="question-text" id="question-text">—</div>
+                    <div class="question-timer" id="question-timer">⏱ ۰ ثانیه</div>
+                </div>
+
+                <div class="side-card input-card">
+                    <div class="input-label">عدد خود را وارد کن (۱ تا ۲۰)</div>
+                    <input type="number" id="number-input" min="1" max="20" placeholder="عدد...">
+                    <button class="btn-primary" onclick="submitNumber()" id="submit-btn">ثبت</button>
+                    <div class="input-message" id="input-message"></div>
+                </div>
+
+                <div class="side-card info-card">
+                    <div class="info-row">
+                        <span>امتیاز تو:</span>
+                        <span class="info-score" id="my-score">۰</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay hidden" id="result-overlay">
+        <div class="modal">
+            <h2>🏆 پایان بازی!</h2>
+            <div id="final-ranking"></div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="location.href='lobby.html'">بازگشت به لابی</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
