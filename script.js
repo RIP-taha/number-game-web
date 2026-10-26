@@ -5,95 +5,35 @@ let socket;
 
 function startGame() {
     const isLoggedIn = checkLogin();
-
-    if (isLoggedIn) {
-        window.location.href = "lobby.html";
-    } else {
-        showModal(
-            "ورود لازم است",
-            "برای شروع بازی باید وارد حساب کاربری خود بشوید.",
-            "ورود / ثبت‌نام",
-            function() {
-                window.location.href = "login.html";
-            }
-        );
-    }
+    if (isLoggedIn) { window.location.href = "lobby.html"; } else { showModal("ورود لازم است", "برای شروع بازی باید وارد حساب کاربری خود بشوید.", "ورود / ثبت‌نام", function() { window.location.href = "login.html"; }); }
 }
-
-function checkLogin() {
-    return localStorage.getItem("currentUser") !== null;
-}
-
-function logout() {
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("currentUserId");
-    window.location.href = "index.html";
-}
-
-function confirmExit() {
-    showModal(
-        "خروج از بازی",
-        "آیا مطمئنی می‌خوای از بازی خارج بشی؟",
-        "بله، خارج شو",
-        function() {
-            window.location.href = "lobby.html";
-        }
-    );
-}
-
-function toggleRule(card) {
-    card.classList.toggle("open");
-}
-
-function goToGame() {
-    if (checkLogin()) {
-        window.location.href = "lobby.html";
-    } else {
-        showModal(
-            "ورود لازم است",
-            "برای شروع بازی باید وارد حساب کاربری خود بشوید.",
-            "ورود / ثبت‌نام",
-            function() {
-                window.location.href = "login.html";
-            }
-        );
-    }
-}
+function checkLogin() { return localStorage.getItem("currentUser") !== null; }
+function logout() { localStorage.removeItem("currentUser"); localStorage.removeItem("currentUserId"); window.location.href = "index.html"; }
+function confirmExit() { showModal("خروج از بازی", "آیا مطمئنی می‌خوای از بازی خارج بشی؟", "بله، خارج شو", function() { window.location.href = "lobby.html"; }); }
+function toggleRule(card) { card.classList.toggle("open"); }
+function goToGame() { if (checkLogin()) { window.location.href = "lobby.html"; } else { showModal("ورود لازم است", "برای شروع بازی باید وارد حساب کاربری خود بشوید.", "ورود / ثبت‌نام", function() { window.location.href = "login.html"; }); } }
 
 function showModal(title, message, buttonText, onConfirm) {
     const overlay = document.createElement("div");
     overlay.className = "modal-overlay";
-
     const modal = document.createElement("div");
     modal.className = "modal";
-
     const h2 = document.createElement("h2");
     h2.textContent = title;
-
     const p = document.createElement("p");
     p.textContent = message;
-
     const btnContainer = document.createElement("div");
     btnContainer.className = "modal-buttons";
-
     const confirmBtn = document.createElement("button");
     confirmBtn.className = "btn-primary";
     confirmBtn.textContent = buttonText;
-    confirmBtn.onclick = function() {
-        document.body.removeChild(overlay);
-        if (onConfirm) onConfirm();
-    };
-
+    confirmBtn.onclick = function() { document.body.removeChild(overlay); if (onConfirm) onConfirm(); };
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "btn-secondary";
     cancelBtn.textContent = "بستن";
-    cancelBtn.onclick = function() {
-        document.body.removeChild(overlay);
-    };
-
+    cancelBtn.onclick = function() { document.body.removeChild(overlay); };
     btnContainer.appendChild(confirmBtn);
     btnContainer.appendChild(cancelBtn);
-
     modal.appendChild(h2);
     modal.appendChild(p);
     modal.appendChild(btnContainer);
@@ -107,12 +47,9 @@ function switchTab(tab) {
     const loginTab = document.getElementById("tab-login");
     const registerTab = document.getElementById("tab-register");
     const message = document.getElementById("auth-message");
-
     if (!loginForm) return;
-
     message.textContent = "";
     message.className = "auth-message";
-
     if (tab === "login") {
         loginForm.classList.remove("hidden");
         registerForm.classList.add("hidden");
@@ -125,36 +62,17 @@ function switchTab(tab) {
         registerTab.classList.add("active");
     }
 }
+function showAuthMessage(text, type) { const message = document.getElementById("auth-message"); message.textContent = text; message.className = "auth-message " + type; }
+function isStrongPassword(password) { if (password.length < 6) { return { valid: false, message: "رمز عبور باید حداقل ۶ کاراکتر باشد!" }; } return { valid: true, message: "" }; }
+function generateRoomCode() { const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let code = ""; for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length)); return code; }
 
-function showAuthMessage(text, type) {
-    const message = document.getElementById("auth-message");
-    message.textContent = text;
-    message.className = "auth-message " + type;
-}
-
-function isStrongPassword(password) {
-    if (password.length < 6) {
-        return { valid: false, message: "رمز عبور باید حداقل ۶ کاراکتر باشد!" };
-    }
-    return { valid: true, message: "" };
-}
-
-function generateRoomCode() {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let code = "";
-    for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-    return code;
-}
 
 // ==========================================
 // 🚀 منطق صفحه اتاق (Room.html)
 // ==========================================
 function initRoomPage() {
     const user = localStorage.getItem("currentUser");
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
+    if (!user) { window.location.href = "login.html"; return; }
 
     socket = io(API_URL);
 
