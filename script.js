@@ -143,19 +143,61 @@ function generateRoomCode() {
     return code;
 }
 
+// --- WebSocket Connection for Multiplayer ---
+let socket;
+
+function initSocket() {
+    socket = io(API_URL);
+
+    socket.on('connect', () => {
+        console.log('✅ به سرور WebSocket وصل شد');
+    });
+
+    socket.on('room_created', (data) => {
+        console.log('اتاق ساخته شد: ' + data.room_code);
+    });
+
+    socket.on('player_joined', (data) => {
+        console.log(data.username + ' به اتاق ملحق شد');
+        showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
+        // اینجا بعداً کد شروع بازی رو می‌ذاریم
+    });
+
+    socket.on('error', (data) => {
+        showModal('خطا', data.message, 'باشه', null);
+    });
+}
+
+function createRoomSocket(roomCode) {
+    const username = localStorage.getItem("currentUser");
+    if (!username) return;
+    if (!socket) initSocket();
+    socket.emit('create_room', { room_code: roomCode, username: username });
+}
+
+function joinRoomSocket(code) {
+    const username = localStorage.getItem("currentUser");
+    if (!username) return;
+    if (!socket) initSocket();
+    socket.emit('join_room', { room_code: code, username: username });
+}
+// ---------------------------------------------
+
 function showCreateRoom() {
     const panel = document.getElementById("room-panel");
     const title = document.getElementById("room-panel-title");
     const content = document.getElementById("room-panel-content");
     const code = generateRoomCode();
-    localStorage.setItem("roomCode", code);
+    
     title.textContent = "👥 اتاق ساخته شد!";
     content.innerHTML = `
         <p style="color: #8888aa; margin-bottom: 15px;">کد اتاق را به دوستانت بده:</p>
-        <div class="room-code">${code}</div>
-        <p style="color: #8888aa; font-size: 0.9rem;">این کد را کپی کن و برای دوستانت بفرست</p>
+        <div class="room-code" id="room-code-display">${code}</div>
+        <p style="color: #8888aa; font-size: 0.9rem;">در حال ساخت اتاق روی سرور...</p>
     `;
     panel.classList.remove("hidden");
+    
+    createRoomSocket(code);
 }
 
 function showJoinRoom() {
@@ -177,7 +219,7 @@ function joinRoom() {
         showModal("خطا", "کد اتاق باید ۶ کاراکتر باشد!", "باشه", null);
         return;
     }
-    showModal("ورود به اتاق", "این بخش به زودی اضافه می‌شود! (کد: " + code + ")", "باشه", null);
+    joinRoomSocket(code);
 }
 
 function closeRoomPanel() {
