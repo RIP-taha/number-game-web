@@ -130,26 +130,10 @@ function showAuthMessage(text, type) {
 }
 
 function isStrongPassword(password) {
-    if (password.length < 8) return { valid: false, message: "رمز باید حداقل ۸ کاراکتر باشد!" };
-    if (!/[A-Z]/.test(password)) return { valid: false, message: "رمز باید حداقل یک حرف بزرگ داشته باشد!" };
-    if (!/[a-z]/.test(password)) return { valid: false, message: "رمز باید حداقل یک حرف کوچیک داشته باشد!" };
-    if (!/[0-9]/.test(password)) return { valid: false, message: "رمز باید حداقل یک عدد داشته باشد!" };
-    if (!/[!@#$%^&*(),.?":{}|<>_\-+=]/.test(password)) return { valid: false, message: "رمز باید حداقل یک کاراکتر خاص داشته باشد!" };
+    if (password.length < 6) {
+        return { valid: false, message: "رمز عبور باید حداقل ۶ کاراکتر باشد!" };
+    }
     return { valid: true, message: "" };
-}
-
-function checkPasswordStrength(password) {
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (password.length >= 12) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[!@#$%^&*(),.?":{}|<>_\-+=]/.test(password)) score++;
-
-    if (score <= 2) return { level: "weak", percent: 33, text: "ضعیف" };
-    if (score <= 4) return { level: "medium", percent: 66, text: "متوسط" };
-    return { level: "strong", percent: 100, text: "قوی" };
 }
 
 function generateRoomCode() {
@@ -770,27 +754,4 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
-    const passwordInput = document.getElementById("register-password");
-    if (passwordInput) {
-        passwordInput.addEventListener("input", function() {
-            const password = passwordInput.value;
-            const bar = document.getElementById("strength-bar");
-            const text = document.getElementById("strength-text");
-            if (!password) {
-                bar.style.width = "0%";
-                bar.className = "strength-bar";
-                text.textContent = "";
-                text.className = "strength-text";
-                return;
-            }
-            const result = checkPasswordStrength(password);
-            bar.style.width = result.percent + "%";
-            bar.className = "strength-bar strength-" + result.level;
-            text.textContent = "قدرت رمز: " + result.text;
-            text.className = "strength-text " + result.level;
-        });
-    }
 });
-
-
