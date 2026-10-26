@@ -184,14 +184,6 @@ function closeRoomPanel() {
     document.getElementById("room-panel").classList.add("hidden");
 }
 
-function showBotConfig() {
-    document.getElementById("bot-panel").classList.remove("hidden");
-}
-
-function closeBotPanel() {
-    document.getElementById("bot-panel").classList.add("hidden");
-}
-
 function startBotGame() {
     const numRounds = parseInt(document.getElementById("bot-rounds").value);
     const botCount = parseInt(document.getElementById("bot-count").value);
