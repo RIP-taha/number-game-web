@@ -215,9 +215,12 @@ function initGame() {
     
     if (config.roomCode) {
         socket = io(API_URL);
-        socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
         
-        // ساخت جدول اولیه (تا زمانی که سرور جواب بده، جدول خالی نمونه)
+        socket.on('connect', () => {
+            console.log('✅ به سرور WebSocket (بازی) وصل شد');
+            socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
+        });
+        
         gameState.players = config.players.map(p => ({ name: p.name, isBot: false, numbers: new Array(5).fill(0), score: 0 }));
         gameState.numRounds = 5;
         gameState.currentRound = 0;
