@@ -81,33 +81,22 @@ function initRoomPage() {
         data.players.forEach((player, index) => {
             const li = document.createElement("li");
             li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff;";
-            if (player === user) {
-                li.style.color = "#00ff88";
-                li.textContent = `👤 ${player} (شما)`;
-            } else {
-                li.style.color = "#ffd700";
-                li.textContent = `👤 ${player}`;
-            }
+            if (player === user) { li.style.color = "#00ff88"; li.textContent = `👤 ${player} (شما)`; }
+            else { li.style.color = "#ffd700"; li.textContent = `👤 ${player}`; }
             list.appendChild(li);
         });
 
         const isHost = data.players[0] === user;
-        if (data.players.length >= 2 && isHost) {
-            document.getElementById("start-game-btn").classList.remove("hidden");
-        }
+        if (data.players.length >= 2 && isHost) { document.getElementById("start-game-btn").classList.remove("hidden"); }
     });
 
-    socket.on('player_joined', (data) => {
-        showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
-    });
+    socket.on('player_joined', (data) => { showModal("بازیکن جدید!", data.username + " وارد اتاق شد.", "باشه", null); });
 
     socket.on('game_started', (data) => {
         localStorage.setItem("gameConfig", JSON.stringify({
-            numPlayers: data.players.length,
-            numRounds: 5,
+            numPlayers: data.players.length, numRounds: 5,
             players: data.players.map(name => ({ name: name, isBot: false })),
-            difficulty: "medium",
-            roomCode: data.room_code
+            difficulty: "medium", roomCode: data.room_code
         }));
         window.location.href = "game.html";
     });
@@ -117,7 +106,6 @@ function initRoomPage() {
     setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
-        
         if (action === 'create') {
             const code = generateRoomCode();
             document.getElementById("join-section").classList.add("hidden");
@@ -204,20 +192,14 @@ async function loadProfile() {
                 html += `<div class='history-item ${winClass}'><div class='history-left'><span class='history-detail'>${rankText} از ${h.players} بازیکن | ${h.rounds} دست</span><span class='history-date'>${date}</span></div><span class='history-score'>${h.score}</span></div>`;
             });
             historyList.innerHTML = html;
-        } else {
-            historyList.innerHTML = "<p class='empty-history'>هنوز بازی نکردی! برو یه بازی کن 😊</p>";
-        }
+        } else { historyList.innerHTML = "<p class='empty-history'>هنوز بازی نکردی!</p>"; }
     } catch (e) { console.log(e); }
 }
 
 // ==========================================
 // 🎮 منطق اصلی بازی (Game.html)
 // ==========================================
-let gameState = {
-    players: [], numRounds: 0, currentRound: 0, currentPlayerIdx: 0,
-    roundsWithMath: [], timeLimit: null, correctAnswer: null,
-    timerJob: null, questionActive: false, startTime: 0, difficulty: "medium"
-};
+let gameState = { players: [], numRounds: 0, currentRound: 0, currentPlayerIdx: 0, roundsWithMath: [], timeLimit: null, correctAnswer: null, timerJob: null, questionActive: false, startTime: 0, difficulty: "medium" };
 
 const easyQuestions = [];
 for (let a = 1; a <= 10; a++) { for (let b = 1; b <= 10; b++) { if (a + b <= 20) easyQuestions.push([a + " + " + b, a + b]); } }
@@ -231,11 +213,9 @@ function initGame() {
     if (!configData) { window.location.href = "lobby.html"; return; }
     const config = JSON.parse(configData);
     
-    // آنلاین
     if (config.roomCode) {
         socket = io(API_URL);
         socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
-        
         socket.on('update_game_state', (data) => {
             const state = data.state;
             gameState.players = state.players;
@@ -243,12 +223,10 @@ function initGame() {
             gameState.currentRound = state.current_round;
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
-            
             renderTable();
             updateTurnOnline();
         });
     } else {
-        // آفلاین (با بات)
         const numRounds = config.numRounds;
         gameState.players = config.players.map((p, i) => ({ name: p.name, isBot: p.isBot, numbers: new Array(numRounds).fill(0), score: 0, order: i + 1 }));
         gameState.numRounds = numRounds;
@@ -264,15 +242,12 @@ function initGame() {
 
 function updateTurnOnline() {
     if (gameState.currentPlayerIdx >= gameState.players.length) {
-        document.getElementById("game-turn").textContent = "در حال حساب کردن امتیازها...";
+        document.getElementById("game-turn").textContent = "در حال حساب کردن...";
         document.getElementById("submit-btn").disabled = true;
         return;
     }
-    
     const currentPlayer = gameState.players[gameState.currentPlayerIdx];
-    const myName = localStorage.getItem("currentUser");
-    const isMyTurn = (currentPlayer.name === myName);
-    
+    const isMyTurn = (currentPlayer.name === localStorage.getItem("currentUser"));
     document.getElementById("game-turn").textContent = "نوبت: " + currentPlayer.name;
     
     if (isMyTurn) {
@@ -307,10 +282,8 @@ function renderTable() {
         bodyHtml += "<td class='score-cell'>" + p.score + "</td></tr>";
     }
     tbody.innerHTML = bodyHtml;
-    const myName = localStorage.getItem("currentUser");
-    const myPlayer = gameState.players.find(p => p.name === myName);
-    const myScoreEl = document.getElementById("my-score");
-    if (myScoreEl && myPlayer) myScoreEl.textContent = myPlayer.score;
+    const myPlayer = gameState.players.find(p => p.name === localStorage.getItem("currentUser"));
+    if (document.getElementById("my-score") && myPlayer) document.getElementById("my-score").textContent = myPlayer.score;
 }
 
 function startRound() {
@@ -324,8 +297,7 @@ function startRound() {
     const qText = document.getElementById("question-text");
     const qTimer = document.getElementById("question-timer");
     if (gameState.roundsWithMath[gameState.currentRound]) {
-        const levels = ["easy", "medium", "hard"];
-        const level = levels[Math.floor(Math.random() * 3)];
+        const level = ["easy", "medium", "hard"][Math.floor(Math.random() * 3)];
         let question, answer;
         if (level === "easy") { gameState.timeLimit = 7; [question, answer] = easyQuestions[Math.floor(Math.random() * easyQuestions.length)]; }
         else if (level === "medium") { gameState.timeLimit = 10; [question, answer] = mediumQuestions[Math.floor(Math.random() * mediumQuestions.length)]; }
@@ -378,18 +350,10 @@ function submitNumber() {
     const val = parseInt(input.value);
     const config = JSON.parse(localStorage.getItem("gameConfig"));
 
-    if (isNaN(val) || val < 1 || val > 20) { 
-        msg.textContent = "❌ عدد باید بین ۱ تا ۲۰ باشد!"; 
-        msg.className = "input-message error"; 
-        return; 
-    }
+    if (isNaN(val) || val < 1 || val > 20) { msg.textContent = "❌ عدد باید بین ۱ تا ۲۰ باشد!"; msg.className = "input-message error"; return; }
 
     if (config.roomCode) {
-        socket.emit('submit_number', { 
-            room_code: config.roomCode, 
-            username: localStorage.getItem("currentUser"), 
-            number: val 
-        });
+        socket.emit('submit_number', { room_code: config.roomCode, username: localStorage.getItem("currentUser"), number: val });
         msg.textContent = "⏳ در حال ارسال...";
         msg.className = "input-message";
         input.value = "";
