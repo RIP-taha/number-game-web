@@ -1,4 +1,4 @@
-const API_URL = "https://number-game-api.fly.dev";
+const API_URL = "https://number-game-api.onrender.com";
 let socket;
 
 function startGame() {
