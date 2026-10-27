@@ -218,11 +218,9 @@ function initGame() {
         
         socket.on('connect', () => {
             console.log('✅ به سرور WebSocket (بازی) وصل شد');
-            // به سرور می‌گیم ما عضو این اتاقیم و منتظر آپدیت هستیم
             socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
         });
         
-        // ساخت جدول اولیه
         gameState.players = config.players.map(p => ({ name: p.name, isBot: false, numbers: new Array(5).fill(0), score: 0 }));
         gameState.numRounds = 5;
         gameState.currentRound = 0;
@@ -230,7 +228,6 @@ function initGame() {
         renderTable();
         updateTurnOnline("در حال اتصال...");
         
-        // وقتی سرور وضعیت بازی رو فرستاد، جدول و نوبت رو آپدیت کن
         socket.on('update_game_state', (data) => {
             const state = data.state;
             gameState.players = state.players;
