@@ -79,45 +79,78 @@ function initRoomPage() {
     socket.on('update_players', (data) => {
         const list = document.getElementById("player-list");
         list.innerHTML = ""; 
+        const isHost = data.host === user;
+        
         data.players.forEach((player, index) => {
             const li = document.createElement("li");
-            li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff;";
-            if (player === user) { li.style.color = "#00ff88"; li.textContent = `👤 ${player} (شما)`; }
-            else { li.style.color = "#ffd700"; li.textContent = `👤 ${player}`; }
+            li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff; display: flex; justify-content: space-between; align-items: center;";
+            
+            const nameSpan = document.createElement("span");
+            if (player === user) { nameSpan.style.color = "#00ff88"; nameSpan.textContent = `👤 ${player} (شما)`; }
+            else if (player === data.host) { nameSpan.style.color = "#ffd700"; nameSpan.textContent = `👑 ${player} (میزبان)`; }
+            else if (player.startsWith("بات")) { nameSpan.style.color = "#ff006e"; nameSpan.textContent = `🤖 ${player}`; }
+            else { nameSpan.style.color = "#e0e0e0"; nameSpan.textContent = `👤 ${player}`; }
+            
+            li.appendChild(nameSpan);
+            
+            if (isHost && player !== user) {
+                const kickBtn = document.createElement("button");
+                kickBtn.textContent = "❌";
+                kickBtn.style.cssText = "background: transparent; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem;";
+                kickBtn.onclick = () => {
+                    socket.emit('kick_player', { room_code: window.location.search.split('=')[1], username_to_kick: player, host: user });
+                };
+                li.appendChild(kickBtn);
+            }
             list.appendChild(li);
         });
 
-        const isHost = data.players[0] === user;
         if (data.players.length >= 2 && isHost) { document.getElementById("start-game-btn").classList.remove("hidden"); }
     });
 
     socket.on('player_joined', (data) => { showModal("بازیکن جدید!", data.username + " وارد اتاق شد.", "باشه", null); });
-
+    socket.on('kicked', (data) => { if (data.username === user) { showModal("اخراج!", "شما از اتاق اخراج شدید.", "باشه", () => window.location.href = "lobby.html"); } });
     socket.on('game_started', (data) => {
         localStorage.setItem("gameConfig", JSON.stringify({
             numPlayers: data.players.length, numRounds: 5,
-            players: data.players.map(name => ({ name: name, isBot: false })),
+            players: data.players.map(name => ({ name: name, isBot: name.startsWith("بات") })),
             difficulty: "medium", roomCode: data.room_code
         }));
         window.location.href = "game.html";
     });
-
     socket.on('error', (data) => { showModal('خطا', data.message, 'باشه', null); });
 
     setTimeout(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const action = urlParams.get('action');
         if (action === 'create') {
-            const code = generateRoomCode();
+            document.getElementById("room-settings").classList.remove("hidden");
             document.getElementById("join-section").classList.add("hidden");
-            document.getElementById("room-section").classList.remove("hidden");
-            document.getElementById("room-code-display").textContent = code;
-            socket.emit('create_room', { room_code: code, username: user });
         } else if (action === 'join') {
             document.getElementById("join-section").classList.remove("hidden");
-            document.getElementById("room-section").classList.add("hidden");
+            document.getElementById("room-settings").classList.add("hidden");
         }
     }, 100);
+}
+
+function createRoomWithSettings() {
+    const user = localStorage.getItem("currentUser");
+    const maxPlayers = parseInt(document.getElementById("max-players").value);
+    const botCount = parseInt(document.getElementById("bot-count").value);
+    const botDifficulty = document.getElementById("bot-difficulty").value;
+    const code = generateRoomCode();
+    
+    document.getElementById("room-settings").classList.add("hidden");
+    document.getElementById("room-section").classList.remove("hidden");
+    document.getElementById("room-code-display").textContent = code;
+    
+    socket.emit('create_room', { 
+        room_code: code, 
+        username: user, 
+        max_players: maxPlayers, 
+        bot_count: botCount, 
+        bot_difficulty: botDifficulty 
+    });
 }
 
 function joinRoomFromPage() {
@@ -221,7 +254,7 @@ function initGame() {
             socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
         });
         
-        gameState.players = config.players.map(p => ({ name: p.name, isBot: false, numbers: new Array(5).fill(0), score: 0 }));
+        gameState.players = config.players.map(p => ({ name: p.name, isBot: p.isBot || p.name.startsWith("بات"), numbers: new Array(5).fill(0), score: 0 }));
         gameState.numRounds = 5;
         gameState.currentRound = 0;
         gameState.currentPlayerIdx = 0;
