@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اتاق بازی - Number Game</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -16,18 +16,16 @@
         </div>
     </nav>
 
-    <main class="auth-page"> <!-- از استایل وسط‌چین استفاده می‌کنیم -->
+    <main class="auth-page">
         <div class="auth-card" style="max-width: 600px;">
             <h2 style="color: #00d9ff; text-align: center; margin-bottom: 20px;">👥 اتاق بازی</h2>
             
-            <!-- بخش ورود به اتاق (اگه کد نداریم) -->
             <div id="join-section">
                 <p style="text-align: center; color: #8888aa; margin-bottom: 15px;">کد اتاق را وارد کنید:</p>
                 <input type="text" id="join-room-code" placeholder="مثلاً ABC123" maxlength="6" style="text-align: center; letter-spacing: 5px; font-size: 1.5rem; margin-bottom: 15px;">
                 <button class="btn-primary" onclick="joinRoomFromPage()" style="width: 100%;">ورود به اتاق</button>
             </div>
 
-            <!-- بخش اتاق ساخته شده (اگه کد داریم) -->
             <div id="room-section" class="hidden">
                 <p style="text-align: center; color: #8888aa; margin-bottom: 15px;">کد اتاق برای دعوت دوستان:</p>
                 <div id="room-code-display" style="font-size: 2.5rem; font-weight: bold; color: #ffd700; text-align: center; letter-spacing: 5px; margin-bottom: 20px;">-----</div>
@@ -37,12 +35,15 @@
                     <li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px;">در حال اتصال...</li>
                 </ul>
                 
+                <!-- دکمه شروع بازی (فقط برای سازنده اتاق) -->
+                <button id="start-game-btn" class="btn-primary hidden" onclick="startMultiplayerGame()" style="width: 100%; margin-bottom: 15px; background-color: #00ff88; color: #0f0f1a;">🚀 شروع بازی</button>
+
                 <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%;">خروج از اتاق</button>
             </div>
         </div>
     </main>
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>

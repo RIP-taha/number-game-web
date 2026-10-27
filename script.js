@@ -1,6 +1,5 @@
 const API_URL = "https://number-game-api.fly.dev";
 
-// --- متغیرهای WebSocket ---
 let socket;
 
 function startGame() {
@@ -77,31 +76,46 @@ function initRoomPage() {
 
     socket.on('connect', () => { console.log('✅ به سرور WebSocket وصل شد'); });
     
-    socket.on('room_created', (data) => { 
-        document.getElementById("room-code-display").textContent = data.room_code; 
-        // وقتی اتاق ساخته شد، اسم سازنده رو نشون بده
+    // این رویداد هر بار که لیست بازیکن‌ها تغییر کنه از سرور میاد
+    socket.on('update_players', (data) => {
         const list = document.getElementById("player-list");
-        list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - میزبان)</li>`;
+        list.innerHTML = ""; // لیست قبلی رو پاک کن
+        
+        data.players.forEach((player, index) => {
+            const li = document.createElement("li");
+            li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff;";
+            
+            if (player === user) {
+                li.style.color = "#00ff88"; // رنگ سبز برای خود کاربر
+                li.textContent = `👤 ${player} (شما)`;
+            } else {
+                li.style.color = "#ffd700"; // رنگ زرد برای بقیه
+                li.textContent = `👤 ${player}`;
+            }
+            list.appendChild(li);
+        });
+
+        // اگه تعداد بازیکن‌ها ۲ نفر یا بیشتر شد و ما سازنده بودیم، دکمه شروع رو نشون بده
+        const isHost = data.players[0] === user;
+        if (data.players.length >= 2 && isHost) {
+            document.getElementById("start-game-btn").classList.remove("hidden");
+        }
     });
 
     socket.on('player_joined', (data) => {
-        const list = document.getElementById("player-list");
-        // پاک کردن پیام در حال اتصال
-        if (list.innerHTML.includes("در حال اتصال...")) {
-            list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - میزبان)</li>`;
-        }
-        // اضافه کردن بازیکن جدید
-        const li = document.createElement("li");
-        li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #ffd700;";
-        li.textContent = "👤 " + data.username;
-        list.appendChild(li);
         showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
     });
 
-    socket.on('room_joined', (data) => {
-        // وقتی خودمون جوین میشیم، لیست رو پاک میکنیم و خودمون رو نشون میدیم
-        const list = document.getElementById("player-list");
-        list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - مهمان)</li>`;
+    socket.on('start_game', (data) => {
+        // وقتی سرور گفت بازی شروع شد، برو به صفحه بازی
+        localStorage.setItem("gameConfig", JSON.stringify({
+            numPlayers: data.players.length,
+            numRounds: 5,
+            players: data.players.map(name => ({ name: name, isBot: false })),
+            difficulty: "medium",
+            roomCode: data.room_code
+        }));
+        window.location.href = "game.html";
     });
 
     socket.on('error', (data) => { showModal('خطا', data.message, 'باشه', null); });
@@ -137,107 +151,76 @@ function joinRoomFromPage() {
         document.getElementById("join-section").classList.add("hidden");
         document.getElementById("room-section").classList.remove("hidden");
         document.getElementById("room-code-display").textContent = code;
-        // لیست رو خالی میکنیم تا منتظر پیام سرور بمونیم
-        document.getElementById("player-list").innerHTML = "<li style='padding: 10px; color: #8888aa;'>در حال اتصال به اتاق...</li>";
+    }
+}
+
+function startMultiplayerGame() {
+    const code = document.getElementById("room-code-display").textContent;
+    if (socket && code) {
+        socket.emit('start_game', { room_code: code });
     }
 }
 
 // ==========================================
-// 🤖 منطق بازی با بات و پروفایل
+// 🤖 منطق بازی با بات و پروفایل (بدون تغییر)
 // ==========================================
 function startBotGame() {
     const numRounds = parseInt(document.getElementById("bot-rounds").value);
     const botCount = parseInt(document.getElementById("bot-count").value);
     const difficulty = document.getElementById("bot-difficulty").value;
 
-    if (isNaN(numRounds) || numRounds < 1 || numRounds > 10) {
-        showModal("خطا", "تعداد دست باید بین ۱ تا ۱۰ باشد!", "باشه", null);
-        return;
-    }
-
-    if (isNaN(botCount) || botCount < 1 || botCount > 3) {
-        showModal("خطا", "تعداد بات باید بین ۱ تا ۳ باشد!", "باشه", null);
-        return;
-    }
+    if (isNaN(numRounds) || numRounds < 1 || numRounds > 10) { showModal("خطا", "تعداد دست باید بین ۱ تا ۱۰ باشد!", "باشه", null); return; }
+    if (isNaN(botCount) || botCount < 1 || botCount > 3) { showModal("خطا", "تعداد بات باید بین ۱ تا ۳ باشد!", "باشه", null); return; }
 
     const myName = localStorage.getItem("currentUser") || "من";
     const players = [{ name: myName, isBot: false }];
-
     const botNames = ["بات آلفا", "بات بتا", "بات گاما"];
-    for (let i = 0; i < botCount; i++) {
-        players.push({ name: botNames[i] || ("بات " + (i + 1)), isBot: true });
-    }
+    for (let i = 0; i < botCount; i++) { players.push({ name: botNames[i] || ("بات " + (i + 1)), isBot: true }); }
 
-    localStorage.setItem("gameConfig", JSON.stringify({
-        numPlayers: players.length,
-        numRounds: numRounds,
-        players: players,
-        difficulty: difficulty,
-        roomCode: null
-    }));
-
+    localStorage.setItem("gameConfig", JSON.stringify({ numPlayers: players.length, numRounds: numRounds, players: players, difficulty: difficulty, roomCode: null }));
     window.location.href = "game.html";
 }
 
-function startRandomMatch() {
-    showModal("مچ رندوم", "این بخش به زودی اضافه می‌شود!", "باشه", null);
-}
+function startRandomMatch() { showModal("مچ رندوم", "این بخش به زودی اضافه می‌شود!", "باشه", null); }
 
 async function loadProfile() {
     const username = localStorage.getItem("currentUser");
     const userId = localStorage.getItem("currentUserId");
-
-    if (!username || !userId) {
-        window.location.href = "login.html";
-        return;
-    }
-
+    if (!username || !userId) { window.location.href = "login.html"; return; }
     document.getElementById("profile-username").textContent = username;
     document.getElementById("profile-avatar").textContent = username.charAt(0).toUpperCase();
 
     try {
         const userRes = await fetch(API_URL + "/api/user/" + userId);
-        if (userRes.ok) {
-            const userData = await userRes.json();
-            document.getElementById("profile-email").textContent = userData.email;
-        }
-    } catch (e) { console.log("Could not load user info:", e); }
+        if (userRes.ok) { const userData = await userRes.json(); document.getElementById("profile-email").textContent = userData.email; }
+    } catch (e) { console.log(e); }
 
     try {
         const statsRes = await fetch(API_URL + "/api/stats/" + userId);
-        const statsData = await statsRes.json();
-        const stats = statsData.stats;
+        const statsData = await statsRes.json(); const stats = statsData.stats;
         document.getElementById("stat-games").textContent = stats.games;
         document.getElementById("stat-wins").textContent = stats.wins;
         document.getElementById("stat-avg").textContent = stats.avg;
         document.getElementById("stat-best").textContent = stats.best;
-    } catch (e) { console.log("Could not load stats:", e); }
+    } catch (e) { console.log(e); }
 
     try {
         const resultsRes = await fetch(API_URL + "/api/results/" + userId);
-        const resultsData = await resultsRes.json();
-        const results = resultsData.results;
+        const resultsData = await resultsRes.json(); const results = resultsData.results;
         const historyList = document.getElementById("history-list");
-
         if (results && results.length > 0) {
             let html = "";
             results.forEach(function(h) {
                 const winClass = h.rank === 1 ? "win" : "";
                 const rankText = h.rank === 1 ? "🥇 اول" : (h.rank === 2 ? "🥈 دوم" : (h.rank === 3 ? "🥉 سوم" : h.rank + "ام"));
                 const date = new Date(h.played_at).toLocaleDateString("fa-IR");
-                html += "<div class='history-item " + winClass + "'>";
-                html += "<div class='history-left'>";
-                html += "<span class='history-detail'>" + rankText + " از " + h.players + " بازیکن | " + h.rounds + " دست</span>";
-                html += "<span class='history-date'>" + date + "</span>";
-                html += "</div>";
-                html += "<span class='history-score'>" + h.score + "</span>";
-                html += "</div>";
+                html += `<div class='history-item ${winClass}'><div class='history-left'><span class='history-detail'>${rankText} از ${h.players} بازیکن | ${h.rounds} دست</span><span class='history-date'>${date}</span></div><span class='history-score'>${h.score}</span></div>`;
             });
             historyList.innerHTML = html;
         } else {
             historyList.innerHTML = "<p class='empty-history'>هنوز بازی نکردی! برو یه بازی کن 😊</p>";
         }
-    } catch (e) { console.log("Could not load history:", e); }
+    } catch (e) { console.log(e); }
 }
 
 // ==========================================
