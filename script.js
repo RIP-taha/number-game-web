@@ -76,26 +76,24 @@ function initRoomPage() {
 
     socket.on('connect', () => { console.log('✅ به سرور WebSocket وصل شد'); });
     
-    // این رویداد هر بار که لیست بازیکن‌ها تغییر کنه از سرور میاد
     socket.on('update_players', (data) => {
         const list = document.getElementById("player-list");
-        list.innerHTML = ""; // لیست قبلی رو پاک کن
+        list.innerHTML = ""; 
         
         data.players.forEach((player, index) => {
             const li = document.createElement("li");
             li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff;";
             
             if (player === user) {
-                li.style.color = "#00ff88"; // رنگ سبز برای خود کاربر
+                li.style.color = "#00ff88";
                 li.textContent = `👤 ${player} (شما)`;
             } else {
-                li.style.color = "#ffd700"; // رنگ زرد برای بقیه
+                li.style.color = "#ffd700";
                 li.textContent = `👤 ${player}`;
             }
             list.appendChild(li);
         });
 
-        // اگه تعداد بازیکن‌ها ۲ نفر یا بیشتر شد و ما سازنده بودیم، دکمه شروع رو نشون بده
         const isHost = data.players[0] === user;
         if (data.players.length >= 2 && isHost) {
             document.getElementById("start-game-btn").classList.remove("hidden");
@@ -106,8 +104,8 @@ function initRoomPage() {
         showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
     });
 
-    socket.on('start_game', (data) => {
-        // وقتی سرور گفت بازی شروع شد، برو به صفحه بازی
+    // این بخش جدید اضافه شده
+    socket.on('game_started', (data) => {
         localStorage.setItem("gameConfig", JSON.stringify({
             numPlayers: data.players.length,
             numRounds: 5,
@@ -162,7 +160,7 @@ function startMultiplayerGame() {
 }
 
 // ==========================================
-// 🤖 منطق بازی با بات و پروفایل (بدون تغییر)
+// 🤖 منطق بازی با بات و پروفایل
 // ==========================================
 function startBotGame() {
     const numRounds = parseInt(document.getElementById("bot-rounds").value);
