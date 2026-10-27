@@ -231,6 +231,7 @@ function initGame() {
     if (!configData) { window.location.href = "lobby.html"; return; }
     const config = JSON.parse(configData);
     
+    // آنلاین
     if (config.roomCode) {
         socket = io(API_URL);
         socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
@@ -242,10 +243,12 @@ function initGame() {
             gameState.currentRound = state.current_round;
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
+            
             renderTable();
             updateTurnOnline();
         });
     } else {
+        // آفلاین (با بات)
         const numRounds = config.numRounds;
         gameState.players = config.players.map((p, i) => ({ name: p.name, isBot: p.isBot, numbers: new Array(numRounds).fill(0), score: 0, order: i + 1 }));
         gameState.numRounds = numRounds;
@@ -265,9 +268,11 @@ function updateTurnOnline() {
         document.getElementById("submit-btn").disabled = true;
         return;
     }
+    
     const currentPlayer = gameState.players[gameState.currentPlayerIdx];
     const myName = localStorage.getItem("currentUser");
     const isMyTurn = (currentPlayer.name === myName);
+    
     document.getElementById("game-turn").textContent = "نوبت: " + currentPlayer.name;
     
     if (isMyTurn) {
