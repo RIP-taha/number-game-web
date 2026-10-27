@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات بازی با بات - Number Game</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="nav-logo">🎮 NUMBER GAME</div>
         <div class="nav-links">
@@ -16,31 +16,25 @@
             <a href="#" onclick="logout()" class="btn-nav">خروج</a>
         </div>
     </nav>
-
-    <main class="auth-page"> <!-- از استایل auth-page استفاده می‌کنیم که وسط‌چین باشه -->
+    <main class="auth-page">
         <div class="auth-card" style="max-width: 500px;">
             <h2 style="color: #00d9ff; text-align: center; margin-bottom: 25px;">🤖 تنظیمات بازی با بات</h2>
-            
             <div class="bot-config">
                 <label>تعداد دست (۱ تا ۱۰)</label>
                 <input type="number" id="bot-rounds" min="1" max="10" value="5">
-
                 <label>تعداد بات (۱ تا ۳)</label>
                 <input type="number" id="bot-count" min="1" max="3" value="2">
-
                 <label>سطح سختی بات‌ها</label>
                 <select id="bot-difficulty">
                     <option value="easy">🟢 آسان</option>
                     <option value="medium" selected>🟡 متوسط</option>
                     <option value="hard">🔴 سخت</option>
                 </select>
-
                 <button class="btn-primary" onclick="startBotGame()" style="width: 100%; margin-top: 30px;">شروع بازی</button>
                 <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 12px;">انصراف</button>
             </div>
         </div>
     </main>
-
     <footer class="footer">
         <div class="footer-content">
             <p>🎮 Number Game | ورژن 1.0.0</p>
@@ -48,6 +42,6 @@
         </div>
     </footer>
     <script src="particles.js"></script>
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>

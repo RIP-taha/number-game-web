@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لابی - Number Game</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="nav-logo">🎮 NUMBER GAME</div>
         <div class="nav-links">
@@ -17,11 +17,9 @@
             <a href="#" onclick="logout()" class="btn-nav">خروج</a>
         </div>
     </nav>
-
     <main class="lobby-page">
         <h1 class="page-title">🎮 لابی بازی</h1>
         <p class="page-subtitle">حالت بازی رو انتخاب کن</p>
-
         <div class="lobby-grid">
             <div class="lobby-card" onclick="location.href='bot-setup.html'">
                 <div class="lobby-icon">🤖</div>
@@ -29,37 +27,30 @@
                 <p>با هوش مصنوعی رقابت کن</p>
                 <button class="btn-primary">شروع</button>
             </div>
-            
             <div class="lobby-card" onclick="startRandomMatch()">
                 <div class="lobby-icon">🌐</div>
                 <h2>مچ رندوم</h2>
                 <p>با بازیکن‌های آنلاین بازی کن</p>
                 <button class="btn-primary">شروع</button>
             </div>
-            
-            <!-- هدایت به صفحه ساخت اتاق -->
             <div class="lobby-card" onclick="location.href='room.html?action=create'">
                 <div class="lobby-icon">👥</div>
                 <h2>ساخت اتاق</h2>
                 <p>اتاق بساز و دوستانت رو دعوت کن</p>
                 <button class="btn-primary">ساخت</button>
             </div>
-            
-            <!-- هدایت به صفحه ورود به اتاق -->
             <div class="lobby-card" onclick="location.href='room.html?action=join'">
                 <div class="lobby-icon">🔑</div>
                 <h2>ورود به اتاق</h2>
                 <p>با کد دعوت وارد اتاق شو</p>
                 <button class="btn-primary">ورود</button>
             </div>
-            
             <div class="lobby-card" onclick="location.href='profile.html'">
                 <div class="lobby-icon">👤</div>
                 <h2>پروفایل</h2>
                 <p>آمار و تاریخچه بازی‌هایت</p>
                 <button class="btn-primary">مشاهده</button>
             </div>
-            
             <div class="lobby-card" onclick="location.href='rules.html'">
                 <div class="lobby-icon">📖</div>
                 <h2>راهنما</h2>
@@ -68,7 +59,6 @@
             </div>
         </div>
     </main>
-
     <footer class="footer">
         <div class="footer-content">
             <p>🎮 Number Game | ورژن 1.0.0</p>
@@ -76,6 +66,6 @@
         </div>
     </footer>
     <script src="particles.js"></script>
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>
