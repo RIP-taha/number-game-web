@@ -1,5 +1,6 @@
 const API_URL = "https://number-game-api.onrender.com";
 let socket;
+let timerInterval;
 
 function startGame() {
     const isLoggedIn = checkLogin();
@@ -217,7 +218,6 @@ function initGame() {
         socket = io(API_URL);
         
         socket.on('connect', () => {
-            console.log('✅ به سرور WebSocket (بازی) وصل شد');
             socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
         });
         
@@ -236,6 +236,40 @@ function initGame() {
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
             
+            // مدیریت سوال ریاضی
+            if (gameState.roundsWithMath[gameState.currentRound] && state.current_question) {
+                const qCard = document.getElementById("question-card");
+                const qText = document.getElementById("question-text");
+                const qTimer = document.getElementById("question-timer");
+                qCard.classList.remove("hidden");
+                qText.textContent = state.current_question.question + " = ?";
+                
+                // تایمر
+                clearInterval(timerInterval);
+                if (state.round_start_time) {
+                    const elapsed = Date.now() / 1000 - state.round_start_time;
+                    const remaining = state.current_question.time_limit - elapsed;
+                    if (remaining > 0) {
+                        qTimer.textContent = "⏱ " + remaining.toFixed(1) + " ثانیه";
+                        timerInterval = setInterval(() => {
+                            const new_elapsed = Date.now() / 1000 - state.round_start_time;
+                            const new_remaining = state.current_question.time_limit - new_elapsed;
+                            if (new_remaining <= 0) {
+                                qTimer.textContent = "⏰ وقت تمام!";
+                                clearInterval(timerInterval);
+                            } else {
+                                qTimer.textContent = "⏱ " + new_remaining.toFixed(1) + " ثانیه";
+                            }
+                        }, 100);
+                    } else {
+                        qTimer.textContent = "⏰ وقت تمام!";
+                    }
+                }
+            } else {
+                document.getElementById("question-card").classList.add("hidden");
+                clearInterval(timerInterval);
+            }
+
             renderTable();
             updateTurnOnline();
         });
@@ -254,10 +288,7 @@ function initGame() {
 }
 
 function updateTurnOnline(text = "") {
-    if (text) {
-        document.getElementById("game-turn").textContent = text;
-        return;
-    }
+    if (text) { document.getElementById("game-turn").textContent = text; return; }
     if (gameState.currentPlayerIdx >= gameState.players.length) {
         document.getElementById("game-turn").textContent = "در حال حساب کردن...";
         document.getElementById("submit-btn").disabled = true;
