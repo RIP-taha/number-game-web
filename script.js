@@ -1,5 +1,4 @@
 const API_URL = "https://number-game-api.fly.dev";
-
 let socket;
 
 function startGame() {
@@ -79,11 +78,9 @@ function initRoomPage() {
     socket.on('update_players', (data) => {
         const list = document.getElementById("player-list");
         list.innerHTML = ""; 
-        
         data.players.forEach((player, index) => {
             const li = document.createElement("li");
             li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; border-right: 4px solid #00d9ff;";
-            
             if (player === user) {
                 li.style.color = "#00ff88";
                 li.textContent = `👤 ${player} (شما)`;
@@ -104,7 +101,6 @@ function initRoomPage() {
         showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
     });
 
-    // این بخش جدید اضافه شده
     socket.on('game_started', (data) => {
         localStorage.setItem("gameConfig", JSON.stringify({
             numPlayers: data.players.length,
@@ -138,12 +134,7 @@ function initRoomPage() {
 function joinRoomFromPage() {
     const code = document.getElementById("join-room-code").value.trim().toUpperCase();
     const user = localStorage.getItem("currentUser");
-    
-    if (code.length !== 6) {
-        showModal("خطا", "کد اتاق باید ۶ کاراکتر باشد!", "باشه", null);
-        return;
-    }
-
+    if (code.length !== 6) { showModal("خطا", "کد اتاق باید ۶ کاراکتر باشد!", "باشه", null); return; }
     if (socket) {
         socket.emit('join_room', { room_code: code, username: user });
         document.getElementById("join-section").classList.add("hidden");
@@ -154,9 +145,7 @@ function joinRoomFromPage() {
 
 function startMultiplayerGame() {
     const code = document.getElementById("room-code-display").textContent;
-    if (socket && code) {
-        socket.emit('start_game', { room_code: code });
-    }
+    if (socket && code) { socket.emit('start_game', { room_code: code }); }
 }
 
 // ==========================================
@@ -241,16 +230,56 @@ function initGame() {
     const configData = localStorage.getItem("gameConfig");
     if (!configData) { window.location.href = "lobby.html"; return; }
     const config = JSON.parse(configData);
-    const numRounds = config.numRounds;
-    gameState.players = config.players.map((p, i) => ({ name: p.name, isBot: p.isBot, numbers: new Array(numRounds).fill(0), score: 0, order: i + 1 }));
-    gameState.numRounds = numRounds;
-    gameState.currentRound = 0;
-    gameState.currentPlayerIdx = 0;
-    gameState.difficulty = config.difficulty || "medium";
-    gameState.roundsWithMath = [];
-    for (let i = 0; i < numRounds; i++) { gameState.roundsWithMath.push(Math.random() < 0.3); }
-    renderTable();
-    startRound();
+    
+    if (config.roomCode) {
+        socket = io(API_URL);
+        socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
+        
+        socket.on('update_game_state', (data) => {
+            const state = data.state;
+            gameState.players = state.players;
+            gameState.numRounds = state.num_rounds;
+            gameState.currentRound = state.current_round;
+            gameState.currentPlayerIdx = state.current_player_idx;
+            gameState.roundsWithMath = state.rounds_with_math;
+            renderTable();
+            updateTurnOnline();
+        });
+    } else {
+        const numRounds = config.numRounds;
+        gameState.players = config.players.map((p, i) => ({ name: p.name, isBot: p.isBot, numbers: new Array(numRounds).fill(0), score: 0, order: i + 1 }));
+        gameState.numRounds = numRounds;
+        gameState.currentRound = 0;
+        gameState.currentPlayerIdx = 0;
+        gameState.difficulty = config.difficulty || "medium";
+        gameState.roundsWithMath = [];
+        for (let i = 0; i < numRounds; i++) { gameState.roundsWithMath.push(Math.random() < 0.3); }
+        renderTable();
+        startRound();
+    }
+}
+
+function updateTurnOnline() {
+    if (gameState.currentPlayerIdx >= gameState.players.length) {
+        document.getElementById("game-turn").textContent = "در حال حساب کردن امتیازها...";
+        document.getElementById("submit-btn").disabled = true;
+        return;
+    }
+    const currentPlayer = gameState.players[gameState.currentPlayerIdx];
+    const myName = localStorage.getItem("currentUser");
+    const isMyTurn = (currentPlayer.name === myName);
+    document.getElementById("game-turn").textContent = "نوبت: " + currentPlayer.name;
+    
+    if (isMyTurn) {
+        document.getElementById("submit-btn").disabled = false;
+        document.getElementById("number-input").disabled = false;
+        document.getElementById("number-input").value = "";
+        document.getElementById("number-input").focus();
+    } else {
+        document.getElementById("submit-btn").disabled = true;
+        document.getElementById("number-input").disabled = true;
+        document.getElementById("number-input").value = "";
+    }
 }
 
 function renderTable() {
@@ -342,20 +371,38 @@ function submitNumber() {
     const input = document.getElementById("number-input");
     const msg = document.getElementById("input-message");
     const val = parseInt(input.value);
-    if (isNaN(val) || val < 1 || val > 20) { msg.textContent = "❌ عدد باید بین ۱ تا ۲۰ باشد!"; msg.className = "input-message error"; return; }
-    const player = gameState.players[gameState.currentPlayerIdx];
-    if (gameState.questionActive) {
-        const elapsed = (Date.now() - gameState.startTime) / 1000;
-        if (elapsed <= gameState.timeLimit && val === gameState.correctAnswer) { player.score += 2; msg.textContent = "✅ درست! +۲ امتیاز"; msg.className = "input-message success"; }
-        else if (elapsed > gameState.timeLimit) { msg.textContent = "⏰ دیر شد! امتیازی نداره"; msg.className = "input-message error"; }
-        else { msg.textContent = "❌ غلط! امتیازی نداره"; msg.className = "input-message error"; }
-        gameState.questionActive = false;
-        if (gameState.timerJob) clearTimeout(gameState.timerJob);
-    } else { msg.textContent = ""; }
-    player.numbers[gameState.currentRound] = val;
-    gameState.currentPlayerIdx++;
-    renderTable();
-    setTimeout(function() { askPlayer(); }, 600);
+    const config = JSON.parse(localStorage.getItem("gameConfig"));
+
+    if (isNaN(val) || val < 1 || val > 20) { 
+        msg.textContent = "❌ عدد باید بین ۱ تا ۲۰ باشد!"; 
+        msg.className = "input-message error"; 
+        return; 
+    }
+
+    if (config.roomCode) {
+        socket.emit('submit_number', { 
+            room_code: config.roomCode, 
+            username: localStorage.getItem("currentUser"), 
+            number: val 
+        });
+        msg.textContent = "⏳ در حال ارسال...";
+        msg.className = "input-message";
+        input.value = "";
+    } else {
+        const player = gameState.players[gameState.currentPlayerIdx];
+        if (gameState.questionActive) {
+            const elapsed = (Date.now() - gameState.startTime) / 1000;
+            if (elapsed <= gameState.timeLimit && val === gameState.correctAnswer) { player.score += 2; msg.textContent = "✅ درست! +۲ امتیاز"; msg.className = "input-message success"; }
+            else if (elapsed > gameState.timeLimit) { msg.textContent = "⏰ دیر شد! امتیازی نداره"; msg.className = "input-message error"; }
+            else { msg.textContent = "❌ غلط! امتیازی نداره"; msg.className = "input-message error"; }
+            gameState.questionActive = false;
+            if (gameState.timerJob) clearTimeout(gameState.timerJob);
+        } else { msg.textContent = ""; }
+        player.numbers[gameState.currentRound] = val;
+        gameState.currentPlayerIdx++;
+        renderTable();
+        setTimeout(function() { askPlayer(); }, 600);
+    }
 }
 
 function botPlay() {
