@@ -66,7 +66,6 @@ function showAuthMessage(text, type) { const message = document.getElementById("
 function isStrongPassword(password) { if (password.length < 6) { return { valid: false, message: "رمز عبور باید حداقل ۶ کاراکتر باشد!" }; } return { valid: true, message: "" }; }
 function generateRoomCode() { const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let code = ""; for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length)); return code; }
 
-
 // ==========================================
 // 🚀 منطق صفحه اتاق (Room.html)
 // ==========================================
@@ -77,18 +76,34 @@ function initRoomPage() {
     socket = io(API_URL);
 
     socket.on('connect', () => { console.log('✅ به سرور WebSocket وصل شد'); });
-    socket.on('room_created', (data) => { document.getElementById("room-code-display").textContent = data.room_code; });
+    
+    socket.on('room_created', (data) => { 
+        document.getElementById("room-code-display").textContent = data.room_code; 
+        // وقتی اتاق ساخته شد، اسم سازنده رو نشون بده
+        const list = document.getElementById("player-list");
+        list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - میزبان)</li>`;
+    });
+
     socket.on('player_joined', (data) => {
         const list = document.getElementById("player-list");
-        if (list.children.length === 1 && list.children[0].textContent === "در حال اتصال...") {
-            list.innerHTML = "";
+        // پاک کردن پیام در حال اتصال
+        if (list.innerHTML.includes("در حال اتصال...")) {
+            list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - میزبان)</li>`;
         }
+        // اضافه کردن بازیکن جدید
         const li = document.createElement("li");
-        li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;";
+        li.style.cssText = "padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #ffd700;";
         li.textContent = "👤 " + data.username;
         list.appendChild(li);
         showModal("بازیکن جدید!", data.username + " وارد اتاق شد. آماده شروع بازی باشید...", "باشه", null);
     });
+
+    socket.on('room_joined', (data) => {
+        // وقتی خودمون جوین میشیم، لیست رو پاک میکنیم و خودمون رو نشون میدیم
+        const list = document.getElementById("player-list");
+        list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما - مهمان)</li>`;
+    });
+
     socket.on('error', (data) => { showModal('خطا', data.message, 'باشه', null); });
 
     setTimeout(() => {
@@ -122,8 +137,8 @@ function joinRoomFromPage() {
         document.getElementById("join-section").classList.add("hidden");
         document.getElementById("room-section").classList.remove("hidden");
         document.getElementById("room-code-display").textContent = code;
-        const list = document.getElementById("player-list");
-        list.innerHTML = `<li style="padding: 10px; background: #16213e; margin-bottom: 5px; border-radius: 8px; color: #00ff88;">👤 ${user} (شما)</li>`;
+        // لیست رو خالی میکنیم تا منتظر پیام سرور بمونیم
+        document.getElementById("player-list").innerHTML = "<li style='padding: 10px; color: #8888aa;'>در حال اتصال به اتاق...</li>";
     }
 }
 
