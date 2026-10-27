@@ -216,6 +216,15 @@ function initGame() {
     if (config.roomCode) {
         socket = io(API_URL);
         socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
+        
+        // ساخت جدول اولیه (تا زمانی که سرور جواب بده، جدول خالی نمونه)
+        gameState.players = config.players.map(p => ({ name: p.name, isBot: false, numbers: new Array(5).fill(0), score: 0 }));
+        gameState.numRounds = 5;
+        gameState.currentRound = 0;
+        gameState.currentPlayerIdx = 0;
+        renderTable();
+        updateTurnOnline("در حال اتصال...");
+        
         socket.on('update_game_state', (data) => {
             const state = data.state;
             gameState.players = state.players;
@@ -223,6 +232,7 @@ function initGame() {
             gameState.currentRound = state.current_round;
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
+            
             renderTable();
             updateTurnOnline();
         });
@@ -240,7 +250,11 @@ function initGame() {
     }
 }
 
-function updateTurnOnline() {
+function updateTurnOnline(text = "") {
+    if (text) {
+        document.getElementById("game-turn").textContent = text;
+        return;
+    }
     if (gameState.currentPlayerIdx >= gameState.players.length) {
         document.getElementById("game-turn").textContent = "در حال حساب کردن...";
         document.getElementById("submit-btn").disabled = true;
