@@ -116,13 +116,33 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-primary:hover {
     background-color: #ff006e;
     color: #fff;
     transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(255, 0, 110, 0.7);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4);
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-primary:hover::after {
+    width: 300px;
+    height: 300px;
 }
 
 .btn-secondary {
@@ -135,12 +155,33 @@ body {
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-secondary:hover {
     background-color: #00d9ff;
     color: #0f0f1a;
     transform: translateY(-5px);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.4);
+}
+
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-secondary:hover::after {
+    width: 300px;
+    height: 300px;
 }
 
 .hero-features {
@@ -220,11 +261,31 @@ body {
     border: 1px solid rgba(0, 217, 255, 0.2);
     transition: all 0.3s;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.rule-card::before, .lobby-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 217, 255, 0.15) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
 }
 
 .rule-card:hover, .lobby-card:hover {
     border-color: #00d9ff;
-    box-shadow: 0 10px 40px rgba(0, 217, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.6), 0 0 40px rgba(0, 217, 255, 0.3);
+    transform: translateY(-8px);
+}
+
+.rule-card:hover::before, .lobby-card:hover::before {
+    opacity: 1;
 }
 
 .rule-header { display: flex; align-items: center; gap: 15px; }
@@ -503,7 +564,7 @@ body {
     .profile-info h1 { font-size: 1.5rem; }
     
     .profile-stats {
-        grid-template-columns: 1fr 1fr; /* دو ستون برای آمار در موبایل */
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
     }
     .stat-card { padding: 15px 10px; }
@@ -524,6 +585,8 @@ body {
         text-align: center;
     }
 }
+
+/* --- Particles Canvas --- */
 #particles-canvas {
     position: fixed;
     top: 0;
@@ -534,5 +597,3 @@ body {
     pointer-events: none;
     background: transparent;
 }
-
-
