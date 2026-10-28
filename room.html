@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اتاق بازی - Number Game</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 
@@ -25,17 +25,17 @@
             <div id="room-settings" class="hidden">
                 <div class="bot-config">
                     <div class="config-group">
-                        <label>حداکثر تعداد بازیکن (۲ تا ۴)</label>
+                        <label>حداکثر تعداد بازیکن (۲ تا ۲۰)</label>
                         <div class="slider-container">
-                            <input type="range" id="max-players" min="2" max="4" value="2" oninput="updateSliderValue('max-players', 'players-val')">
+                            <input type="range" id="max-players" min="2" max="20" value="2" oninput="updateSliderValue('max-players', 'players-val')">
                             <span class="slider-value" id="players-val">2</span>
                         </div>
                     </div>
                     
                     <div class="config-group">
-                        <label>تعداد بات‌ها (۰ تا ۳)</label>
+                        <label>تعداد بات‌ها (۰ تا ۵)</label>
                         <div class="slider-container">
-                            <input type="range" id="bot-count-room" min="0" max="3" value="0" oninput="updateSliderValue('bot-count-room', 'bots-val')">
+                            <input type="range" id="bot-count-room" min="0" max="5" value="0" oninput="updateSliderValue('bot-count-room', 'bots-val')">
                             <span class="slider-value" id="bots-val">0</span>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                 <div id="room-code-display" style="font-size: 2.5rem; font-weight: bold; color: #ffd700; text-align: center; letter-spacing: 8px; margin-bottom: 30px; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">-----</div>
                 
                 <h3 style="color: #00d9ff; margin-bottom: 15px; text-align: center;">بازیکنان حاضر:</h3>
-                <ul id="player-list" style="list-style: none; padding: 0; color: #e0e0e0; font-size: 1.1rem; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
+                <ul id="player-list" style="list-style: none; padding: 0; color: #e0e0e0; font-size: 1.1rem; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
                     <li style="padding: 12px; background: #16213e; border-radius: 8px; text-align: center;">در حال اتصال...</li>
                 </ul>
                 
@@ -88,6 +88,6 @@
 
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="particles.js"></script>
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=14"></script>
 </body>
 </html>
