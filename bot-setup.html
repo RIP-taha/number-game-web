@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات بازی با بات - Number Game</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 
@@ -28,18 +28,18 @@
             <div class="bot-config">
                 <!-- بخش تعداد دست -->
                 <div class="config-group">
-                    <label>تعداد دست</label>
+                    <label>تعداد دست (۱ تا ۲۰)</label>
                     <div class="slider-container">
-                        <input type="range" id="bot-rounds" min="1" max="10" value="5" oninput="updateSliderValue('bot-rounds', 'rounds-val')">
+                        <input type="range" id="bot-rounds" min="1" max="20" value="5" oninput="updateSliderValue('bot-rounds', 'rounds-val')">
                         <span class="slider-value" id="rounds-val">5</span>
                     </div>
                 </div>
 
                 <!-- بخش تعداد بات -->
                 <div class="config-group">
-                    <label>تعداد بات‌ها</label>
+                    <label>تعداد بات‌ها (۱ تا ۵)</label>
                     <div class="slider-container">
-                        <input type="range" id="bot-count" min="1" max="3" value="2" oninput="updateSliderValue('bot-count', 'bots-val')">
+                        <input type="range" id="bot-count" min="1" max="5" value="2" oninput="updateSliderValue('bot-count', 'bots-val')">
                         <span class="slider-value" id="bots-val">2</span>
                     </div>
                 </div>
@@ -77,6 +77,6 @@
     </footer>
 
     <script src="particles.js"></script>
-    <script src="script.js?v=11"></script>
+    <script src="script.js?v=12"></script>
 </body>
 </html>

@@ -604,3 +604,38 @@ function togglePassword(inputId, btn) {
         btn.textContent = "👁️";
     }
 }
+function updateSliderValue(inputId, displayId) {
+    const input = document.getElementById(inputId);
+    const display = document.getElementById(displayId);
+    if (input && display) {
+        display.textContent = input.value;
+    }
+}
+function startBotGame() {
+    const numRounds = parseInt(document.getElementById("bot-rounds").value);
+    const botCount = parseInt(document.getElementById("bot-count").value);
+    
+    // خواندن سختی از رادیو باتن‌ها
+    const difficultyRadio = document.querySelector('input[name="difficulty"]:checked');
+    const difficulty = difficultyRadio ? difficultyRadio.value : "medium";
+
+    if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) { showModal("خطا", "تعداد دست باید بین ۱ تا ۲۰ باشد!", "باشه", null); return; }
+    if (isNaN(botCount) || botCount < 1 || botCount > 5) { showModal("خطا", "تعداد بات باید بین ۱ تا ۵ باشد!", "باشه", null); return; }
+
+    const myName = localStorage.getItem("currentUser") || "من";
+    const players = [{ name: myName, isBot: false }];
+    const botNames = ["بات آلفا", "بات بتا", "بات گاما", "بات دلتا", "بات اپسیلون"];
+    for (let i = 0; i < botCount; i++) { 
+        players.push({ name: botNames[i] || ("بات " + (i + 1)), isBot: true }); 
+    }
+
+    localStorage.setItem("gameConfig", JSON.stringify({ 
+        numPlayers: players.length, 
+        numRounds: numRounds, 
+        players: players, 
+        difficulty: difficulty, 
+        roomCode: null 
+    }));
+    
+    window.location.href = "game.html";
+}
