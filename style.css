@@ -13,7 +13,6 @@ body {
     flex-direction: column;
 }
 
-/* --- Navbar --- */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -72,7 +71,6 @@ body {
     transform: scale(1.05);
 }
 
-/* --- Home Page --- */
 .hero {
     flex: 1;
     display: flex;
@@ -211,7 +209,6 @@ body {
 .feature-card h3 { font-size: 1.3rem; color: #00d9ff; margin-bottom: 10px; }
 .feature-card p { color: #8888aa; font-size: 0.95rem; }
 
-/* --- Footer --- */
 .footer {
     background-color: #0a0a12;
     padding: 30px 20px;
@@ -223,7 +220,6 @@ body {
 .footer-links a { color: #00d9ff; text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
 .footer-links a:hover { color: #ff006e; }
 
-/* --- General Page Layouts (Rules, Lobby, Profile) --- */
 .rules-page, .lobby-page, .profile-page {
     flex: 1;
     padding: 60px 20px;
@@ -247,7 +243,6 @@ body {
     margin-bottom: 50px;
 }
 
-/* --- Rules & Lobby Cards --- */
 .rules-container, .lobby-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -295,7 +290,6 @@ body {
 .rule-card.open .rule-body { max-height: 200px; margin-top: 15px; }
 .rule-body p, .lobby-card p { color: #e0e0e0; line-height: 1.8; font-size: 0.95rem; }
 
-/* --- Modals --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -337,7 +331,6 @@ body {
 .modal-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 .modal-buttons button { padding: 12px 30px; font-size: 1rem; }
 
-/* --- Auth (Login/Register) --- */
 .auth-page {
     flex: 1;
     display: flex;
@@ -398,7 +391,36 @@ body {
 .auth-switch a { color: #00d9ff; text-decoration: none; }
 .hidden { display: none !important; }
 
-/* --- Profile Page (Desktop) --- */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-left: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #8888aa;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.toggle-password:hover {
+    color: #00d9ff;
+    background-color: rgba(0, 217, 255, 0.1);
+}
+
 .profile-header {
     display: flex;
     align-items: center;
@@ -494,7 +516,6 @@ body {
 .profile-actions { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
 .profile-actions button { padding: 15px 40px; font-size: 1.1rem; }
 
-/* --- Game Page --- */
 .game-page { flex: 1; padding: 20px 10px; max-width: 1400px; margin: 0 auto; width: 100%; }
 .game-header {
     display: flex;
@@ -524,12 +545,18 @@ body {
 .game-side-panel { display: flex; flex-direction: column; gap: 15px; }
 .side-card { background-color: #1a1a2e; padding: 20px; border-radius: 16px; border: 1px solid rgba(0, 217, 255, 0.2); }
 
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: transparent;
+}
 
-/* ========================================================= */
-/* 📱 تنظیمات مخصوص گوشی‌های موبایل (ریسپانسیو کردن کامل) 📱 */
-/* ========================================================= */
 @media (max-width: 768px) {
-    /* منو بالا */
     .navbar {
         flex-direction: column;
         padding: 15px;
@@ -541,14 +568,10 @@ body {
         justify-content: center;
         gap: 15px;
     }
-
-    /* صفحه اصلی */
     .hero-title { font-size: 2.2rem; }
     .hero-buttons { flex-direction: column; width: 100%; }
     .btn-primary, .btn-secondary { width: 100%; padding: 15px; }
     .page-title { font-size: 2rem; }
-
-    /* پروفایل */
     .profile-page { padding: 30px 15px; }
     .profile-header {
         flex-direction: column;
@@ -562,38 +585,21 @@ body {
         font-size: 3.5rem;
     }
     .profile-info h1 { font-size: 1.5rem; }
-    
     .profile-stats {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
     }
     .stat-card { padding: 15px 10px; }
     .stat-value { font-size: 1.5rem; }
-    
     .profile-history { padding: 20px 15px; }
     .history-item { padding: 12px; flex-direction: row; }
     .history-score { font-size: 1.1rem; }
-
     .profile-actions { flex-direction: column; width: 100%; }
     .profile-actions button { width: 100%; }
-
-    /* بازی */
     .game-layout { grid-template-columns: 1fr; }
     .game-header {
         flex-direction: column;
         gap: 10px;
         text-align: center;
     }
-}
-
-/* --- Particles Canvas --- */
-#particles-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-    background: transparent;
 }

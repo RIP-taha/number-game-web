@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ورود - Number Game</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
+
     <nav class="navbar">
         <div class="nav-logo">🎮 NUMBER GAME</div>
         <div class="nav-links">
@@ -16,44 +17,65 @@
             <a href="login.html" class="btn-nav">ورود / ثبت‌نام</a>
         </div>
     </nav>
+
     <main class="auth-page">
         <div class="auth-card">
             <div class="auth-tabs">
                 <button class="auth-tab active" onclick="switchTab('login')" id="tab-login">ورود</button>
                 <button class="auth-tab" onclick="switchTab('register')" id="tab-register">ثبت‌نام</button>
             </div>
+
             <form id="login-form" class="auth-form">
                 <h2>ورود به حساب</h2>
                 <label>نام کاربری</label>
                 <input type="text" id="login-username" placeholder="نام کاربری خود را وارد کنید" required>
+                
                 <label>رمز عبور</label>
-                <input type="password" id="login-password" placeholder="رمز عبور خود را وارد کنید" required>
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" placeholder="رمز عبور خود را وارد کنید" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">👁️</button>
+                </div>
+
                 <button type="submit" class="btn-primary">ورود</button>
                 <p class="auth-switch">حساب نداری؟ <a href="#" onclick="switchTab('register')">ثبت‌نام کن</a></p>
             </form>
+
             <form id="register-form" class="auth-form hidden">
                 <h2>ساخت حساب جدید</h2>
                 <label>نام کاربری</label>
                 <input type="text" id="register-username" placeholder="یه نام کاربری انتخاب کن" required>
+                
                 <label>ایمیل</label>
                 <input type="email" id="register-email" placeholder="ایمیل خود را وارد کنید" required>
+                
                 <label>رمز عبور</label>
-                <input type="password" id="register-password" placeholder="حداقل ۶ کاراکتر" required>
+                <div class="password-wrapper">
+                    <input type="password" id="register-password" placeholder="حداقل ۶ کاراکتر" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('register-password', this)">👁️</button>
+                </div>
+                
                 <label>تکرار رمز عبور</label>
-                <input type="password" id="register-password2" placeholder="رمز عبور را دوباره وارد کنید" required>
+                <div class="password-wrapper">
+                    <input type="password" id="register-password2" placeholder="رمز عبور را دوباره وارد کنید" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('register-password2', this)">👁️</button>
+                </div>
+
                 <button type="submit" class="btn-primary">ثبت‌نام</button>
                 <p class="auth-switch">حساب داری؟ <a href="#" onclick="switchTab('login')">ورود کن</a></p>
             </form>
+
             <p id="auth-message" class="auth-message"></p>
         </div>
     </main>
+
     <footer class="footer">
         <div class="footer-content">
             <p>🎮 Number Game | ورژن 1.0.0</p>
             <p>ساخته شده با ❤️ توسط تیم Number Game</p>
         </div>
     </footer>
+
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>
