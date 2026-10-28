@@ -603,3 +603,103 @@ body {
         text-align: center;
     }
 }
+/* --- Bot Setup Page Custom Styles --- */
+.bot-config {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.config-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.config-group label {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 217, 255, 0.2);
+}
+
+input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 6px;
+    background: #16213e;
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #00d9ff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00d9ff;
+    transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.slider-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    min-width: 30px;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.difficulty-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.difficulty-option {
+    cursor: pointer;
+}
+
+.difficulty-option input {
+    display: none;
+}
+
+.option-box {
+    display: block;
+    text-align: center;
+    padding: 15px 10px;
+    background-color: #16213e;
+    border: 2px solid rgba(0, 217, 255, 0.2);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #8888aa;
+    transition: all 0.3s;
+}
+
+.difficulty-option input:checked + .option-box {
+    background-color: rgba(0, 217, 255, 0.1);
+    border-color: #00d9ff;
+    color: #00d9ff;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+}
+
+.difficulty-option:hover .option-box {
+    border-color: #00d9ff;
+    color: #fff;
+}

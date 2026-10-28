@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات بازی با بات - Number Game</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
+
     <nav class="navbar">
         <div class="nav-logo">🎮 NUMBER GAME</div>
         <div class="nav-links">
@@ -16,32 +17,66 @@
             <a href="#" onclick="logout()" class="btn-nav">خروج</a>
         </div>
     </nav>
+
     <main class="auth-page">
-        <div class="auth-card" style="max-width: 500px;">
-            <h2 style="color: #00d9ff; text-align: center; margin-bottom: 25px;">🤖 تنظیمات بازی با بات</h2>
+        <div class="auth-card" style="max-width: 550px; padding: 40px;">
+            <div style="text-align: center; margin-bottom: 35px;">
+                <h2 style="color: #00d9ff; font-size: 2rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,217,255,0.4);">🤖 نبرد با هوش مصنوعی</h2>
+                <p style="color: #8888aa; font-size: 1rem;">تنظیمات بازی رو انتخاب کن و آماده شو</p>
+            </div>
+
             <div class="bot-config">
-                <label>تعداد دست (۱ تا ۱۰)</label>
-                <input type="number" id="bot-rounds" min="1" max="10" value="5">
-                <label>تعداد بات (۱ تا ۳)</label>
-                <input type="number" id="bot-count" min="1" max="3" value="2">
-                <label>سطح سختی بات‌ها</label>
-                <select id="bot-difficulty">
-                    <option value="easy">🟢 آسان</option>
-                    <option value="medium" selected>🟡 متوسط</option>
-                    <option value="hard">🔴 سخت</option>
-                </select>
-                <button class="btn-primary" onclick="startBotGame()" style="width: 100%; margin-top: 30px;">شروع بازی</button>
-                <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 12px;">انصراف</button>
+                <!-- بخش تعداد دست -->
+                <div class="config-group">
+                    <label>تعداد دست</label>
+                    <div class="slider-container">
+                        <input type="range" id="bot-rounds" min="1" max="10" value="5" oninput="updateSliderValue('bot-rounds', 'rounds-val')">
+                        <span class="slider-value" id="rounds-val">5</span>
+                    </div>
+                </div>
+
+                <!-- بخش تعداد بات -->
+                <div class="config-group">
+                    <label>تعداد بات‌ها</label>
+                    <div class="slider-container">
+                        <input type="range" id="bot-count" min="1" max="3" value="2" oninput="updateSliderValue('bot-count', 'bots-val')">
+                        <span class="slider-value" id="bots-val">2</span>
+                    </div>
+                </div>
+
+                <!-- بخش سختی -->
+                <div class="config-group">
+                    <label>سطح سختی بات‌ها</label>
+                    <div class="difficulty-options">
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="easy">
+                            <span class="option-box">🟢 آسان</span>
+                        </label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="medium" checked>
+                            <span class="option-box">🟡 متوسط</span>
+                        </label>
+                        <label class="difficulty-option">
+                            <input type="radio" name="difficulty" value="hard">
+                            <span class="option-box">🔴 سخت</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="startBotGame()" style="width: 100%; margin-top: 30px; padding: 18px; font-size: 1.2rem;">🚀 شروع بازی</button>
+                <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 15px; font-size: 1rem;">انصراف</button>
             </div>
         </div>
     </main>
+
     <footer class="footer">
         <div class="footer-content">
             <p>🎮 Number Game | ورژن 1.0.0</p>
             <p>ساخته شده با ❤️ توسط تیم Number Game</p>
         </div>
     </footer>
+
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=11"></script>
 </body>
 </html>
