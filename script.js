@@ -154,24 +154,33 @@ function createRoomWithSettings() {
     document.getElementById("room-section").classList.remove("hidden");
     document.getElementById("room-code-display").textContent = code;
     
-    socket.emit('create_room', { 
-        room_code: code, 
-        username: user, 
-        max_players: maxPlayers, 
-        bot_count: botCount, 
-        bot_difficulty: botDifficulty 
-    });
+    const doCreate = () => {
+        socket.emit('create_room', { room_code: code, username: user, max_players: maxPlayers, bot_count: botCount, bot_difficulty: botDifficulty });
+    };
+    
+    if (socket.connected) {
+        doCreate();
+    } else {
+        socket.on('connect', doCreate);
+    }
 }
 
 function joinRoomFromPage() {
     const code = document.getElementById("join-room-code").value.trim().toUpperCase();
     const user = localStorage.getItem("currentUser");
     if (code.length !== 6) { showModal("خطا", "کد اتاق باید ۶ کاراکتر باشد!", "باشه", null); return; }
-    if (socket) {
+    
+    const doJoin = () => {
         socket.emit('join_room', { room_code: code, username: user });
         document.getElementById("join-section").classList.add("hidden");
         document.getElementById("room-section").classList.remove("hidden");
         document.getElementById("room-code-display").textContent = code;
+    };
+    
+    if (socket.connected) {
+        doJoin();
+    } else {
+        socket.on('connect', doJoin);
     }
 }
 
