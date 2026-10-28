@@ -146,8 +146,8 @@ function initRoomPage() {
 function createRoomWithSettings() {
     const user = localStorage.getItem("currentUser");
     const maxPlayers = parseInt(document.getElementById("max-players").value);
-    const botCount = parseInt(document.getElementById("bot-count").value);
-    const botDifficulty = document.getElementById("bot-difficulty").value;
+    const botCount = parseInt(document.getElementById("bot-count-room").value);
+    const botDifficulty = document.getElementById("bot-difficulty-room").value;
     const code = generateRoomCode();
     
     document.getElementById("room-settings").classList.add("hidden");
@@ -363,7 +363,6 @@ function renderTable() {
     thead.innerHTML = headHtml;
     
     let bodyHtml = "";
-    // اینجا از یک کپی سورت شده برای نمایش استفاده میکنیم تا ترتیب نوبت‌ها به هم نریزه
     const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
     
     for (const p of sortedPlayers) {
@@ -388,8 +387,6 @@ function startRound() {
     gameState.questionActive = false;
     gameState.correctAnswer = null;
     gameState.timeLimit = null;
-    
-    // همیشه از ایندکس 0 شروع میکنیم (پلیر اصلی همیشه اولین نفر توی آرایه است)
     gameState.currentPlayerIdx = 0;
     
     const qCard = document.getElementById("question-card");
@@ -500,7 +497,6 @@ function endRound() {
         for (let k = 0; k < gameState.players.length; k++) { if (k !== i && gameState.players[k].numbers[r] === num) { unique = false; break; } }
         if (unique) gameState.players[i].score += 1;
     }
-    // **مهم**: ترتیب آرایه اصلی (gameState.players) رو به هم نمیزنیم تا نوبتها درست بمونن
     renderTable();
     gameState.currentRound++;
     setTimeout(function() { startRound(); }, 1200);
@@ -512,7 +508,6 @@ async function showFinalScreen() {
     const ranking = document.getElementById("final-ranking");
     let html = "";
     const medals = ["🥇", "🥈", "🥉"];
-    // برای نمایش نهایی، یک کپی سورت شده میسازیم
     const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
     sortedPlayers.forEach(function(p, i) {
         const medal = i < 3 ? medals[i] : (i + 1) + ".";
@@ -530,7 +525,6 @@ async function saveGameResult() {
     if (!userId || !myName) return;
     const myPlayer = gameState.players.find(p => p.name === myName);
     if (!myPlayer) return;
-    // رتبه رو بر اساس کپی سورت شده حساب میکنیم
     const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
     const myRank = sortedPlayers.indexOf(myPlayer) + 1;
     try {
