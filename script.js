@@ -82,8 +82,11 @@ function initRoomPage() {
     const user = localStorage.getItem("currentUser");
     if (!user) { window.location.href = "login.html"; return; }
 
-    // اتصال به سوکت
-    socket = io(API_URL);
+    // استفاده از Polling برای سازگاری با Render
+    socket = io(API_URL, {
+        transports: ["polling"],
+        upgrade: false
+    });
 
     socket.on('connect', () => { 
         console.log('✅ به سرور WebSocket (اتاق) وصل شد'); 
@@ -271,7 +274,11 @@ function initGame() {
     const config = JSON.parse(configData);
     
     if (config.roomCode) {
-        socket = io(API_URL);
+        // استفاده از Polling برای بازی
+        socket = io(API_URL, {
+            transports: ["polling"],
+            upgrade: false
+        });
         
         socket.on('connect', () => {
             console.log('✅ به سرور WebSocket (بازی) وصل شد');
