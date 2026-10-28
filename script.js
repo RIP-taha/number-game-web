@@ -64,6 +64,16 @@ function switchTab(tab) {
 function showAuthMessage(text, type) { const message = document.getElementById("auth-message"); message.textContent = text; message.className = "auth-message " + type; }
 function isStrongPassword(password) { if (password.length < 6) { return { valid: false, message: "رمز عبور باید حداقل ۶ کاراکتر باشد!" }; } return { valid: true, message: "" }; }
 function generateRoomCode() { const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let code = ""; for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length)); return code; }
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") { input.type = "text"; btn.textContent = "🙈"; }
+    else { input.type = "password"; btn.textContent = "👁️"; }
+}
+function updateSliderValue(inputId, displayId) {
+    const input = document.getElementById(inputId);
+    const display = document.getElementById(displayId);
+    if (input && display) { display.textContent = input.value; }
+}
 
 // ==========================================
 // 🚀 منطق صفحه اتاق (Room.html)
@@ -176,14 +186,15 @@ function startMultiplayerGame() {
 function startBotGame() {
     const numRounds = parseInt(document.getElementById("bot-rounds").value);
     const botCount = parseInt(document.getElementById("bot-count").value);
-    const difficulty = document.getElementById("bot-difficulty").value;
+    const difficultyRadio = document.querySelector('input[name="difficulty"]:checked');
+    const difficulty = difficultyRadio ? difficultyRadio.value : "medium";
 
-    if (isNaN(numRounds) || numRounds < 1 || numRounds > 10) { showModal("خطا", "تعداد دست باید بین ۱ تا ۱۰ باشد!", "باشه", null); return; }
-    if (isNaN(botCount) || botCount < 1 || botCount > 3) { showModal("خطا", "تعداد بات باید بین ۱ تا ۳ باشد!", "باشه", null); return; }
+    if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) { showModal("خطا", "تعداد دست باید بین ۱ تا ۲۰ باشد!", "باشه", null); return; }
+    if (isNaN(botCount) || botCount < 1 || botCount > 5) { showModal("خطا", "تعداد بات باید بین ۱ تا ۵ باشد!", "باشه", null); return; }
 
     const myName = localStorage.getItem("currentUser") || "من";
     const players = [{ name: myName, isBot: false }];
-    const botNames = ["بات آلفا", "بات بتا", "بات گاما"];
+    const botNames = ["بات آلفا", "بات بتا", "بات گاما", "بات دلتا", "بات اپسیلون"];
     for (let i = 0; i < botCount; i++) { players.push({ name: botNames[i] || ("بات " + (i + 1)), isBot: true }); }
 
     localStorage.setItem("gameConfig", JSON.stringify({ numPlayers: players.length, numRounds: numRounds, players: players, difficulty: difficulty, roomCode: null }));
@@ -269,7 +280,6 @@ function initGame() {
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
             
-            // مدیریت سوال ریاضی
             if (gameState.roundsWithMath[gameState.currentRound] && state.current_question) {
                 const qCard = document.getElementById("question-card");
                 const qText = document.getElementById("question-text");
@@ -277,7 +287,6 @@ function initGame() {
                 qCard.classList.remove("hidden");
                 qText.textContent = state.current_question.question + " = ?";
                 
-                // تایمر
                 clearInterval(timerInterval);
                 if (state.round_start_time) {
                     const elapsed = Date.now() / 1000 - state.round_start_time;
@@ -347,12 +356,17 @@ function renderTable() {
     const thead = document.getElementById("game-thead");
     const tbody = document.getElementById("game-tbody");
     if (!thead || !tbody) return;
+    
     let headHtml = "<tr><th>بازیکن</th>";
     for (let j = 0; j < gameState.numRounds; j++) { headHtml += "<th>دست " + (j + 1) + "</th>"; }
     headHtml += "<th>امتیاز</th></tr>";
     thead.innerHTML = headHtml;
+    
     let bodyHtml = "";
-    for (const p of gameState.players) {
+    // اینجا از یک کپی سورت شده برای نمایش استفاده میکنیم تا ترتیب نوبت‌ها به هم نریزه
+    const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+    
+    for (const p of sortedPlayers) {
         const isCurrent = gameState.players[gameState.currentPlayerIdx] && gameState.players[gameState.currentPlayerIdx].name === p.name && !p.isBot && gameState.currentPlayerIdx < gameState.players.length;
         bodyHtml += "<tr class='" + (isCurrent ? "highlight-row" : "") + "'>";
         bodyHtml += "<td>" + p.name + "</td>";
@@ -363,6 +377,7 @@ function renderTable() {
         bodyHtml += "<td class='score-cell'>" + p.score + "</td></tr>";
     }
     tbody.innerHTML = bodyHtml;
+    
     const myPlayer = gameState.players.find(p => p.name === localStorage.getItem("currentUser"));
     if (document.getElementById("my-score") && myPlayer) document.getElementById("my-score").textContent = myPlayer.score;
 }
@@ -373,7 +388,10 @@ function startRound() {
     gameState.questionActive = false;
     gameState.correctAnswer = null;
     gameState.timeLimit = null;
+    
+    // همیشه از ایندکس 0 شروع میکنیم (پلیر اصلی همیشه اولین نفر توی آرایه است)
     gameState.currentPlayerIdx = 0;
+    
     const qCard = document.getElementById("question-card");
     const qText = document.getElementById("question-text");
     const qTimer = document.getElementById("question-timer");
@@ -482,7 +500,7 @@ function endRound() {
         for (let k = 0; k < gameState.players.length; k++) { if (k !== i && gameState.players[k].numbers[r] === num) { unique = false; break; } }
         if (unique) gameState.players[i].score += 1;
     }
-    gameState.players.sort((a, b) => b.score - a.score);
+    // **مهم**: ترتیب آرایه اصلی (gameState.players) رو به هم نمیزنیم تا نوبتها درست بمونن
     renderTable();
     gameState.currentRound++;
     setTimeout(function() { startRound(); }, 1200);
@@ -494,7 +512,9 @@ async function showFinalScreen() {
     const ranking = document.getElementById("final-ranking");
     let html = "";
     const medals = ["🥇", "🥈", "🥉"];
-    gameState.players.forEach(function(p, i) {
+    // برای نمایش نهایی، یک کپی سورت شده میسازیم
+    const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+    sortedPlayers.forEach(function(p, i) {
         const medal = i < 3 ? medals[i] : (i + 1) + ".";
         html += "<div class='final-ranking-item " + (i === 0 ? "first" : "") + "'>";
         html += "<span class='rank-name'>" + medal + " " + p.name + "</span>";
@@ -510,7 +530,9 @@ async function saveGameResult() {
     if (!userId || !myName) return;
     const myPlayer = gameState.players.find(p => p.name === myName);
     if (!myPlayer) return;
-    const myRank = gameState.players.indexOf(myPlayer) + 1;
+    // رتبه رو بر اساس کپی سورت شده حساب میکنیم
+    const sortedPlayers = [...gameState.players].sort((a, b) => b.score - a.score);
+    const myRank = sortedPlayers.indexOf(myPlayer) + 1;
     try {
         await fetch(API_URL + "/api/save-result", {
             method: "POST", headers: { "Content-Type": "application/json" },
@@ -593,49 +615,3 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
-
-function togglePassword(inputId, btn) {
-    const input = document.getElementById(inputId);
-    if (input.type === "password") {
-        input.type = "text";
-        btn.textContent = "🙈";
-    } else {
-        input.type = "password";
-        btn.textContent = "👁️";
-    }
-}
-function updateSliderValue(inputId, displayId) {
-    const input = document.getElementById(inputId);
-    const display = document.getElementById(displayId);
-    if (input && display) {
-        display.textContent = input.value;
-    }
-}
-function startBotGame() {
-    const numRounds = parseInt(document.getElementById("bot-rounds").value);
-    const botCount = parseInt(document.getElementById("bot-count").value);
-    
-    // خواندن سختی از رادیو باتن‌ها
-    const difficultyRadio = document.querySelector('input[name="difficulty"]:checked');
-    const difficulty = difficultyRadio ? difficultyRadio.value : "medium";
-
-    if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) { showModal("خطا", "تعداد دست باید بین ۱ تا ۲۰ باشد!", "باشه", null); return; }
-    if (isNaN(botCount) || botCount < 1 || botCount > 5) { showModal("خطا", "تعداد بات باید بین ۱ تا ۵ باشد!", "باشه", null); return; }
-
-    const myName = localStorage.getItem("currentUser") || "من";
-    const players = [{ name: myName, isBot: false }];
-    const botNames = ["بات آلفا", "بات بتا", "بات گاما", "بات دلتا", "بات اپسیلون"];
-    for (let i = 0; i < botCount; i++) { 
-        players.push({ name: botNames[i] || ("بات " + (i + 1)), isBot: true }); 
-    }
-
-    localStorage.setItem("gameConfig", JSON.stringify({ 
-        numPlayers: players.length, 
-        numRounds: numRounds, 
-        players: players, 
-        difficulty: difficulty, 
-        roomCode: null 
-    }));
-    
-    window.location.href = "game.html";
-}
