@@ -82,9 +82,12 @@ function initRoomPage() {
     const user = localStorage.getItem("currentUser");
     if (!user) { window.location.href = "login.html"; return; }
 
+    // اتصال به سوکت
     socket = io(API_URL);
 
-    socket.on('connect', () => { console.log('✅ به سرور WebSocket وصل شد'); });
+    socket.on('connect', () => { 
+        console.log('✅ به سرور WebSocket (اتاق) وصل شد'); 
+    });
     
     socket.on('update_players', (data) => {
         const list = document.getElementById("player-list");
@@ -271,6 +274,7 @@ function initGame() {
         socket = io(API_URL);
         
         socket.on('connect', () => {
+            console.log('✅ به سرور WebSocket (بازی) وصل شد');
             socket.emit('join_room', { room_code: config.roomCode, username: localStorage.getItem("currentUser") });
         });
         
