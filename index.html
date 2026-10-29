@@ -4,277 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="theme-color" content="#0b1020">
-    <meta name="description" content="در Number Game عدد انتخاب کن، با دوستانت رقابت کن و با قدرت ریاضی برنده شو!">
-
-    <title>Number Game | جایی برای رقابت هوشمندانه</title>
-
-    <link
-        href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"
-        rel="stylesheet"
-        type="text/css"
-    >
-
-    <link rel="stylesheet" href="style.css?v=10">
+    <title>Number Game | بازی اعداد</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="style.css?v=9">
 </head>
-
-<body class="home-page">
-
-    <!-- Navigation -->
+<body>
     <nav class="navbar">
-        <a href="index.html" class="nav-logo home-brand" aria-label="صفحه اصلی Number Game">
-            <span class="brand-icon">N</span>
-            <span>NUMBER<span class="brand-accent">GAME</span></span>
-        </a>
-
+        <div class="nav-logo">🎮 NUMBER GAME</div>
         <div class="nav-links">
-            <a href="index.html" class="home-nav-active">خانه</a>
+            <a href="index.html">خانه</a>
             <a href="rules.html">راهنما</a>
-            <a href="login.html" class="btn-nav">ورود / ثبت‌نام ↗</a>
+            <a href="login.html" class="btn-nav">ورود / ثبت‌نام</a>
         </div>
     </nav>
-
-    <main>
-        <!-- Hero -->
-        <section class="hero home-hero">
-            <div class="home-glow home-glow-one"></div>
-            <div class="home-glow home-glow-two"></div>
-
-            <div class="hero-content home-hero-content">
-
-                <div class="hero-eyebrow">
-                    <span class="status-dot"></span>
-                    رقابت شروع می‌شود؛ آماده‌ای؟
-                </div>
-
-                <h1 class="hero-title home-title">
-                    فکر کن.
-                    <span class="title-gradient">انتخاب کن.</span>
-                    <span class="title-last-line">برنده شو.</span>
-                </h1>
-
-                <p class="hero-subtitle home-subtitle">
-                    به دنیای <span>NUMBER GAME</span> خوش اومدی!
-                </p>
-
-                <p class="hero-desc home-description">
-                    عددت رو انتخاب کن، قدرت ریاضیت رو به چالش بکش
-                    و با دوستانت وارد یک رقابت هیجان‌انگیز شو.
-                    هر دور یک فرصت تازه برای پیروزیه!
-                </p>
-
-                <div class="hero-buttons home-actions">
-                    <button
-                        type="button"
-                        class="btn-primary home-start-btn"
-                        onclick="startGame()"
-                    >
-                        <span>🚀</span>
-                        <span>شروع ماجراجویی</span>
-                        <span class="action-arrow">←</span>
-                    </button>
-
-                    <a href="rules.html" class="btn-secondary home-guide-btn">
-                        <span>📖</span>
-                        آشنایی با بازی
-                    </a>
-                </div>
-
-                <div class="home-trust-line">
-                    <span>🎯</span>
-                    <span>استراتژی</span>
-                    <span class="trust-separator">•</span>
-                    <span>🧠</span>
-                    <span>هوش و ریاضی</span>
-                    <span class="trust-separator">•</span>
-                    <span>🏆</span>
-                    <span>رقابت</span>
-                </div>
+    <main class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">🎮 NUMBER GAME 🎮</h1>
+            <p class="hero-subtitle">بازی اعداد و ریاضی، آنلاین با دوستان!</p>
+            <p class="hero-desc">عدد انتخاب کن، با بقیه رقابت کن، سوال ریاضی جواب بده و برنده شو!</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="startGame()">🚀 شروع بازی</button>
+                <button class="btn-secondary" onclick="location.href='rules.html'">📖 راهنما</button>
             </div>
-
-            <!-- Decorative game preview -->
-            <div class="home-preview" aria-label="نمایشی از فضای بازی">
-                <div class="preview-orbit orbit-one"></div>
-                <div class="preview-orbit orbit-two"></div>
-
-                <div class="preview-card preview-card-main">
-                    <div class="preview-topbar">
-                        <span class="preview-window-dots">
-                            <i></i><i></i><i></i>
-                        </span>
-                        <span class="preview-label">GAME ARENA</span>
-                        <span class="preview-live">
-                            <span class="status-dot"></span>
-                            READY
-                        </span>
-                    </div>
-
-                    <div class="preview-content">
-                        <div class="preview-round">ROUND <span>01</span></div>
-
-                        <div class="preview-number">7</div>
-
-                        <div class="preview-number-caption">
-                            <span class="preview-sparkle">✦</span>
-                            YOUR NEXT MOVE
-                            <span class="preview-sparkle">✦</span>
-                        </div>
-
-                        <div class="preview-number-options">
-                            <span>3</span>
-                            <span>5</span>
-                            <span class="option-selected">7</span>
-                            <span>8</span>
-                            <span>9</span>
-                        </div>
-
-                        <div class="preview-progress">
-                            <span></span>
-                        </div>
-
-                        <div class="preview-footer">
-                            <span>🧠 THINK SMART</span>
-                            <span>LEVEL UP ↑</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="preview-float preview-float-score">
-                    <span class="float-icon">⚡</span>
-                    <div>
-                        <small>GAME MODE</small>
-                        <strong>SMART PLAY</strong>
-                    </div>
-                </div>
-
-                <div class="preview-float preview-float-trophy">
-                    <span class="float-icon">🏆</span>
-                    <div>
-                        <small>YOUR GOAL</small>
-                        <strong>BE THE BEST</strong>
-                    </div>
-                </div>
+        </div>
+        <div class="hero-features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>بازی با بات</h3>
+                <p>با هوش مصنوعی رقابت کن</p>
             </div>
-        </section>
-
-        <!-- Features -->
-        <section class="home-features-section" id="features">
-            <div class="section-heading">
-                <span class="section-kicker">CHOOSE YOUR CHALLENGE</span>
-                <h2>سبک رقابتت رو انتخاب کن</h2>
-                <p>هر بازی یک تجربه‌ست؛ تو انتخاب می‌کنی چطور وارد رقابت بشی.</p>
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>مچ رندوم</h3>
+                <p>با بازیکن‌های آنلاین بازی کن</p>
             </div>
-
-            <div class="hero-features home-feature-grid">
-
-                <article class="feature-card home-feature-card feature-bot">
-                    <div class="feature-card-top">
-                        <span class="feature-icon">🤖</span>
-                        <span class="feature-tag">SOLO MODE</span>
-                    </div>
-
-                    <h3>رقابت با بات</h3>
-                    <p>
-                        مهارتت رو محک بزن، تصمیم‌های بهتر بگیر
-                        و با رقیب‌های هوشمند روبه‌رو شو.
-                    </p>
-
-                    <div class="feature-bottom">
-                        <span>مناسب تمرین و پیشرفت</span>
-                        <span class="feature-arrow">↙</span>
-                    </div>
-                </article>
-
-                <article class="feature-card home-feature-card feature-random">
-                    <div class="feature-card-top">
-                        <span class="feature-icon">🌐</span>
-                        <span class="feature-tag">ONLINE MODE</span>
-                    </div>
-
-                    <h3>مچ رندوم</h3>
-                    <p>
-                        با بازیکن‌های دیگر وارد رقابت شو
-                        و شانس خودت رو برای رسیدن به رتبهٔ اول امتحان کن.
-                    </p>
-
-                    <div class="feature-bottom">
-                        <span>رقابت با بازیکن‌های دیگر</span>
-                        <span class="feature-arrow">↙</span>
-                    </div>
-                </article>
-
-                <article class="feature-card home-feature-card feature-friends">
-                    <div class="feature-card-top">
-                        <span class="feature-icon">👥</span>
-                        <span class="feature-tag">FRIENDS MODE</span>
-                    </div>
-
-                    <h3>اتاق دوستان</h3>
-                    <p>
-                        اتاق اختصاصی بساز، کد رو به دوستات بده
-                        و رقابت رو کنار هم شروع کنید.
-                    </p>
-
-                    <div class="feature-bottom">
-                        <span>بازی گروهی با دوستان</span>
-                        <span class="feature-arrow">↙</span>
-                    </div>
-                </article>
-
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>اتاق دوستان</h3>
+                <p>اتاق بساز و دوستانت رو دعوت کن</p>
             </div>
-        </section>
-
-        <!-- Call to action -->
-        <section class="home-cta">
-            <div class="cta-decoration">✦</div>
-
-            <div class="cta-content">
-                <span class="section-kicker">YOUR NEXT MOVE</span>
-                <h2>آماده‌ای هوشمندانه رقابت کنی؟</h2>
-                <p>اولین قدم رو بردار؛ بقیهٔ ماجرا با توئه.</p>
-
-                <button
-                    type="button"
-                    class="btn-primary cta-start-btn"
-                    onclick="startGame()"
-                >
-                    🚀 بزن بریم!
-                </button>
-            </div>
-
-            <div class="cta-decoration cta-decoration-bottom">✧</div>
-        </section>
+        </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="footer home-footer">
-        <div class="footer-content home-footer-content">
-
-            <a href="index.html" class="nav-logo home-brand footer-brand">
-                <span class="brand-icon">N</span>
-                <span>NUMBER<span class="brand-accent">GAME</span></span>
-            </a>
-
-            <p class="footer-description">
-                یک انتخاب، یک رقابت، یک فرصت برای بهتر شدن.
-            </p>
-
+    <footer class="footer">
+        <div class="footer-content">
+            <p>🎮 Number Game | ورژن 1.0.0</p>
+            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
             <div class="footer-links">
-                <a href="index.html">خانه</a>
-                <a href="rules.html">راهنمای بازی</a>
-                <a href="login.html">ورود / ثبت‌نام</a>
-            </div>
-
-            <div class="footer-bottom">
-                <span>© Number Game · نسخه 1.0.0</span>
-                <span>ساخته‌شده با <span class="footer-heart">♥</span> برای عاشقان رقابت</span>
+                <a href="#">درباره ما</a>
+                <a href="#">تماس</a>
+                <a href="#">قوانین</a>
             </div>
         </div>
     </footer>
-
     <script src="particles.js"></script>
-    <script src="script.js?v=10"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>
-
