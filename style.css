@@ -718,3 +718,36 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .custom-select:focus {
     border-color: #ff006e;
 }
+/* --- Game Page Improvements --- */
+
+/* هایلایت کردن ردیف بازیکنی که نوبتشه */
+.game-table tr.highlight-row td {
+    background-color: rgba(0, 217, 255, 0.15) !important;
+    border-top: 1px solid #00d9ff;
+    border-bottom: 1px solid #00d9ff;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+}
+
+.game-table tr.highlight-row td:first-child {
+    border-right: 4px solid #00d9ff;
+}
+
+/* افکت پالس برای دکمه ثبت وقتی نوبت کاربره */
+.btn-primary.pulse {
+    animation: pulse-glow 1.5s infinite;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 217, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0); }
+}
+
+/* قشنگ‌تر کردن ستون امتیاز */
+.game-table .score-cell {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}

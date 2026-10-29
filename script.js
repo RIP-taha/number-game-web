@@ -352,6 +352,7 @@ function updateTurnOnline(text = "") {
     if (gameState.currentPlayerIdx >= gameState.players.length) {
         document.getElementById("game-turn").textContent = "در حال حساب کردن...";
         document.getElementById("submit-btn").disabled = true;
+        document.getElementById("submit-btn").classList.remove("pulse");
         return;
     }
     const currentPlayer = gameState.players[gameState.currentPlayerIdx];
@@ -360,11 +361,13 @@ function updateTurnOnline(text = "") {
     
     if (isMyTurn) {
         document.getElementById("submit-btn").disabled = false;
+        document.getElementById("submit-btn").classList.add("pulse");
         document.getElementById("number-input").disabled = false;
         document.getElementById("number-input").value = "";
         document.getElementById("number-input").focus();
     } else {
         document.getElementById("submit-btn").disabled = true;
+        document.getElementById("submit-btn").classList.remove("pulse");
         document.getElementById("number-input").disabled = true;
         document.getElementById("number-input").value = "";
     }
@@ -432,10 +435,12 @@ function askPlayer() {
     document.getElementById("input-message").textContent = "";
     if (player.isBot) {
         document.getElementById("submit-btn").disabled = true;
+        document.getElementById("submit-btn").classList.remove("pulse");
         document.getElementById("number-input").disabled = true;
         setTimeout(botPlay, 1200);
     } else {
         document.getElementById("submit-btn").disabled = false;
+        document.getElementById("submit-btn").classList.add("pulse");
         document.getElementById("number-input").disabled = false;
         document.getElementById("number-input").value = "";
         document.getElementById("number-input").focus();
