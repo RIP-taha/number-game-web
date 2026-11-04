@@ -1,93 +1,317 @@
+
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اتاق بازی - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=15">
+
+    <title>Private Rooms | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=16">
 </head>
+
 <body>
 
+    <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <div class="nav-logo">
+            <span class="numora-logo-icon">N</span>
+            <span>NUMORA</span>
+        </div>
+
         <div class="nav-links">
-            <a href="lobby.html">بازگشت به لابی</a>
-            <span id="nav-username" class="nav-user">👤 کاربر</span>
+            <a href="index.html">Home</a>
+            <a href="lobby.html">Game Center</a>
+            <span id="nav-username" class="nav-user">PLAYER</span>
         </div>
     </nav>
 
-    <main class="auth-page">
-        <div class="auth-card" style="max-width: 600px; padding: 40px;">
-            <h2 style="color: #00d9ff; text-align: center; margin-bottom: 30px; font-size: 2rem; text-shadow: 0 0 15px rgba(0,217,255,0.4);">👥 اتاق بازی</h2>
-            
-            <!-- تنظیمات ساخت اتاق (فقط برای سازنده) -->
-            <div id="room-settings" class="hidden">
-                <div class="bot-config">
-                    <div class="config-group">
-                        <label>حداکثر تعداد بازیکن (۲ تا ۲۰)</label>
-                        <div class="slider-container">
-                            <input type="range" id="max-players" min="2" max="20" value="2" oninput="updateSliderValue('max-players', 'players-val')">
-                            <span class="slider-value" id="players-val">2</span>
-                        </div>
-                    </div>
-                    
-                    <div class="config-group">
-                        <label>تعداد بات‌ها (۰ تا ۵)</label>
-                        <div class="slider-container">
-                            <input type="range" id="bot-count-room" min="0" max="5" value="0" oninput="updateSliderValue('bot-count-room', 'bots-val')">
-                            <span class="slider-value" id="bots-val">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="config-group">
-                        <label>سطح بات‌ها</label>
-                        <select id="bot-difficulty-room" class="custom-select">
-                            <option value="easy">🟢 آسان</option>
-                            <option value="medium" selected>🟡 متوسط</option>
-                            <option value="hard">🔴 سخت</option>
-                        </select>
-                    </div>
-                    
-                    <button class="btn-primary" onclick="createRoomWithSettings()" style="width: 100%; margin-top: 25px; padding: 15px; font-size: 1.1rem;">ساخت اتاق</button>
-                    <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 12px;">انصراف</button>
+
+    <!-- ROOM PAGE -->
+    <main class="numora-room-page">
+
+        <section class="room-heading">
+
+            <div class="room-heading-text">
+                <span class="room-eyebrow">NUMORA MULTIPLAYER</span>
+
+                <h1>
+                    YOUR SPACE.
+                    <span>YOUR GAME.</span>
+                </h1>
+
+                <p>
+                    Create a private room or join your friends using an invite code.
+                </p>
+            </div>
+
+            <div class="room-heading-badge">
+                <span class="room-badge-dot"></span>
+                PRIVATE LOBBY
+            </div>
+
+        </section>
+
+
+        <!-- MAIN ROOM CARD -->
+        <section class="numora-room-card">
+
+            <div class="room-card-top">
+                <div class="room-icon">
+                    <span>⌘</span>
+                </div>
+
+                <div>
+                    <span class="room-card-eyebrow">MULTIPLAYER HUB</span>
+                    <h2>Private Room</h2>
                 </div>
             </div>
 
-            <!-- بخش ورود به اتاق (اگه کد نداریم) -->
-            <div id="join-section" class="hidden">
-                <p style="text-align: center; color: #8888aa; margin-bottom: 20px;">کد اتاق را وارد کنید:</p>
-                <input type="text" id="join-room-code" placeholder="مثلاً ABC123" maxlength="6" style="text-align: center; letter-spacing: 8px; font-size: 1.8rem; font-weight: bold; margin-bottom: 25px; background-color: #16213e; border: 2px solid #00d9ff; border-radius: 12px; color: #fff; padding: 15px; width: 100%; outline: none;">
-                <button class="btn-primary" onclick="joinRoomFromPage()" style="width: 100%; padding: 15px; font-size: 1.1rem;">ورود به اتاق</button>
-                <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 12px;">انصراف</button>
+
+            <!-- CREATE ROOM SETTINGS -->
+            <div id="room-settings" class="hidden numora-room-section">
+
+                <div class="room-section-heading">
+                    <span class="room-section-number">01 / CONFIGURATION</span>
+                    <h3>Configure Your Room</h3>
+                    <p>Set up your private match before inviting players.</p>
+                </div>
+
+
+                <div class="room-config-grid">
+
+                    <div class="room-config-item">
+
+                        <div class="room-config-header">
+                            <label for="max-players">Maximum Players</label>
+                            <span class="room-config-hint">2 - 20 PLAYERS</span>
+                        </div>
+
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="max-players"
+                                min="2"
+                                max="20"
+                                value="2"
+                                oninput="updateSliderValue('max-players', 'players-val')"
+                            >
+
+                            <span class="slider-value" id="players-val">2</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="room-config-item">
+
+                        <div class="room-config-header">
+                            <label for="bot-count-room">AI Players</label>
+                            <span class="room-config-hint">0 - 5 BOTS</span>
+                        </div>
+
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="bot-count-room"
+                                min="0"
+                                max="5"
+                                value="0"
+                                oninput="updateSliderValue('bot-count-room', 'bots-val')"
+                            >
+
+                            <span class="slider-value" id="bots-val">0</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="room-config-item room-difficulty-item">
+
+                        <div class="room-config-header">
+                            <label for="bot-difficulty-room">AI Difficulty</label>
+                            <span class="room-config-hint">BOT SETTINGS</span>
+                        </div>
+
+                        <select id="bot-difficulty-room" class="custom-select">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="room-actions">
+                    <button class="btn-primary room-main-btn" onclick="createRoomWithSettings()">
+                        CREATE ROOM
+                        <span>→</span>
+                    </button>
+
+                    <button class="btn-secondary room-cancel-btn" onclick="location.href='lobby.html'">
+                        Cancel
+                    </button>
+                </div>
+
             </div>
 
-            <!-- بخش اتاق ساخته شده (اگه کد داریم) -->
-            <div id="room-section" class="hidden">
-                <p style="text-align: center; color: #8888aa; margin-bottom: 15px;">کد اتاق برای دعوت دوستان:</p>
-                <div id="room-code-display" style="font-size: 2.5rem; font-weight: bold; color: #ffd700; text-align: center; letter-spacing: 8px; margin-bottom: 30px; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">-----</div>
-                
-                <h3 style="color: #00d9ff; margin-bottom: 15px; text-align: center;">بازیکنان حاضر:</h3>
-                <ul id="player-list" style="list-style: none; padding: 0; color: #e0e0e0; font-size: 1.1rem; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
-                    <li style="padding: 12px; background: #16213e; border-radius: 8px; text-align: center;">در حال اتصال...</li>
+
+
+            <!-- JOIN ROOM SECTION -->
+            <div id="join-section" class="hidden numora-room-section">
+
+                <div class="room-section-heading">
+                    <span class="room-section-number">02 / JOIN MATCH</span>
+                    <h3>Enter Room Code</h3>
+                    <p>Got an invitation? Enter the code to join your friends.</p>
+                </div>
+
+
+                <div class="room-code-input-wrapper">
+
+                    <label for="join-room-code">INVITATION CODE</label>
+
+                    <input
+                        type="text"
+                        id="join-room-code"
+                        placeholder="ABC123"
+                        maxlength="6"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+
+                    <span class="room-code-hint">
+                        Enter the 6-character room code.
+                    </span>
+
+                </div>
+
+
+                <div class="room-actions">
+
+                    <button class="btn-primary room-main-btn" onclick="joinRoomFromPage()">
+                        JOIN ROOM
+                        <span>→</span>
+                    </button>
+
+                    <button class="btn-secondary room-cancel-btn" onclick="location.href='lobby.html'">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CREATED ROOM SECTION -->
+            <div id="room-section" class="hidden numora-room-section">
+
+                <div class="room-section-heading">
+                    <span class="room-section-number">03 / ROOM STATUS</span>
+                    <h3>Your Room Is Ready</h3>
+                    <p>Share your invitation code and wait for other players.</p>
+                </div>
+
+
+                <div class="room-code-display-box">
+
+                    <span class="room-code-label">YOUR INVITATION CODE</span>
+
+                    <div id="room-code-display" class="room-code-display">
+                        -----
+                    </div>
+
+                    <span class="room-code-share-hint">
+                        Share this code with your friends.
+                    </span>
+
+                </div>
+
+
+                <div class="room-players-header">
+                    <div>
+                        <span class="room-section-number">LIVE SESSION</span>
+                        <h3>Players in Room</h3>
+                    </div>
+
+                    <span class="room-live-status">
+                        <span></span>
+                        WAITING
+                    </span>
+                </div>
+
+
+                <ul id="player-list" class="numora-player-list">
+                    <li class="room-player-loading">
+                        Connecting to room...
+                    </li>
                 </ul>
-                
-                <button id="start-game-btn" class="btn-primary hidden" onclick="startMultiplayerGame()" style="width: 100%; margin-bottom: 15px; background-color: #00ff88; color: #0f0f1a; font-weight: bold; padding: 15px; font-size: 1.1rem;">🚀 شروع بازی</button>
 
-                <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; padding: 12px;">خروج از اتاق</button>
+
+                <div class="room-actions room-created-actions">
+
+                    <button
+                        id="start-game-btn"
+                        class="btn-primary room-main-btn hidden"
+                        onclick="startMultiplayerGame()"
+                    >
+                        START GAME
+                        <span>→</span>
+                    </button>
+
+                    <button
+                        class="btn-secondary room-cancel-btn"
+                        onclick="location.href='lobby.html'"
+                    >
+                        LEAVE ROOM
+                    </button>
+
+                </div>
+
             </div>
-        </div>
+
+        </section>
+
+
+        <!-- BOTTOM INFO -->
+        <section class="room-footer-info">
+
+            <div class="room-info-icon">✦</div>
+
+            <div>
+                <h3>PLAY TOGETHER. THINK DIFFERENTLY.</h3>
+                <p>
+                    Private rooms let you challenge friends in your own multiplayer space.
+                </p>
+            </div>
+
+        </section>
+
     </main>
 
+
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <p>NUMORA <span>©</span> 2026</p>
+            <p>THINK FAST. PLAY SMART.</p>
         </div>
     </footer>
 
+
+    <!-- SCRIPTS -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="particles.js"></script>
     <script src="script.js?v=15"></script>
+
 </body>
 </html>

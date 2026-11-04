@@ -1,19 +1,23 @@
+
 const API_URL = "https://number-game-api.onrender.com";
 
 let socket;
 let timerInterval;
 let finalScreenShown = false;
 
-function startGame() {
-    const isLoggedIn = checkLogin();
 
-    if (isLoggedIn) {
+// =========================
+// GENERAL FUNCTIONS
+// =========================
+
+function startGame() {
+    if (checkLogin()) {
         window.location.href = "lobby.html";
     } else {
         showModal(
-            "ورود لازم است",
-            "برای شروع بازی باید وارد حساب کاربری خود بشوید.",
-            "ورود / ثبت‌نام",
+            "Login Required",
+            "You need to sign in to start playing.",
+            "Sign In / Register",
             function () {
                 window.location.href = "login.html";
             }
@@ -33,9 +37,9 @@ function logout() {
 
 function confirmExit() {
     showModal(
-        "خروج از بازی",
-        "آیا مطمئنی می‌خوای از بازی خارج بشی؟",
-        "بله، خارج شو",
+        "Exit Game",
+        "Are you sure you want to leave the game?",
+        "Yes, Exit",
         function () {
             window.location.href = "lobby.html";
         }
@@ -51,9 +55,9 @@ function goToGame() {
         window.location.href = "lobby.html";
     } else {
         showModal(
-            "ورود لازم است",
-            "برای شروع بازی باید وارد حساب کاربری خود بشوید.",
-            "ورود / ثبت‌نام",
+            "Login Required",
+            "You need to sign in to start playing.",
+            "Sign In / Register",
             function () {
                 window.location.href = "login.html";
             }
@@ -91,7 +95,7 @@ function showModal(title, message, buttonText, onConfirm) {
 
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "btn-secondary";
-    cancelBtn.textContent = "بستن";
+    cancelBtn.textContent = "Close";
 
     cancelBtn.onclick = function () {
         if (overlay.parentNode) {
@@ -109,6 +113,11 @@ function showModal(title, message, buttonText, onConfirm) {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 }
+
+
+// =========================
+// AUTHENTICATION
+// =========================
 
 function switchTab(tab) {
     const loginForm = document.getElementById("login-form");
@@ -150,7 +159,7 @@ function isStrongPassword(password) {
     if (password.length < 6) {
         return {
             valid: false,
-            message: "رمز عبور باید حداقل ۶ کاراکتر باشد!"
+            message: "Password must contain at least 6 characters."
         };
     }
 
@@ -158,17 +167,6 @@ function isStrongPassword(password) {
         valid: true,
         message: ""
     };
-}
-
-function generateRoomCode() {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let code = "";
-
-    for (let i = 0; i < 6; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-
-    return code;
 }
 
 function togglePassword(inputId, btn) {
@@ -185,12 +183,50 @@ function togglePassword(inputId, btn) {
     }
 }
 
+
+// =========================
+// GENERAL UTILITIES
+// =========================
+
+function generateRoomCode() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let code = "";
+
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return code;
+}
+
 function updateSliderValue(inputId, displayId) {
     const input = document.getElementById(inputId);
     const display = document.getElementById(displayId);
 
     if (input && display) {
         display.textContent = input.value;
+    }
+}
+
+function isBotName(name) {
+    return typeof name === "string" &&
+        (name.startsWith("Bot") || name.startsWith("بات"));
+}
+
+function getOrdinal(number) {
+    if (number % 100 >= 11 && number % 100 <= 13) {
+        return number + "th";
+    }
+
+    switch (number % 10) {
+        case 1:
+            return number + "st";
+        case 2:
+            return number + "nd";
+        case 3:
+            return number + "rd";
+        default:
+            return number + "th";
     }
 }
 
@@ -213,7 +249,7 @@ function initRoomPage() {
     });
 
     socket.on("connect", () => {
-        console.log("به سرور WebSocket (اتاق) وصل شد");
+        console.log("Connected to room WebSocket.");
     });
 
     socket.on("update_players", (data) => {
@@ -232,37 +268,40 @@ function initRoomPage() {
 
             li.style.cssText =
                 "padding: 10px; background: #16213e; margin-bottom: 5px; " +
-                "border-radius: 8px; border-right: 4px solid #00d9ff; " +
+                "border-radius: 8px; border-left: 4px solid #7957FF; " +
                 "display: flex; justify-content: space-between; align-items: center;";
 
             const nameSpan = document.createElement("span");
 
             if (player === user) {
-                nameSpan.style.color = "#00ff88";
-                nameSpan.textContent = `👤 ${player} (شما)`;
+                nameSpan.style.color = "#A78BFA";
+                nameSpan.textContent = `👤 ${player} (You)`;
             } else if (player === data.host) {
-                nameSpan.style.color = "#ffd700";
-                nameSpan.textContent = `👑 ${player} (میزبان)`;
-            } else if (player.startsWith("بات")) {
-                nameSpan.style.color = "#ff006e";
+                nameSpan.style.color = "#EABF55";
+                nameSpan.textContent = `👑 ${player} (Host)`;
+            } else if (isBotName(player)) {
+                nameSpan.style.color = "#A78BFA";
                 nameSpan.textContent = `🤖 ${player}`;
             } else {
-                nameSpan.style.color = "#e0e0e0";
+                nameSpan.style.color = "#F4F5FA";
                 nameSpan.textContent = `👤 ${player}`;
             }
 
             li.appendChild(nameSpan);
 
-            if (isHost && player !== user && !player.startsWith("بات")) {
+            if (isHost && player !== user && !isBotName(player)) {
                 const kickBtn = document.createElement("button");
 
-                kickBtn.textContent = "❌";
+                kickBtn.textContent = "✕";
+                kickBtn.title = "Remove player";
+
                 kickBtn.style.cssText =
-                    "background: transparent; border: none; color: #ff4444; " +
+                    "background: transparent; border: none; color: #F16B83; " +
                     "cursor: pointer; font-size: 1.2rem;";
 
                 kickBtn.onclick = () => {
                     const params = new URLSearchParams(window.location.search);
+
                     const roomCode =
                         params.get("code") ||
                         document.getElementById("room-code-display")?.textContent;
@@ -293,9 +332,9 @@ function initRoomPage() {
 
     socket.on("player_joined", (data) => {
         showModal(
-            "بازیکن جدید!",
-            data.username + " وارد اتاق شد.",
-            "باشه",
+            "New Player",
+            data.username + " joined the room.",
+            "Got It",
             null
         );
     });
@@ -303,9 +342,9 @@ function initRoomPage() {
     socket.on("kicked", (data) => {
         if (data.username === user) {
             showModal(
-                "اخراج!",
-                "شما از اتاق اخراج شدید.",
-                "باشه",
+                "Removed from Room",
+                "You have been removed from this room.",
+                "Got It",
                 () => window.location.href = "lobby.html"
             );
         }
@@ -317,7 +356,7 @@ function initRoomPage() {
             numRounds: 5,
             players: data.players.map(name => ({
                 name: name,
-                isBot: name.startsWith("بات")
+                isBot: isBotName(name)
             })),
             difficulty: "medium",
             roomCode: data.room_code
@@ -328,9 +367,9 @@ function initRoomPage() {
 
     socket.on("error", (data) => {
         showModal(
-            "خطا",
-            data?.message || "خطای نامشخصی رخ داد.",
-            "باشه",
+            "Room Error",
+            data?.message || "An unexpected error occurred.",
+            "Got It",
             null
         );
     });
@@ -398,7 +437,12 @@ function joinRoomFromPage() {
     const user = localStorage.getItem("currentUser");
 
     if (code.length !== 6) {
-        showModal("خطا", "کد اتاق باید ۶ کاراکتر باشد!", "باشه", null);
+        showModal(
+            "Invalid Room Code",
+            "The room code must contain exactly 6 characters.",
+            "Got It",
+            null
+        );
         return;
     }
 
@@ -456,9 +500,9 @@ function startBotGame() {
 
     if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) {
         showModal(
-            "خطا",
-            "تعداد دست باید بین ۱ تا ۲۰ باشد!",
-            "باشه",
+            "Invalid Settings",
+            "The number of rounds must be between 1 and 20.",
+            "Got It",
             null
         );
         return;
@@ -466,28 +510,34 @@ function startBotGame() {
 
     if (isNaN(botCount) || botCount < 1 || botCount > 5) {
         showModal(
-            "خطا",
-            "تعداد بات باید بین ۱ تا ۵ باشد!",
-            "باشه",
+            "Invalid Settings",
+            "The number of AI opponents must be between 1 and 5.",
+            "Got It",
             null
         );
         return;
     }
 
-    const myName = localStorage.getItem("currentUser") || "من";
-    const players = [{ name: myName, isBot: false }];
+    const myName = localStorage.getItem("currentUser") || "Player";
+
+    const players = [
+        {
+            name: myName,
+            isBot: false
+        }
+    ];
 
     const botNames = [
-        "بات آلفا",
-        "بات بتا",
-        "بات گاما",
-        "بات دلتا",
-        "بات اپسیلون"
+        "Bot Alpha",
+        "Bot Beta",
+        "Bot Gamma",
+        "Bot Delta",
+        "Bot Epsilon"
     ];
 
     for (let i = 0; i < botCount; i++) {
         players.push({
-            name: botNames[i] || ("بات " + (i + 1)),
+            name: botNames[i] || ("Bot " + (i + 1)),
             isBot: true
         });
     }
@@ -505,9 +555,9 @@ function startBotGame() {
 
 function startRandomMatch() {
     showModal(
-        "مچ رندوم",
-        "این بخش به زودی اضافه می‌شود!",
-        "باشه",
+        "Random Match",
+        "Random matchmaking is coming soon!",
+        "Got It",
         null
     );
 }
@@ -527,6 +577,7 @@ async function loadProfile() {
     }
 
     document.getElementById("profile-username").textContent = username;
+
     document.getElementById("profile-avatar").textContent =
         username.charAt(0).toUpperCase();
 
@@ -535,6 +586,7 @@ async function loadProfile() {
 
         if (userRes.ok) {
             const userData = await userRes.json();
+
             document.getElementById("profile-email").textContent =
                 userData.email;
         }
@@ -546,7 +598,7 @@ async function loadProfile() {
         const statsRes = await fetch(API_URL + "/api/stats/" + userId);
 
         if (!statsRes.ok) {
-            throw new Error("دریافت آمار ناموفق بود.");
+            throw new Error("Could not load player statistics.");
         }
 
         const statsData = await statsRes.json();
@@ -556,6 +608,7 @@ async function loadProfile() {
         document.getElementById("stat-wins").textContent = stats.wins;
         document.getElementById("stat-avg").textContent = stats.avg;
         document.getElementById("stat-best").textContent = stats.best;
+
     } catch (e) {
         console.log(e);
     }
@@ -564,11 +617,12 @@ async function loadProfile() {
         const resultsRes = await fetch(API_URL + "/api/results/" + userId);
 
         if (!resultsRes.ok) {
-            throw new Error("دریافت نتایج ناموفق بود.");
+            throw new Error("Could not load game history.");
         }
 
         const resultsData = await resultsRes.json();
         const results = resultsData.results;
+
         const historyList = document.getElementById("history-list");
 
         if (!historyList) return;
@@ -579,17 +633,13 @@ async function loadProfile() {
             results.forEach(function (h) {
                 const winClass = h.rank === 1 ? "win" : "";
 
-                const rankText = h.rank === 1
-                    ? "🥇 اول"
-                    : (h.rank === 2
-                        ? "🥈 دوم"
-                        : (h.rank === 3 ? "🥉 سوم" : h.rank + "ام"));
+                const rankText = getOrdinal(h.rank);
 
-                const date = new Date(h.played_at).toLocaleDateString("fa-IR");
+                const date = new Date(h.played_at).toLocaleDateString("en-US");
 
                 html += `<div class="history-item ${winClass}">`;
                 html += `<div class="history-left">`;
-                html += `<span class="history-detail">${rankText} از ${h.players} بازیکن | ${h.rounds} دست</span>`;
+                html += `<span class="history-detail">${rankText} place out of ${h.players} players | ${h.rounds} rounds</span>`;
                 html += `<span class="history-date">${date}</span>`;
                 html += `</div>`;
                 html += `<span class="history-score">${h.score}</span>`;
@@ -597,10 +647,12 @@ async function loadProfile() {
             });
 
             historyList.innerHTML = html;
+
         } else {
             historyList.innerHTML =
-                "<p class='empty-history'>هنوز بازی نکردی!</p>";
+                "<p class='empty-history'>You haven't played any games yet.</p>";
         }
+
     } catch (e) {
         console.log(e);
     }
@@ -675,7 +727,7 @@ function initGame() {
     try {
         config = JSON.parse(configData);
     } catch (error) {
-        console.error("تنظیمات بازی معتبر نیست:", error);
+        console.error("Invalid game configuration:", error);
         window.location.href = "lobby.html";
         return;
     }
@@ -684,7 +736,8 @@ function initGame() {
     gameState.gameOver = false;
 
     if (config.roomCode) {
-        // بازی آنلاین
+        // ONLINE GAME
+
         socket = io(API_URL, {
             transports: ["polling"],
             upgrade: false
@@ -692,7 +745,7 @@ function initGame() {
 
         gameState.players = (config.players || []).map(p => ({
             name: p.name,
-            isBot: p.isBot || p.name.startsWith("بات"),
+            isBot: p.isBot || isBotName(p.name),
             numbers: new Array(5).fill(0),
             score: 0
         }));
@@ -702,10 +755,10 @@ function initGame() {
         gameState.currentPlayerIdx = 0;
 
         renderTable();
-        updateTurnOnline("در حال اتصال...");
+        updateTurnOnline("Connecting to game server...");
 
         socket.on("connect", () => {
-            console.log("به سرور WebSocket (بازی) وصل شد");
+            console.log("Connected to game WebSocket.");
 
             socket.emit("join_room", {
                 room_code: config.roomCode,
@@ -714,8 +767,8 @@ function initGame() {
         });
 
         socket.on("connect_error", (error) => {
-            console.error("خطای اتصال به سرور بازی:", error);
-            updateTurnOnline("خطا در اتصال به سرور؛ در حال تلاش مجدد...");
+            console.error("Game server connection error:", error);
+            updateTurnOnline("Connection error. Reconnecting...");
         });
 
         socket.on("update_game_state", (data) => {
@@ -725,7 +778,9 @@ function initGame() {
 
             gameState.players = state.players.map(p => ({
                 ...p,
-                isBot: p.is_bot === true || p.isBot === true
+                isBot: p.is_bot === true ||
+                    p.isBot === true ||
+                    isBotName(p.name)
             }));
 
             gameState.numRounds = state.num_rounds;
@@ -734,7 +789,8 @@ function initGame() {
             gameState.roundsWithMath = state.rounds_with_math;
             gameState.gameOver = state.game_over === true;
 
-            // سؤال ریاضی
+            // MATH QUESTION
+
             if (
                 !gameState.gameOver &&
                 gameState.roundsWithMath[gameState.currentRound] &&
@@ -746,6 +802,7 @@ function initGame() {
 
                 if (qCard && qText && qTimer) {
                     qCard.classList.remove("hidden");
+
                     qText.textContent =
                         state.current_question.question + " = ?";
 
@@ -760,7 +817,7 @@ function initGame() {
 
                         if (remaining > 0) {
                             qTimer.textContent =
-                                "⏱ " + remaining.toFixed(1) + " ثانیه";
+                                "⏱ " + remaining.toFixed(1) + " sec";
 
                             timerInterval = setInterval(() => {
                                 const newElapsed =
@@ -770,18 +827,20 @@ function initGame() {
                                     state.current_question.time_limit - newElapsed;
 
                                 if (newRemaining <= 0) {
-                                    qTimer.textContent = "⏰ وقت تمام!";
+                                    qTimer.textContent = "⏰ Time's up!";
                                     clearInterval(timerInterval);
                                 } else {
                                     qTimer.textContent =
-                                        "⏱ " + newRemaining.toFixed(1) + " ثانیه";
+                                        "⏱ " + newRemaining.toFixed(1) + " sec";
                                 }
                             }, 100);
+
                         } else {
-                            qTimer.textContent = "⏰ وقت تمام!";
+                            qTimer.textContent = "⏰ Time's up!";
                         }
                     }
                 }
+
             } else {
                 document.getElementById("question-card")?.classList.add("hidden");
                 clearInterval(timerInterval);
@@ -789,14 +848,15 @@ function initGame() {
 
             renderTable();
 
-            // پایان بازی آنلاین
+            // ONLINE GAME OVER
+
             if (gameState.gameOver) {
                 const turn = document.getElementById("game-turn");
                 const submitButton = document.getElementById("submit-btn");
                 const numberInput = document.getElementById("number-input");
 
                 if (turn) {
-                    turn.textContent = "🏁 بازی تمام شد!";
+                    turn.textContent = "🏁 Game Over!";
                 }
 
                 if (submitButton) {
@@ -810,13 +870,14 @@ function initGame() {
 
                 clearInterval(timerInterval);
                 showFinalScreen();
+
             } else {
                 updateTurnOnline();
             }
         });
 
         socket.on("error", (data) => {
-            const message = data?.message || "خطای نامشخصی رخ داد.";
+            const message = data?.message || "An unexpected error occurred.";
 
             const inputMessage = document.getElementById("input-message");
 
@@ -824,12 +885,13 @@ function initGame() {
                 inputMessage.textContent = "❌ " + message;
                 inputMessage.className = "input-message error";
             } else {
-                showModal("خطا", message, "باشه", null);
+                showModal("Game Error", message, "Got It", null);
             }
         });
 
     } else {
-        // بازی آفلاین؛ منطق بات‌ها حفظ شده است.
+        // OFFLINE GAME
+
         const numRounds = config.numRounds;
 
         gameState.players = config.players.map((p, i) => ({
@@ -874,7 +936,7 @@ function updateTurnOnline(text = "") {
     }
 
     if (gameState.gameOver) {
-        turn.textContent = "🏁 بازی تمام شد!";
+        turn.textContent = "🏁 Game Over!";
         submitButton.disabled = true;
         submitButton.classList.remove("pulse");
         numberInput.disabled = true;
@@ -882,7 +944,7 @@ function updateTurnOnline(text = "") {
     }
 
     if (gameState.currentPlayerIdx >= gameState.players.length) {
-        turn.textContent = "در حال حساب کردن...";
+        turn.textContent = "Calculating results...";
         submitButton.disabled = true;
         submitButton.classList.remove("pulse");
         numberInput.disabled = true;
@@ -894,7 +956,7 @@ function updateTurnOnline(text = "") {
     const isMyTurn =
         currentPlayer.name === localStorage.getItem("currentUser");
 
-    turn.textContent = "نوبت: " + currentPlayer.name;
+    turn.textContent = "Turn: " + currentPlayer.name;
 
     if (isMyTurn) {
         submitButton.disabled = false;
@@ -903,6 +965,7 @@ function updateTurnOnline(text = "") {
         numberInput.disabled = false;
         numberInput.value = "";
         numberInput.focus();
+
     } else {
         submitButton.disabled = true;
         submitButton.classList.remove("pulse");
@@ -949,13 +1012,13 @@ function renderTable() {
     const isOnlineGame = Boolean(config.roomCode);
     const isGameOver = gameState.gameOver === true;
 
-    let headHtml = "<tr><th>بازیکن</th>";
+    let headHtml = "<tr><th>Player</th>";
 
     for (let j = 0; j < gameState.numRounds; j++) {
-        headHtml += "<th>دست " + (j + 1) + "</th>";
+        headHtml += "<th>Round " + (j + 1) + "</th>";
     }
 
-    headHtml += "<th>امتیاز</th></tr>";
+    headHtml += "<th>Score</th></tr>";
     thead.innerHTML = headHtml;
 
     let bodyHtml = "";
@@ -982,21 +1045,20 @@ function renderTable() {
         for (let j = 0; j < gameState.numRounds; j++) {
             const val = p.numbers[j];
 
-            // در بازی آنلاین، عدد دست جاری برای همه مخفی است.
-            // قفل فقط در رابط کاربری نمایش داده می‌شود؛
-            // مخفی‌سازی اصلی در app.py انجام می‌شود.
+            // Hide the current round's numbers in online games.
+            // The actual protection is handled by the backend.
+
             if (
                 isOnlineGame &&
                 !isGameOver &&
                 j === gameState.currentRound
             ) {
                 bodyHtml +=
-                    "<td class='number-hidden' title='عدد تا پایان دست مخفی است'>🔒</td>";
+                    "<td class='number-hidden' title='Hidden until the round ends'>🔒</td>";
 
                 continue;
             }
 
-            // خانه‌های خالی یا عددهای ثبت‌نشده
             if (
                 val === 0 ||
                 val === null ||
@@ -1038,8 +1100,8 @@ function startRound() {
     }
 
     document.getElementById("game-round").textContent =
-        "دست " + (gameState.currentRound + 1) +
-        " از " + gameState.numRounds;
+        "Round " + (gameState.currentRound + 1) +
+        " of " + gameState.numRounds;
 
     gameState.questionActive = false;
     gameState.correctAnswer = null;
@@ -1065,6 +1127,7 @@ function startRound() {
                 easyQuestions[
                     Math.floor(Math.random() * easyQuestions.length)
                 ];
+
         } else if (level === "medium") {
             gameState.timeLimit = 10;
 
@@ -1072,6 +1135,7 @@ function startRound() {
                 mediumQuestions[
                     Math.floor(Math.random() * mediumQuestions.length)
                 ];
+
         } else {
             gameState.timeLimit = 15;
 
@@ -1086,7 +1150,8 @@ function startRound() {
 
         qCard.classList.remove("hidden");
         qText.textContent = question + " = ?";
-        qTimer.textContent = "⏱ " + gameState.timeLimit + " ثانیه";
+        qTimer.textContent = "⏱ " + gameState.timeLimit + " sec";
+
     } else {
         qCard.classList.add("hidden");
     }
@@ -1103,7 +1168,7 @@ function askPlayer() {
     const player = gameState.players[gameState.currentPlayerIdx];
 
     document.getElementById("game-turn").textContent =
-        "نوبت: " + player.name;
+        "Turn: " + player.name;
 
     document.getElementById("input-message").textContent = "";
 
@@ -1113,6 +1178,7 @@ function askPlayer() {
         document.getElementById("number-input").disabled = true;
 
         setTimeout(botPlay, 1200);
+
     } else {
         document.getElementById("submit-btn").disabled = false;
         document.getElementById("submit-btn").classList.add("pulse");
@@ -1144,13 +1210,13 @@ function startTimer() {
         const remaining = gameState.timeLimit - elapsed;
 
         if (remaining <= 0) {
-            timerEl.textContent = "⏰ وقت تمام!";
+            timerEl.textContent = "⏰ Time's up!";
             timerEl.classList.add("warning");
             gameState.questionActive = false;
             return;
         }
 
-        timerEl.textContent = "⏱ " + remaining.toFixed(1) + " ثانیه";
+        timerEl.textContent = "⏱ " + remaining.toFixed(1) + " sec";
         timerEl.classList.remove("warning");
 
         if (remaining < 3) {
@@ -1172,21 +1238,22 @@ function submitNumber() {
 
     try {
         config = JSON.parse(localStorage.getItem("gameConfig") || "{}");
+
     } catch (error) {
-        msg.textContent = "❌ تنظیمات بازی معتبر نیست!";
+        msg.textContent = "❌ Invalid game configuration!";
         msg.className = "input-message error";
         return;
     }
 
     if (isNaN(val) || val < 1 || val > 20) {
-        msg.textContent = "❌ عدد باید بین ۱ تا ۲۰ باشد!";
+        msg.textContent = "❌ Enter a number between 1 and 20.";
         msg.className = "input-message error";
         return;
     }
 
     if (config.roomCode) {
         if (!socket || !socket.connected) {
-            msg.textContent = "❌ اتصال به سرور برقرار نیست!";
+            msg.textContent = "❌ Not connected to the game server.";
             msg.className = "input-message error";
             return;
         }
@@ -1197,9 +1264,10 @@ function submitNumber() {
             number: val
         });
 
-        msg.textContent = "⏳ در حال ارسال...";
+        msg.textContent = "⏳ Submitting your number...";
         msg.className = "input-message";
         input.value = "";
+
     } else {
         const player = gameState.players[gameState.currentPlayerIdx];
 
@@ -1214,13 +1282,15 @@ function submitNumber() {
                 val === gameState.correctAnswer
             ) {
                 player.score += 2;
-                msg.textContent = "✅ درست! +۲ امتیاز";
+                msg.textContent = "✅ Correct! +2 points";
                 msg.className = "input-message success";
+
             } else if (elapsed > gameState.timeLimit) {
-                msg.textContent = "⏰ دیر شد! امتیازی نداره";
+                msg.textContent = "⏰ Too late! No points awarded.";
                 msg.className = "input-message error";
+
             } else {
-                msg.textContent = "❌ غلط! امتیازی نداره";
+                msg.textContent = "❌ Incorrect! No points awarded.";
                 msg.className = "input-message error";
             }
 
@@ -1229,6 +1299,7 @@ function submitNumber() {
             if (gameState.timerJob) {
                 clearTimeout(gameState.timerJob);
             }
+
         } else {
             msg.textContent = "";
         }
@@ -1272,6 +1343,7 @@ function botPlay() {
         ) {
             player.score += 2;
         }
+
     } else {
         chosenNumber = Math.floor(Math.random() * 20) + 1;
     }
@@ -1302,11 +1374,16 @@ function endRound() {
 
     if (oneCount < twoCount) {
         for (const p of gameState.players) {
-            if (p.numbers[r] < 10) p.score += 3;
+            if (p.numbers[r] < 10) {
+                p.score += 3;
+            }
         }
+
     } else if (twoCount < oneCount) {
         for (const p of gameState.players) {
-            if (p.numbers[r] >= 10) p.score += 3;
+            if (p.numbers[r] >= 10) {
+                p.score += 3;
+            }
         }
     }
 
@@ -1344,7 +1421,8 @@ function endRound() {
 // =========================
 
 async function showFinalScreen() {
-    // جلوگیری از باز شدن چندباره نتایج
+    // Prevent the results screen from opening more than once.
+
     if (finalScreenShown) return;
 
     finalScreenShown = true;
@@ -1355,7 +1433,7 @@ async function showFinalScreen() {
     const ranking = document.getElementById("final-ranking");
 
     if (!overlay || !ranking) {
-        console.error("عناصر صفحه نتایج در game.html پیدا نشدند.");
+        console.error("Result screen elements were not found in game.html.");
         return;
     }
 
@@ -1376,7 +1454,7 @@ async function showFinalScreen() {
             escapeHtml(medal + " " + p.name) + "</span>";
 
         html += "<span class='rank-score'>" +
-            escapeHtml(p.score) + " امتیاز</span>";
+            escapeHtml(p.score) + " points</span>";
 
         html += "</div>";
     });
@@ -1417,8 +1495,9 @@ async function saveGameResult() {
                 rounds: gameState.numRounds
             })
         });
+
     } catch (e) {
-        console.log("Could not save result:", e);
+        console.log("Could not save game result:", e);
     }
 }
 
@@ -1441,6 +1520,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (loginBtn) loginBtn.classList.add("hidden");
             if (logoutBtn) logoutBtn.classList.remove("hidden");
+
         } else {
             navUser.classList.add("hidden");
 
@@ -1464,6 +1544,9 @@ document.addEventListener("DOMContentLoaded", function () {
         initRoomPage();
     }
 
+
+    // LOGIN FORM
+
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
 
@@ -1479,7 +1562,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!username || !password) {
                 showAuthMessage(
-                    "❌ همه فیلدها الزامی است!",
+                    "❌ All fields are required.",
                     "error"
                 );
                 return;
@@ -1501,7 +1584,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!res.ok) {
                     showAuthMessage(
-                        "❌ " + (data.error || "خطا در ورود!"),
+                        "❌ " + (data.error || "Login failed."),
                         "error"
                     );
                     return;
@@ -1518,7 +1601,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
                 showAuthMessage(
-                    "✅ ورود موفق! در حال انتقال...",
+                    "✅ Login successful! Redirecting...",
                     "success"
                 );
 
@@ -1528,12 +1611,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } catch (err) {
                 showAuthMessage(
-                    "❌ خطا در ارتباط با سرور!",
+                    "❌ Could not connect to the server.",
                     "error"
                 );
             }
         });
     }
+
+
+    // REGISTER FORM
 
     if (registerForm) {
         registerForm.addEventListener("submit", async function (e) {
@@ -1553,7 +1639,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!username || !email || !password || !password2) {
                 showAuthMessage(
-                    "❌ همه فیلدها الزامی است!",
+                    "❌ All fields are required.",
                     "error"
                 );
                 return;
@@ -1561,7 +1647,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (username.length < 3) {
                 showAuthMessage(
-                    "❌ نام کاربری باید حداقل ۳ کاراکتر باشد!",
+                    "❌ Username must contain at least 3 characters.",
                     "error"
                 );
                 return;
@@ -1579,7 +1665,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (password !== password2) {
                 showAuthMessage(
-                    "❌ رمزهای عبور یکسان نیستند!",
+                    "❌ Passwords do not match.",
                     "error"
                 );
                 return;
@@ -1602,7 +1688,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (!res.ok) {
                     showAuthMessage(
-                        "❌ " + (data.error || "خطا در ثبت‌نام!"),
+                        "❌ " + (data.error || "Registration failed."),
                         "error"
                     );
                     return;
@@ -1619,7 +1705,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
                 showAuthMessage(
-                    "✅ ثبت‌نام موفق! در حال انتقال...",
+                    "✅ Registration successful! Redirecting...",
                     "success"
                 );
 
@@ -1629,11 +1715,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } catch (err) {
                 showAuthMessage(
-                    "❌ خطا در ارتباط با سرور!",
+                    "❌ Could not connect to the server.",
                     "error"
                 );
             }
         });
     }
 });
-

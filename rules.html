@@ -1,72 +1,919 @@
+
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>راهنما - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+
+    <title>How to Play | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
+
 <body>
+
+    <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+
+        <div class="nav-logo">
+            <span class="numora-logo-icon">N</span>
+            <span>NUMORA</span>
+        </div>
+
         <div class="nav-links">
-            <a href="index.html">خانه</a>
-            <a href="rules.html">راهنما</a>
-            <span id="nav-username" class="nav-user hidden">👤 کاربر</span>
-            <a href="#" onclick="logout()" class="btn-nav hidden" id="logout-btn">خروج</a>
-            <a href="login.html" class="btn-nav" id="login-btn">ورود / ثبت‌نام</a>
+            <a href="index.html">Home</a>
+            <a href="lobby.html">Game Center</a>
+            <a href="rules.html" class="active">How to Play</a>
+
+            <span id="nav-username" class="nav-user hidden">PLAYER</span>
+
+            <a href="#" onclick="logout()" class="btn-nav hidden" id="logout-btn">
+                Sign Out
+            </a>
+
+            <a href="login.html" class="btn-nav" id="login-btn">
+                Sign In
+            </a>
         </div>
+
     </nav>
-    <main class="rules-page">
-        <h1 class="page-title">📖 راهنمای بازی</h1>
-        <p class="page-subtitle">همه چیز درباره قوانین و نحوه بازی</p>
-        <div class="rules-container" id="rules-container">
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">🎯</div><h2>هدف بازی</h2></div>
-                <div class="rule-body"><p>هر دست، یه عدد بین ۱ تا ۲۰ انتخاب کن. گروهی که تعدادش کمتره، امتیاز می‌گیره!</p></div>
+
+
+    <!-- MAIN RULES PAGE -->
+    <main class="numora-rules-page">
+
+
+        <!-- HERO -->
+        <section class="rules-hero">
+
+            <div class="rules-hero-content">
+
+                <span class="rules-eyebrow">
+                    THE NUMORA KNOWLEDGE BASE
+                </span>
+
+                <h1>
+                    MASTER THE GAME.
+                    <span>OWN THE NUMBERS.</span>
+                </h1>
+
+                <p>
+                    Everything you need to know about NUMORA.
+                    Learn the rules, understand the scoring system,
+                    and get ready to challenge your mind.
+                </p>
+
+                <div class="rules-hero-tags">
+                    <span>01 / LEARN</span>
+                    <span>02 / THINK</span>
+                    <span>03 / WIN</span>
+                </div>
+
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">🔢</div><h2>گروه‌بندی</h2></div>
-                <div class="rule-body"><p>اعداد به دو گروه تقسیم می‌شن: یک‌رقمی (۱ تا ۹) و دورقمی (۱۰ تا ۲۰).</p></div>
+
+            <div class="rules-hero-visual">
+
+                <div class="rules-visual-circle">
+                    <span class="visual-number">20</span>
+                    <span class="visual-label">POSSIBLE NUMBERS</span>
+                </div>
+
+                <div class="visual-floating visual-one">+3</div>
+                <div class="visual-floating visual-two">+1</div>
+                <div class="visual-floating visual-three">+2</div>
+
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">🏆</div><h2>امتیاز گروه کمتر</h2></div>
-                <div class="rule-body"><p>گروهی که تعداد کمتری داره، هر نفرش ۳ امتیاز می‌گیره. اگه مساوی باشن، هیچ‌کس امتیاز نمی‌گیره.</p></div>
+
+        </section>
+
+
+        <!-- QUICK OVERVIEW -->
+        <section class="rules-overview">
+
+            <div class="overview-item">
+                <span class="overview-number">01–20</span>
+                <span class="overview-label">NUMBER RANGE</span>
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">⭐</div><h2>امتیاز عدد منحصربه‌فرد</h2></div>
-                <div class="rule-body"><p>اگه عددی که انتخاب کردی، هیچ‌کس دیگه‌ای انتخاب نکرده باشه، ۱ امتیاز اضافه می‌گیری.</p></div>
+
+            <div class="overview-divider"></div>
+
+            <div class="overview-item">
+                <span class="overview-number">+3</span>
+                <span class="overview-label">SMALLER GROUP</span>
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">📝</div><h2>سوال ریاضی</h2></div>
-                <div class="rule-body"><p>بعضی دست‌ها یه سوال ریاضی زمان‌دار دارن. جواب درست توی زمان → ۲ امتیاز!</p></div>
+
+            <div class="overview-divider"></div>
+
+            <div class="overview-item">
+                <span class="overview-number">+1</span>
+                <span class="overview-label">UNIQUE PICK</span>
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">🎚️</div><h2>سطح سوال</h2></div>
-                <div class="rule-body"><p>آسان (جمع، ۷ ثانیه) | متوسط (تفریق، ۱۰ ثانیه) | سخت (ضرب، ۱۵ ثانیه)</p></div>
+
+            <div class="overview-divider"></div>
+
+            <div class="overview-item">
+                <span class="overview-number">+2</span>
+                <span class="overview-label">MATH CHALLENGE</span>
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">📊</div><h2>جدول و رتبه‌بندی</h2></div>
-                <div class="rule-body"><p>بعد هر دست، جدول بر اساس امتیاز سورت می‌شه. آخر بازی، نفر اول تا آخر مشخص می‌شن.</p></div>
+
+        </section>
+
+
+        <!-- SECTION INTRO -->
+        <section class="rules-section-intro">
+
+            <div>
+                <span class="rules-section-eyebrow">GAME MANUAL / 01</span>
+                <h2>THE RULEBOOK</h2>
+                <p>
+                    Explore each section to understand how NUMORA works.
+                </p>
             </div>
-            <div class="rule-card" onclick="toggleRule(this)">
-                <div class="rule-header"><div class="rule-icon">🎮</div><h2>حالت‌های بازی</h2></div>
-                <div class="rule-body"><p>می‌تونی با بات بازی کنی، به مچ رندوم بری، یا اتاق بسازی و دوستات رو دعوت کنی.</p></div>
+
+            <span class="rules-section-count">08 CORE RULES</span>
+
+        </section>
+
+
+        <!-- RULE CARDS -->
+        <section class="numora-rules-container" id="rules-container">
+
+
+            <!-- RULE 01 -->
+            <article class="numora-rule-card open" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🎯</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 01 / OBJECTIVE</span>
+                        <h3>The Goal of the Game</h3>
+                        <small>هدف اصلی بازی</small>
+                    </div>
+
+                    <div class="numora-rule-number">01</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            NUMORA is a multiplayer number-selection game.
+                            In every round, each player secretly chooses
+                            one number between 1 and 20.
+                        </p>
+
+                        <p>
+                            After everyone makes their choice, all selected
+                            numbers are revealed and divided into two groups.
+                            The group with fewer players earns points.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>THE MAIN STRATEGY</strong>
+                            Don't just choose a number randomly.
+                            Think about what other players might choose.
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            NUMORA یک بازی گروهی مبتنی بر انتخاب عدد است.
+                            در هر دور، هر بازیکن باید به‌صورت مخفیانه یک عدد
+                            بین ۱ تا ۲۰ انتخاب کند.
+                        </p>
+
+                        <p>
+                            بعد از انتخاب همه بازیکنان، اعداد نمایش داده می‌شوند
+                            و بازیکنان به دو گروه تقسیم می‌شوند.
+                            گروهی که تعداد اعضای کمتری داشته باشد، امتیاز می‌گیرد.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>استراتژی اصلی</strong>
+                            فقط به انتخاب تصادفی عدد اکتفا نکن!
+                            سعی کن حدس بزنی سایر بازیکنان چه عددی انتخاب می‌کنند.
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 02 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🔢</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 02 / NUMBER GROUPS</span>
+                        <h3>Number Categories</h3>
+                        <small>دسته‌بندی اعداد</small>
+                    </div>
+
+                    <div class="numora-rule-number">02</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            All selected numbers are separated into two
+                            categories according to their value.
+                        </p>
+
+                        <div class="number-groups">
+
+                            <div class="number-group-card">
+                                <span>GROUP A</span>
+                                <strong>1 – 9</strong>
+                                <small>Single-digit numbers</small>
+                            </div>
+
+                            <div class="number-group-card">
+                                <span>GROUP B</span>
+                                <strong>10 – 20</strong>
+                                <small>Double-digit numbers</small>
+                            </div>
+
+                        </div>
+
+                        <p>
+                            Every player belongs to one of these groups,
+                            depending on the number they selected.
+                        </p>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            تمام اعداد انتخاب‌شده بر اساس مقدارشان
+                            به دو دسته تقسیم می‌شوند:
+                        </p>
+
+                        <div class="number-groups">
+
+                            <div class="number-group-card">
+                                <span>گروه اول</span>
+                                <strong>۱ تا ۹</strong>
+                                <small>اعداد یک‌رقمی</small>
+                            </div>
+
+                            <div class="number-group-card">
+                                <span>گروه دوم</span>
+                                <strong>۱۰ تا ۲۰</strong>
+                                <small>اعداد دورقمی</small>
+                            </div>
+
+                        </div>
+
+                        <p>
+                            هر بازیکن با توجه به عددی که انتخاب کرده،
+                            عضو یکی از این دو گروه خواهد بود.
+                        </p>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 03 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🏆</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 03 / SCORING SYSTEM</span>
+                        <h3>The Smaller Group Wins</h3>
+                        <small>امتیاز گروه کوچک‌تر</small>
+                    </div>
+
+                    <div class="numora-rule-number">03</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            Once all numbers are revealed, the number
+                            of players in each group is compared.
+                        </p>
+
+                        <p>
+                            Every player in the smaller group receives
+                            <strong>3 points</strong>.
+                        </p>
+
+                        <p>
+                            If both groups have the same number of players,
+                            nobody receives points from this rule.
+                        </p>
+
+                        <div class="example-box">
+                            <span class="example-label">EXAMPLE</span>
+
+                            <div class="example-comparison">
+                                <div>
+                                    <span>GROUP A</span>
+                                    <strong>3 PLAYERS</strong>
+                                </div>
+
+                                <span class="example-vs">VS</span>
+
+                                <div>
+                                    <span>GROUP B</span>
+                                    <strong>2 PLAYERS</strong>
+                                </div>
+                            </div>
+
+                            <div class="example-result">
+                                Group B wins → Each player gets +3 points.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            پس از مشخص شدن تمام انتخاب‌ها، تعداد بازیکنان
+                            دو گروه با یکدیگر مقایسه می‌شود.
+                        </p>
+
+                        <p>
+                            هر بازیکنی که در گروه کوچک‌تر قرار گرفته باشد،
+                            <strong>۳ امتیاز</strong> دریافت می‌کند.
+                        </p>
+
+                        <p>
+                            اگر تعداد اعضای دو گروه برابر باشد،
+                            از این قانون هیچ امتیازی به کسی تعلق نمی‌گیرد.
+                        </p>
+
+                        <div class="example-box">
+                            <span class="example-label">مثال</span>
+
+                            <div class="example-comparison">
+                                <div>
+                                    <span>گروه اول</span>
+                                    <strong>۳ بازیکن</strong>
+                                </div>
+
+                                <span class="example-vs">VS</span>
+
+                                <div>
+                                    <span>گروه دوم</span>
+                                    <strong>۲ بازیکن</strong>
+                                </div>
+                            </div>
+
+                            <div class="example-result">
+                                گروه دوم برنده است؛ هر عضو آن ۳ امتیاز می‌گیرد.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 04 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">⭐</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 04 / UNIQUE NUMBERS</span>
+                        <h3>Unique Number Bonus</h3>
+                        <small>امتیاز عدد منحصربه‌فرد</small>
+                    </div>
+
+                    <div class="numora-rule-number">04</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            Choosing a number that nobody else selects
+                            gives you an additional <strong>1 point</strong>.
+                        </p>
+
+                        <p>
+                            This bonus is independent of the smaller-group
+                            scoring system.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>IMPORTANT</strong>
+                            If your selected number is shared by even
+                            one other player, you do not receive this bonus.
+                        </div>
+
+                        <div class="example-box">
+                            <span class="example-label">EXAMPLE</span>
+                            <p>
+                                You choose 7, and nobody else chooses 7.
+                            </p>
+                            <div class="example-result">
+                                Your reward: +1 UNIQUE NUMBER POINT
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            اگر عددی را انتخاب کنی که هیچ بازیکن دیگری
+                            آن را انتخاب نکرده باشد، یک <strong>امتیاز اضافه</strong>
+                            دریافت می‌کنی.
+                        </p>
+
+                        <p>
+                            این امتیاز مستقل از قانون گروه کوچک‌تر است
+                            و جداگانه محاسبه می‌شود.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>نکته مهم</strong>
+                            اگر حتی یک نفر دیگر هم عدد انتخابی تو را انتخاب کرده باشد،
+                            امتیاز منحصربه‌فرد را دریافت نمی‌کنی.
+                        </div>
+
+                        <div class="example-box">
+                            <span class="example-label">مثال</span>
+                            <p>
+                                تو عدد ۷ را انتخاب کرده‌ای و هیچ بازیکن دیگری ۷ را انتخاب نکرده است.
+                            </p>
+                            <div class="example-result">
+                                جایزه تو: ۱ امتیاز اضافه
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 05 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🧠</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 05 / MATH CHALLENGE</span>
+                        <h3>Mathematics Challenge</h3>
+                        <small>چالش سوال ریاضی</small>
+                    </div>
+
+                    <div class="numora-rule-number">05</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            Some rounds include a timed mathematics question.
+                            You must solve the question before the timer reaches zero.
+                        </p>
+
+                        <p>
+                            A correct answer submitted within the allowed time
+                            rewards you with <strong>2 additional points</strong>.
+                        </p>
+
+                        <p>
+                            Incorrect or late answers do not earn this bonus.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>QUICK TIP</strong>
+                            Stay focused and check your answer before submitting it.
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            در بعضی از دورهای بازی، یک سوال ریاضی زمان‌دار
+                            برای بازیکنان نمایش داده می‌شود.
+                        </p>
+
+                        <p>
+                            باید قبل از تمام شدن زمان، پاسخ درست را وارد کنی
+                            و آن را ثبت کنی.
+                        </p>
+
+                        <p>
+                            اگر پاسخ صحیح را در زمان تعیین‌شده ارسال کنی،
+                            <strong>۲ امتیاز اضافه</strong> دریافت خواهی کرد.
+                        </p>
+
+                        <p>
+                            پاسخ اشتباه یا پاسخی که بعد از پایان زمان ارسال شود،
+                            امتیازی ندارد.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>پیشنهاد</strong>
+                            با تمرکز جواب بده و قبل از ثبت پاسخ، یک بار آن را بررسی کن.
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 06 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🎚️</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 06 / DIFFICULTY</span>
+                        <h3>Question Difficulty</h3>
+                        <small>سطح دشواری سوالات</small>
+                    </div>
+
+                    <div class="numora-rule-number">06</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            Mathematics questions have three difficulty levels.
+                            Each level has a different operation and time limit.
+                        </p>
+
+                        <div class="difficulty-grid">
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot easy"></span>
+                                <h4>Easy</h4>
+                                <strong>ADDITION</strong>
+                                <span>7 Seconds</span>
+                                <p>Simple addition problems.</p>
+                            </div>
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot medium"></span>
+                                <h4>Medium</h4>
+                                <strong>SUBTRACTION</strong>
+                                <span>10 Seconds</span>
+                                <p>Subtraction problems.</p>
+                            </div>
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot hard"></span>
+                                <h4>Hard</h4>
+                                <strong>MULTIPLICATION</strong>
+                                <span>15 Seconds</span>
+                                <p>Multiplication challenges.</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            سوالات ریاضی دارای سه سطح دشواری هستند.
+                            هر سطح عملیات ریاضی و زمان مخصوص خودش را دارد.
+                        </p>
+
+                        <div class="difficulty-grid">
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot easy"></span>
+                                <h4>آسان</h4>
+                                <strong>جمع</strong>
+                                <span>۷ ثانیه</span>
+                                <p>سوالات ساده جمع.</p>
+                            </div>
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot medium"></span>
+                                <h4>متوسط</h4>
+                                <strong>تفریق</strong>
+                                <span>۱۰ ثانیه</span>
+                                <p>سوالات تفریق.</p>
+                            </div>
+
+                            <div class="difficulty-card">
+                                <span class="difficulty-dot hard"></span>
+                                <h4>سخت</h4>
+                                <strong>ضرب</strong>
+                                <span>۱۵ ثانیه</span>
+                                <p>چالش‌های ضرب.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-highlight">
+                            زمان‌ها بر اساس تنظیمات فعلی بازی نوشته شده‌اند.
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 07 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">📊</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 07 / LEADERBOARD</span>
+                        <h3>Scoreboard & Rankings</h3>
+                        <small>جدول امتیازات و رتبه‌بندی</small>
+                    </div>
+
+                    <div class="numora-rule-number">07</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            After each round, players' scores are updated
+                            and the scoreboard is sorted by total points.
+                        </p>
+
+                        <p>
+                            At the end of the match, the final rankings
+                            show how every player performed.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>THE WINNER</strong>
+                            The player with the highest total score
+                            finishes in first place.
+                        </div>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            پس از پایان هر دور، امتیاز بازیکنان به‌روزرسانی
+                            می‌شود و جدول بر اساس مجموع امتیازات مرتب خواهد شد.
+                        </p>
+
+                        <p>
+                            در پایان مسابقه، رتبه نهایی تمام بازیکنان مشخص می‌شود
+                            تا عملکرد هر شخص قابل مشاهده باشد.
+                        </p>
+
+                        <div class="rule-highlight">
+                            <strong>برنده بازی</strong>
+                            بازیکنی که در پایان مسابقه بیشترین امتیاز را داشته باشد،
+                            در رتبه اول قرار می‌گیرد.
+                        </div>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- RULE 08 -->
+            <article class="numora-rule-card" onclick="toggleRule(this)">
+
+                <div class="numora-rule-header">
+
+                    <div class="numora-rule-icon">🎮</div>
+
+                    <div class="numora-rule-title">
+                        <span>RULE 08 / GAME MODES</span>
+                        <h3>Available Game Modes</h3>
+                        <small>حالت‌های مختلف بازی</small>
+                    </div>
+
+                    <div class="numora-rule-number">08</div>
+
+                    <div class="numora-rule-arrow">⌄</div>
+
+                </div>
+
+                <div class="numora-rule-body">
+
+                    <div class="rule-language english-rule">
+                        <span class="language-label">ENGLISH</span>
+
+                        <p>
+                            NUMORA offers different ways to play.
+                            Choose the mode that fits your style.
+                        </p>
+
+                        <ul class="mode-list">
+                            <li>
+                                <strong>Play vs Bots</strong>
+                                <span>Practice and compete against AI players.</span>
+                            </li>
+
+                            <li>
+                                <strong>Random Match</strong>
+                                <span>Find an opponent and play online.</span>
+                            </li>
+
+                            <li>
+                                <strong>Private Rooms</strong>
+                                <span>Create a room and invite your friends.</span>
+                            </li>
+
+                            <li>
+                                <strong>Join a Room</strong>
+                                <span>Enter an invitation code to join an existing room.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-language persian-rule">
+                        <span class="language-label">فارسی</span>
+
+                        <p>
+                            NUMORA چند روش مختلف برای بازی کردن در اختیار تو قرار می‌دهد.
+                            می‌توانی با توجه به سلیقه خودت یکی را انتخاب کنی.
+                        </p>
+
+                        <ul class="mode-list">
+                            <li>
+                                <strong>بازی با بات‌ها</strong>
+                                <span>تمرین و رقابت با بازیکنان هوش مصنوعی.</span>
+                            </li>
+
+                            <li>
+                                <strong>مسابقه تصادفی</strong>
+                                <span>پیدا کردن حریف و شروع یک مسابقه آنلاین.</span>
+                            </li>
+
+                            <li>
+                                <strong>ساخت اتاق خصوصی</strong>
+                                <span>ساخت اتاق و دعوت از دوستان.</span>
+                            </li>
+
+                            <li>
+                                <strong>ورود به اتاق</strong>
+                                <span>وارد کردن کد دعوت برای پیوستن به یک اتاق موجود.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- HOW TO START -->
+        <section class="rules-start-section">
+
+            <div class="rules-start-heading">
+                <span class="rules-section-eyebrow">READY PLAYER?</span>
+                <h2>HOW TO GET STARTED</h2>
+                <p>Follow these simple steps and enter the game.</p>
             </div>
-        </div>
-        <div class="rules-cta">
-            <button class="btn-primary" onclick="goToGame()">🚀 بریم بازی!</button>
-            <button class="btn-secondary" onclick="location.href='index.html'" style="margin-right: 10px;">🏠 خانه</button>
-        </div>
+
+            <div class="rules-start-grid">
+
+                <div class="start-step">
+                    <span>01</span>
+                    <h3>Create an Account</h3>
+                    <p>Sign in or create your NUMORA account.</p>
+                    <small>ساخت حساب کاربری</small>
+                </div>
+
+                <div class="start-step">
+                    <span>02</span>
+                    <h3>Choose a Mode</h3>
+                    <p>Select bots, random match, or private rooms.</p>
+                    <small>انتخاب حالت بازی</small>
+                </div>
+
+                <div class="start-step">
+                    <span>03</span>
+                    <h3>Make Your Move</h3>
+                    <p>Think carefully and choose your number.</p>
+                    <small>انتخاب هوشمندانه عدد</small>
+                </div>
+
+                <div class="start-step">
+                    <span>04</span>
+                    <h3>Climb the Rankings</h3>
+                    <p>Earn points and aim for the top position.</p>
+                    <small>رسیدن به رتبه اول</small>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+        <section class="rules-cta">
+
+            <span class="rules-eyebrow">YOUR NEXT MOVE STARTS HERE</span>
+
+            <h2>THINK YOU CAN WIN?</h2>
+
+            <p>
+                The rules are simple. The strategy is yours.
+                Step into NUMORA and prove your skills.
+            </p>
+
+            <button class="rules-play-btn" onclick="goToGame()">
+                ENTER GAME CENTER
+                <span>→</span>
+            </button>
+
+        </section>
+
     </main>
+
+
+    <!-- FOOTER -->
     <footer class="footer">
+
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <p>NUMORA © 2026</p>
+            <p>THINK FAST. PLAY SMART.</p>
         </div>
+
     </footer>
+
+
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=15"></script>
+
 </body>
 </html>
+

@@ -1,82 +1,257 @@
+
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تنظیمات بازی با بات - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=12">
+
+    <title>Bot Setup | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=18">
 </head>
+
 <body>
 
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <a href="index.html" class="nav-logo">
+            <span class="logo-icon">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <a href="lobby.html">بازگشت به لابی</a>
-            <span id="nav-username" class="nav-user">👤 کاربر</span>
-            <a href="#" onclick="logout()" class="btn-nav">خروج</a>
+            <a href="lobby.html">Game Center</a>
+            <a href="rules.html">How to Play</a>
+            <span id="nav-username" class="nav-user"></span>
+            <a href="#" onclick="logout()" class="btn-nav">Sign Out</a>
         </div>
     </nav>
 
-    <main class="auth-page">
-        <div class="auth-card" style="max-width: 550px; padding: 40px;">
-            <div style="text-align: center; margin-bottom: 35px;">
-                <h2 style="color: #00d9ff; font-size: 2rem; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,217,255,0.4);">🤖 نبرد با هوش مصنوعی</h2>
-                <p style="color: #8888aa; font-size: 1rem;">تنظیمات بازی رو انتخاب کن و آماده شو</p>
+
+    <main class="bot-setup-page">
+
+        <section class="bot-setup-container">
+
+            <div class="bot-setup-heading">
+                <div class="bot-setup-badge">
+                    <span class="status-dot"></span>
+                    AI CHALLENGE MODE
+                </div>
+
+                <h1>
+                    BUILD YOUR
+                    <span>CHALLENGE.</span>
+                </h1>
+
+                <p>
+                    Configure your opponents, choose your difficulty,
+                    and prepare for the ultimate mind battle.
+                </p>
             </div>
 
-            <div class="bot-config">
-                <!-- بخش تعداد دست -->
-                <div class="config-group">
-                    <label>تعداد دست (۱ تا ۲۰)</label>
-                    <div class="slider-container">
-                        <input type="range" id="bot-rounds" min="1" max="20" value="5" oninput="updateSliderValue('bot-rounds', 'rounds-val')">
-                        <span class="slider-value" id="rounds-val">5</span>
+
+            <div class="bot-setup-card">
+
+                <div class="setup-card-header">
+                    <div>
+                        <span class="setup-overline">GAME CONFIGURATION</span>
+                        <h2>Match Settings</h2>
+                    </div>
+
+                    <div class="setup-robot-icon">
+                        <span>AI</span>
                     </div>
                 </div>
 
-                <!-- بخش تعداد بات -->
-                <div class="config-group">
-                    <label>تعداد بات‌ها (۱ تا ۵)</label>
-                    <div class="slider-container">
-                        <input type="range" id="bot-count" min="1" max="5" value="2" oninput="updateSliderValue('bot-count', 'bots-val')">
-                        <span class="slider-value" id="bots-val">2</span>
+
+                <!-- ROUNDS -->
+
+                <div class="bot-config-section">
+
+                    <div class="config-heading">
+                        <div>
+                            <label for="bot-rounds">NUMBER OF ROUNDS</label>
+                            <p>How long will the challenge last?</p>
+                        </div>
+
+                        <div class="config-number">
+                            <span id="rounds-val">5</span>
+                            <small>ROUNDS</small>
+                        </div>
                     </div>
+
+                    <div class="modern-slider-container">
+                        <input
+                            type="range"
+                            id="bot-rounds"
+                            min="1"
+                            max="20"
+                            value="5"
+                            oninput="updateSliderValue('bot-rounds', 'rounds-val')"
+                        >
+
+                        <div class="slider-labels">
+                            <span>01</span>
+                            <span>20</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- بخش سختی -->
-                <div class="config-group">
-                    <label>سطح سختی بات‌ها</label>
-                    <div class="difficulty-options">
-                        <label class="difficulty-option">
-                            <input type="radio" name="difficulty" value="easy">
-                            <span class="option-box">🟢 آسان</span>
-                        </label>
-                        <label class="difficulty-option">
-                            <input type="radio" name="difficulty" value="medium" checked>
-                            <span class="option-box">🟡 متوسط</span>
-                        </label>
-                        <label class="difficulty-option">
-                            <input type="radio" name="difficulty" value="hard">
-                            <span class="option-box">🔴 سخت</span>
-                        </label>
+
+                <div class="setup-divider"></div>
+
+
+                <!-- BOT COUNT -->
+
+                <div class="bot-config-section">
+
+                    <div class="config-heading">
+                        <div>
+                            <label for="bot-count">AI OPPONENTS</label>
+                            <p>Choose how many bots you want to face.</p>
+                        </div>
+
+                        <div class="config-number">
+                            <span id="bots-val">2</span>
+                            <small>BOTS</small>
+                        </div>
                     </div>
+
+                    <div class="modern-slider-container">
+                        <input
+                            type="range"
+                            id="bot-count"
+                            min="1"
+                            max="5"
+                            value="2"
+                            oninput="updateSliderValue('bot-count', 'bots-val')"
+                        >
+
+                        <div class="slider-labels">
+                            <span>01</span>
+                            <span>05</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <button class="btn-primary" onclick="startBotGame()" style="width: 100%; margin-top: 30px; padding: 18px; font-size: 1.2rem;">🚀 شروع بازی</button>
-                <button class="btn-secondary" onclick="location.href='lobby.html'" style="width: 100%; margin-top: 15px; padding: 15px; font-size: 1rem;">انصراف</button>
+
+                <div class="setup-divider"></div>
+
+
+                <!-- DIFFICULTY -->
+
+                <div class="bot-config-section">
+
+                    <div class="config-heading difficulty-heading">
+                        <div>
+                            <label>AI DIFFICULTY</label>
+                            <p>Select how challenging your opponents will be.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="difficulty-grid">
+
+                        <label class="difficulty-option">
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="easy"
+                            >
+
+                            <span class="difficulty-card easy">
+                                <span class="difficulty-indicator"></span>
+                                <span class="difficulty-icon">01</span>
+                                <strong>Easy</strong>
+                                <small>Relaxed challenge</small>
+                            </span>
+                        </label>
+
+
+                        <label class="difficulty-option">
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="medium"
+                                checked
+                            >
+
+                            <span class="difficulty-card medium">
+                                <span class="difficulty-indicator"></span>
+                                <span class="difficulty-icon">02</span>
+                                <strong>Medium</strong>
+                                <small>Balanced challenge</small>
+                                <span class="recommended-tag">DEFAULT</span>
+                            </span>
+                        </label>
+
+
+                        <label class="difficulty-option">
+                            <input
+                                type="radio"
+                                name="difficulty"
+                                value="hard"
+                            >
+
+                            <span class="difficulty-card hard">
+                                <span class="difficulty-indicator"></span>
+                                <span class="difficulty-icon">03</span>
+                                <strong>Hard</strong>
+                                <small>Serious competition</small>
+                            </span>
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="bot-setup-actions">
+
+                    <button
+                        class="bot-start-btn"
+                        onclick="startBotGame()"
+                    >
+                        <span>START CHALLENGE</span>
+                        <span class="start-arrow">→</span>
+                    </button>
+
+                    <a href="lobby.html" class="bot-cancel-btn">
+                        Back to Game Center
+                    </a>
+
+                </div>
+
+
+                <div class="setup-footer-note">
+                    <span class="status-dot"></span>
+                    YOUR MATCH IS READY TO BE CONFIGURED
+                </div>
+
             </div>
-        </div>
+
+        </section>
+
     </main>
+
 
     <footer class="footer">
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <p>NUMORA © 2026 — THINK FAST. PLAY SMART.</p>
         </div>
     </footer>
 
+
     <script src="particles.js"></script>
-    <script src="script.js?v=12"></script>
+    <script src="script.js?v=15"></script>
+
 </body>
 </html>

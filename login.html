@@ -1,77 +1,135 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=10">
+    <meta name="theme-color" content="#090b14">
+    <title>Sign In | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=13">
 </head>
-<body>
+<body class="numora-auth-body">
 
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <a href="index.html" class="nav-logo">
+            <span class="logo-symbol">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <a href="index.html">خانه</a>
-            <a href="rules.html">راهنما</a>
-            <a href="login.html" class="btn-nav">ورود / ثبت‌نام</a>
+            <a href="index.html">Home</a>
+            <a href="rules.html">How to Play</a>
+            <a href="login.html" class="btn-nav">Sign In</a>
         </div>
     </nav>
 
-    <main class="auth-page">
-        <div class="auth-card">
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('login')" id="tab-login">ورود</button>
-                <button class="auth-tab" onclick="switchTab('register')" id="tab-register">ثبت‌نام</button>
+    <main class="auth-page numora-auth-page">
+        <section class="auth-showcase">
+            <div class="auth-showcase-content">
+                <span class="auth-eyebrow"><span class="status-dot"></span> YOUR NEXT CHALLENGE STARTS HERE</span>
+                <h1>ENTER THE<br><span>NUMORA</span><br>UNIVERSE.</h1>
+                <p>One account. Endless challenges. Sign in and put your mind to the test.</p>
+
+                <div class="auth-showcase-stats">
+                    <div>
+                        <strong>01</strong>
+                        <span>CREATE YOUR ACCOUNT</span>
+                    </div>
+                    <div>
+                        <strong>02</strong>
+                        <span>CHALLENGE YOUR MIND</span>
+                    </div>
+                    <div>
+                        <strong>03</strong>
+                        <span>CLIMB THE RANKS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-orbit auth-orbit-one"></div>
+            <div class="auth-orbit auth-orbit-two"></div>
+            <div class="auth-glow"></div>
+            <span class="auth-decor-number">N°01</span>
+        </section>
+
+        <section class="auth-card">
+            <div class="auth-card-heading">
+                <span class="auth-card-kicker">WELCOME TO NUMORA</span>
+                <h2 id="auth-title">Your NUMORA account.</h2>
+                <p id="auth-subtitle">Sign in or create an account to continue.</p>
             </div>
 
-            <form id="login-form" class="auth-form">
-                <h2>ورود به حساب</h2>
-                <label>نام کاربری</label>
-                <input type="text" id="login-username" placeholder="نام کاربری خود را وارد کنید" required>
-                
-                <label>رمز عبور</label>
+            <div class="auth-tabs" role="tablist" aria-label="Account access">
+                <button type="button" class="auth-tab active" onclick="switchTab('login')" id="tab-login" role="tab" aria-selected="true">Sign In</button>
+                <button type="button" class="auth-tab" onclick="switchTab('register')" id="tab-register" role="tab" aria-selected="false">Create Account</button>
+            </div>
+
+            <form id="login-form" class="auth-form" autocomplete="on">
+                <h2>Sign in to your account</h2>
+
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" name="username" placeholder="Enter your username" autocomplete="username" required>
+
+                <label for="login-password">Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="login-password" placeholder="رمز عبور خود را وارد کنید" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">👁️</button>
+                    <input type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+                    <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePassword('login-password', this)">SHOW</button>
                 </div>
 
-                <button type="submit" class="btn-primary">ورود</button>
-                <p class="auth-switch">حساب نداری؟ <a href="#" onclick="switchTab('register')">ثبت‌نام کن</a></p>
+                <button type="submit" class="btn-primary auth-submit">
+                    <span>Sign In</span>
+                    <span class="auth-submit-arrow">→</span>
+                </button>
+
+                <p class="auth-switch">New to NUMORA? <a href="#" onclick="switchTab('register'); return false;">Create an account</a></p>
             </form>
 
-            <form id="register-form" class="auth-form hidden">
-                <h2>ساخت حساب جدید</h2>
-                <label>نام کاربری</label>
-                <input type="text" id="register-username" placeholder="یه نام کاربری انتخاب کن" required>
-                
-                <label>ایمیل</label>
-                <input type="email" id="register-email" placeholder="ایمیل خود را وارد کنید" required>
-                
-                <label>رمز عبور</label>
+            <form id="register-form" class="auth-form hidden" autocomplete="on">
+                <h2>Create your account</h2>
+
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" name="username" placeholder="Choose a username" autocomplete="username" required>
+
+                <label for="register-email">Email address</label>
+                <input type="email" id="register-email" name="email" placeholder="Enter your email address" autocomplete="email" required>
+
+                <label for="register-password">Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="register-password" placeholder="حداقل ۶ کاراکتر" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('register-password', this)">👁️</button>
-                </div>
-                
-                <label>تکرار رمز عبور</label>
-                <div class="password-wrapper">
-                    <input type="password" id="register-password2" placeholder="رمز عبور را دوباره وارد کنید" required>
-                    <button type="button" class="toggle-password" onclick="togglePassword('register-password2', this)">👁️</button>
+                    <input type="password" id="register-password" name="new-password" placeholder="At least 6 characters" autocomplete="new-password" required>
+                    <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePassword('register-password', this)">SHOW</button>
                 </div>
 
-                <button type="submit" class="btn-primary">ثبت‌نام</button>
-                <p class="auth-switch">حساب داری؟ <a href="#" onclick="switchTab('login')">ورود کن</a></p>
+                <label for="register-password2">Confirm password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="register-password2" name="confirm-password" placeholder="Enter your password again" autocomplete="new-password" required>
+                    <button type="button" class="toggle-password" aria-label="Show password" onclick="togglePassword('register-password2', this)">SHOW</button>
+                </div>
+
+                <button type="submit" class="btn-primary auth-submit">
+                    <span>Create Account</span>
+                    <span class="auth-submit-arrow">→</span>
+                </button>
+
+                <p class="auth-switch">Already have an account? <a href="#" onclick="switchTab('login'); return false;">Sign in</a></p>
             </form>
 
-            <p id="auth-message" class="auth-message"></p>
-        </div>
+            <p id="auth-message" class="auth-message" role="status" aria-live="polite"></p>
+
+            <div class="auth-card-footer">
+                <span class="auth-footer-line"></span>
+                <span>THINK FAST. PLAY SMART.</span>
+                <span class="auth-footer-line"></span>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <div class="footer-brand"><span class="logo-symbol">N</span> NUMORA</div>
+            <p>A new dimension of mind games.</p>
+            <p class="copyright">© 2026 NUMORA. All rights reserved.</p>
         </div>
     </footer>
 

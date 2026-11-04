@@ -1,71 +1,124 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پروفایل - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+    <meta name="theme-color" content="#090b14">
+    <title>My Profile | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
+
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <a href="index.html" class="nav-logo">
+            <span class="logo-symbol">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <a href="index.html">خانه</a>
-            <a href="lobby.html">لابی</a>
-            <a href="rules.html">راهنما</a>
-            <span id="nav-username" class="nav-user">👤 کاربر</span>
-            <a href="#" onclick="logout()" class="btn-nav">خروج</a>
+            <a href="index.html">Home</a>
+            <a href="lobby.html">Game Center</a>
+            <a href="rules.html">How to Play</a>
+            <span id="nav-username" class="nav-user">Player</span>
+            <a href="#" onclick="logout()" class="btn-nav">Sign Out</a>
         </div>
     </nav>
-    <main class="profile-page">
-        <div class="profile-header">
-            <div class="profile-avatar" id="profile-avatar">👤</div>
+
+    <main class="profile-page numora-profile-page">
+
+        <header class="profile-heading">
+            <div class="profile-eyebrow">
+                <span class="status-dot"></span>
+                PLAYER DASHBOARD
+            </div>
+            <h1 class="profile-page-title">YOUR <span>PROFILE.</span></h1>
+        </header>
+
+        <section class="profile-header">
+            <div class="profile-avatar" id="profile-avatar" aria-label="Player avatar">N</div>
+
             <div class="profile-info">
-                <h1 id="profile-username">کاربر</h1>
+                <h1 id="profile-username">Player</h1>
                 <p id="profile-email">email@example.com</p>
+
+                <div class="profile-member-label">
+                    <span class="status-dot"></span>
+                    NUMORA PLAYER
+                </div>
             </div>
-        </div>
-        <div class="profile-stats" id="profile-stats">
-            <div class="stat-card">
-                <div class="stat-icon">🎮</div>
-                <div class="stat-value" id="stat-games">۰</div>
-                <div class="stat-label">بازی</div>
+        </section>
+
+        <section class="profile-stats" id="profile-stats" aria-label="Player statistics">
+
+            <article class="stat-card">
+                <div class="stat-icon">◈</div>
+                <div class="stat-value" id="stat-games">0</div>
+                <div class="stat-label">GAMES PLAYED</div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">✦</div>
+                <div class="stat-value" id="stat-wins">0</div>
+                <div class="stat-label">TOTAL WINS</div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">⌁</div>
+                <div class="stat-value" id="stat-avg">0</div>
+                <div class="stat-label">AVERAGE SCORE</div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">✧</div>
+                <div class="stat-value" id="stat-best">0</div>
+                <div class="stat-label">BEST SCORE</div>
+            </article>
+
+        </section>
+
+        <section class="profile-history">
+            <div class="profile-section-heading">
+                <h2>Match History</h2>
+                <span class="history-count-label">YOUR RECENT GAMES</span>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-value" id="stat-wins">۰</div>
-                <div class="stat-label">برد</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-value" id="stat-avg">۰</div>
-                <div class="stat-label">میانگین امتیاز</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-value" id="stat-best">۰</div>
-                <div class="stat-label">بهترین امتیاز</div>
-            </div>
-        </div>
-        <div class="profile-history">
-            <h2>📜 تاریخچه بازی‌ها</h2>
+
             <div id="history-list" class="history-list">
-                <p class="empty-history">هنوز بازی نکردی!</p>
+                <p class="empty-history">
+                    <span class="profile-empty-icon">⌁</span>
+                    No games played yet. Your journey starts here.
+                </p>
             </div>
-        </div>
+        </section>
+
         <div class="profile-actions">
-            <button class="btn-primary" onclick="location.href='lobby.html'">🎮 بریم بازی</button>
-            <button class="btn-secondary" onclick="logout()">🚪 خروج از حساب</button>
+            <button type="button" class="btn-primary" onclick="location.href='lobby.html'">
+                <span>PLAY A GAME</span>
+                <span class="btn-arrow">→</span>
+            </button>
+
+            <button type="button" class="btn-secondary" onclick="logout()">
+                SIGN OUT
+            </button>
         </div>
+
     </main>
+
     <footer class="footer">
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <div class="footer-brand">
+                <span class="logo-symbol">N</span>
+                NUMORA
+            </div>
+            <p>A new dimension of mind games.</p>
+            <p class="copyright">© 2026 NUMORA. All rights reserved.</p>
         </div>
     </footer>
+
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>

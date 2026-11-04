@@ -1,64 +1,171 @@
+
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بازی - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+
+    <title>NUMORA — Game Arena</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=15">
 </head>
-<body>
+
+<body class="numora-game-page">
+
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <a href="index.html" class="nav-logo">
+            <span class="logo-mark">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <span id="nav-username" class="nav-user">👤 کاربر</span>
-            <a href="#" onclick="confirmExit()" class="btn-nav">خروج از بازی</a>
+            <span id="nav-username" class="nav-user">PLAYER</span>
+            <a href="#" onclick="confirmExit(); return false;" class="btn-nav">
+                Exit Game
+            </a>
         </div>
     </nav>
-    <main class="game-page">
-        <div class="game-header">
-            <div class="game-round" id="game-round">دست ۱ از ۵</div>
-            <div class="game-turn" id="game-turn">نوبت: بازیکن</div>
-        </div>
-        <div class="game-layout">
-            <div class="game-table-area">
-                <table class="game-table" id="game-table">
-                    <thead id="game-thead"></thead>
-                    <tbody id="game-tbody"></tbody>
-                </table>
+
+    <main class="game-page numora-arena">
+
+        <header class="game-heading">
+            <div class="game-heading-text">
+                <span class="game-eyebrow">NUMORA ARENA</span>
+                <h1>THE GAME IS ON.</h1>
+                <p>Think fast. Choose wisely. Claim your victory.</p>
             </div>
-            <div class="game-side-panel">
+
+            <div class="game-status">
+                <div class="game-round" id="game-round">
+                    ROUND 1 / 5
+                </div>
+
+                <div class="game-turn" id="game-turn">
+                    Waiting for player...
+                </div>
+            </div>
+        </header>
+
+        <div class="game-layout">
+
+            <section class="game-table-section">
+                <div class="game-section-heading">
+                    <div>
+                        <span class="game-section-eyebrow">LIVE MATCH</span>
+                        <h2>Scoreboard</h2>
+                    </div>
+
+                    <span class="live-indicator">
+                        <span></span>
+                        LIVE
+                    </span>
+                </div>
+
+                <div class="game-table-area">
+                    <table class="game-table" id="game-table">
+                        <thead id="game-thead"></thead>
+                        <tbody id="game-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <aside class="game-side-panel">
+
                 <div class="side-card question-card hidden" id="question-card">
-                    <div class="question-label">📝 سوال ریاضی</div>
-                    <div class="question-text" id="question-text">—</div>
-                    <div class="question-timer" id="question-timer">⏱ ۰ ثانیه</div>
-                </div>
-                <div class="side-card input-card">
-                    <div class="input-label">عدد خود را وارد کن (۱ تا ۲۰)</div>
-                    <input type="number" id="number-input" min="1" max="20" placeholder="عدد...">
-                    <button class="btn-primary" onclick="submitNumber()" id="submit-btn">ثبت</button>
-                    <div class="input-message" id="input-message"></div>
-                </div>
-                <div class="side-card info-card">
-                    <div class="info-row">
-                        <span>امتیاز تو:</span>
-                        <span class="info-score" id="my-score">۰</span>
+                    <div class="question-label">
+                        <span class="card-icon">∑</span>
+                        MATH CHALLENGE
+                    </div>
+
+                    <div class="question-text" id="question-text">
+                        —
+                    </div>
+
+                    <div class="question-timer" id="question-timer">
+                        0.0 SEC
                     </div>
                 </div>
-            </div>
+
+                <div class="side-card input-card">
+                    <div class="input-label">
+                        <span class="card-icon">#</span>
+                        YOUR NUMBER
+                    </div>
+
+                    <p class="input-description">
+                        Choose a number between 1 and 20.
+                    </p>
+
+                    <input
+                        type="number"
+                        id="number-input"
+                        min="1"
+                        max="20"
+                        placeholder="00"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        class="btn-primary"
+                        onclick="submitNumber()"
+                        id="submit-btn"
+                    >
+                        SUBMIT NUMBER
+                    </button>
+
+                    <div class="input-message" id="input-message"></div>
+                </div>
+
+                <div class="side-card info-card">
+                    <div class="info-row">
+                        <span>YOUR SCORE</span>
+                        <span class="info-score" id="my-score">0</span>
+                    </div>
+
+                    <div class="score-caption">
+                        Keep playing. Keep climbing.
+                    </div>
+                </div>
+
+            </aside>
         </div>
     </main>
+
     <div class="modal-overlay hidden" id="result-overlay">
-        <div class="modal">
-            <h2>🏆 پایان بازی!</h2>
+        <div class="modal numora-result-modal">
+
+            <div class="result-icon">🏆</div>
+
+            <span class="result-eyebrow">MATCH COMPLETED</span>
+
+            <h2>GAME OVER.</h2>
+
+            <p class="result-description">
+                Here's how everyone performed.
+            </p>
+
             <div id="final-ranking"></div>
+
             <div class="modal-buttons">
-                <button class="btn-primary" onclick="location.href='lobby.html'">بازگشت به لابی</button>
+                <button
+                    class="btn-primary"
+                    onclick="location.href='lobby.html'"
+                >
+                    BACK TO GAME CENTER
+                </button>
             </div>
+
         </div>
     </div>
+
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
+
 </body>
 </html>

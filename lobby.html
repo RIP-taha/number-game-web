@@ -1,71 +1,154 @@
+
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لابی - Number Game</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+
+    <title>Lobby | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=11">
 </head>
+
 <body>
+
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+        <a href="index.html" class="nav-logo">
+            <span class="logo-symbol">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <a href="index.html">خانه</a>
-            <a href="rules.html">راهنما</a>
-            <span id="nav-username" class="nav-user">👤 کاربر</span>
-            <a href="#" onclick="logout()" class="btn-nav">خروج</a>
+            <a href="index.html">Home</a>
+            <a href="rules.html">How to Play</a>
+            <span id="nav-username" class="nav-user">User</span>
+            <a href="#" onclick="logout()" class="btn-nav">Log Out</a>
         </div>
     </nav>
-    <main class="lobby-page">
-        <h1 class="page-title">🎮 لابی بازی</h1>
-        <p class="page-subtitle">حالت بازی رو انتخاب کن</p>
-        <div class="lobby-grid">
-            <div class="lobby-card" onclick="location.href='bot-setup.html'">
-                <div class="lobby-icon">🤖</div>
-                <h2>بازی با بات</h2>
-                <p>با هوش مصنوعی رقابت کن</p>
-                <button class="btn-primary">شروع</button>
+
+    <main class="lobby-page numora-lobby">
+
+        <div class="lobby-heading">
+            <div class="lobby-badge">
+                <span class="status-dot"></span>
+                GAME CENTER
             </div>
-            <div class="lobby-card" onclick="startRandomMatch()">
-                <div class="lobby-icon">🌐</div>
-                <h2>مچ رندوم</h2>
-                <p>با بازیکن‌های آنلاین بازی کن</p>
-                <button class="btn-primary">شروع</button>
-            </div>
-            <div class="lobby-card" onclick="location.href='room.html?action=create'">
-                <div class="lobby-icon">👥</div>
-                <h2>ساخت اتاق</h2>
-                <p>اتاق بساز و دوستانت رو دعوت کن</p>
-                <button class="btn-primary">ساخت</button>
-            </div>
-            <div class="lobby-card" onclick="location.href='room.html?action=join'">
-                <div class="lobby-icon">🔑</div>
-                <h2>ورود به اتاق</h2>
-                <p>با کد دعوت وارد اتاق شو</p>
-                <button class="btn-primary">ورود</button>
-            </div>
-            <div class="lobby-card" onclick="location.href='profile.html'">
-                <div class="lobby-icon">👤</div>
-                <h2>پروفایل</h2>
-                <p>آمار و تاریخچه بازی‌هایت</p>
-                <button class="btn-primary">مشاهده</button>
-            </div>
-            <div class="lobby-card" onclick="location.href='rules.html'">
-                <div class="lobby-icon">📖</div>
-                <h2>راهنما</h2>
-                <p>قوانین بازی رو بخون</p>
-                <button class="btn-primary">مشاهده</button>
-            </div>
+
+            <h1 class="page-title">
+                CHOOSE YOUR <span>GAME MODE.</span>
+            </h1>
+
+            <p class="page-subtitle">
+                Pick your challenge. Make your move. Prove your skills.
+            </p>
         </div>
+
+        <div class="lobby-grid">
+
+            <div class="lobby-card">
+                <div class="lobby-icon">🤖</div>
+                <span class="lobby-card-number">01 / SOLO</span>
+
+                <h2>Play vs Bots</h2>
+                <p>Challenge AI opponents and test your strategy.</p>
+
+                <a href="bot-setup.html" class="btn-primary">
+                    <span>PLAY NOW</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+
+            <div class="lobby-card">
+                <div class="lobby-icon">🌐</div>
+                <span class="lobby-card-number">02 / ONLINE</span>
+
+                <h2>Random Match</h2>
+                <p>Find an opponent and compete against real players.</p>
+
+                <button class="btn-primary" onclick="startRandomMatch()">
+                    <span>FIND MATCH</span>
+                    <span class="card-arrow">↗</span>
+                </button>
+            </div>
+
+            <div class="lobby-card">
+                <div class="lobby-icon">✦</div>
+                <span class="lobby-card-number">03 / PRIVATE</span>
+
+                <h2>Create Room</h2>
+                <p>Set up a private room and invite your friends.</p>
+
+                <a href="room.html?action=create" class="btn-primary">
+                    <span>CREATE ROOM</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+
+            <div class="lobby-card">
+                <div class="lobby-icon">⌘</div>
+                <span class="lobby-card-number">04 / INVITE</span>
+
+                <h2>Join Room</h2>
+                <p>Enter an invitation code and join the competition.</p>
+
+                <a href="room.html?action=join" class="btn-primary">
+                    <span>JOIN ROOM</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+
+            <div class="lobby-card">
+                <div class="lobby-icon">◉</div>
+                <span class="lobby-card-number">05 / PERSONAL</span>
+
+                <h2>My Profile</h2>
+                <p>Track your performance, statistics and game history.</p>
+
+                <a href="profile.html" class="btn-primary">
+                    <span>VIEW PROFILE</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+
+            <div class="lobby-card">
+                <div class="lobby-icon">ⓘ</div>
+                <span class="lobby-card-number">06 / INFORMATION</span>
+
+                <h2>How to Play</h2>
+                <p>Learn the rules and discover how NUMORA works.</p>
+
+                <a href="rules.html" class="btn-primary">
+                    <span>READ RULES</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="lobby-bottom-note">
+            <span class="note-line"></span>
+            <span>YOUR NEXT CHALLENGE STARTS HERE</span>
+            <span class="note-line"></span>
+        </div>
+
     </main>
+
     <footer class="footer">
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
+            <p>NUMORA <span class="footer-divider">/</span> Version 1.0.0</p>
+            <p>THINK FAST. PLAY SMART.</p>
         </div>
     </footer>
+
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=11"></script>
+
 </body>
 </html>
+
+<link rel="stylesheet" href="style.css?v=12">
