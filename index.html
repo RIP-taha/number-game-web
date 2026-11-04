@@ -1,62 +1,178 @@
 
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Game | بازی اعداد</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="style.css?v=9">
+
+    <meta name="theme-color" content="#090B14">
+    <meta name="description" content="NUMORA - Think fast, play smart. Challenge your mind and compete with players around the world.">
+
+    <title>NUMORA — Think Fast. Play Smart.</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
+
 <body>
+
+    <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-logo">🎮 NUMBER GAME</div>
+
+        <a href="index.html" class="nav-logo">
+            <span class="logo-symbol">N</span>
+            <span>NUMORA</span>
+        </a>
+
         <div class="nav-links">
-            <a href="index.html">خانه</a>
-            <a href="rules.html">راهنما</a>
-            <a href="login.html" class="btn-nav">ورود / ثبت‌نام</a>
+            <a href="index.html">Home</a>
+            <a href="rules.html">How to Play</a>
+            <a href="login.html" class="btn-nav">Sign In</a>
         </div>
+
     </nav>
+
+
+    <!-- Hero Section -->
     <main class="hero">
+
         <div class="hero-content">
-            <h1 class="hero-title">🎮 NUMBER GAME 🎮</h1>
-            <p class="hero-subtitle">بازی اعداد و ریاضی، آنلاین با دوستان!</p>
-            <p class="hero-desc">عدد انتخاب کن، با بقیه رقابت کن، سوال ریاضی جواب بده و برنده شو!</p>
+
+            <div class="hero-badge">
+                <span class="status-dot"></span>
+                THE NEXT LEVEL OF MIND GAMES
+            </div>
+
+            <h1 class="hero-title">
+                THINK FAST.
+                <span>PLAY SMART.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Welcome to NUMORA
+            </p>
+
+            <p class="hero-desc">
+                Challenge your mind, test your skills, and compete
+                with players around the world.
+                Every number counts. Every second matters.
+            </p>
+
             <div class="hero-buttons">
-                <button class="btn-primary" onclick="startGame()">🚀 شروع بازی</button>
-                <button class="btn-secondary" onclick="location.href='rules.html'">📖 راهنما</button>
+
+                <button class="btn-primary" onclick="startGame()">
+                    Start Playing
+                    <span class="btn-arrow">→</span>
+                </button>
+
+                <button class="btn-secondary"
+                        onclick="location.href='rules.html'">
+                    How to Play
+                </button>
+
             </div>
+
+            <div class="hero-note">
+                <span class="note-line"></span>
+                YOUR MIND IS YOUR GREATEST WEAPON
+                <span class="note-line"></span>
+            </div>
+
         </div>
+
+
+        <!-- Game Modes -->
         <div class="hero-features">
+
             <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3>بازی با بات</h3>
-                <p>با هوش مصنوعی رقابت کن</p>
+
+                <div class="feature-icon">01</div>
+
+                <h3>Play vs Bots</h3>
+
+                <p>
+                    Challenge intelligent bots
+                    and sharpen your skills.
+                </p>
+
+                <span class="feature-arrow">↗</span>
+
             </div>
+
+
             <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3>مچ رندوم</h3>
-                <p>با بازیکن‌های آنلاین بازی کن</p>
+
+                <div class="feature-icon">02</div>
+
+                <h3>Random Match</h3>
+
+                <p>
+                    Find online opponents
+                    and compete in real time.
+                </p>
+
+                <span class="feature-arrow">↗</span>
+
             </div>
+
+
             <div class="feature-card">
-                <div class="feature-icon">👥</div>
-                <h3>اتاق دوستان</h3>
-                <p>اتاق بساز و دوستانت رو دعوت کن</p>
+
+                <div class="feature-icon">03</div>
+
+                <h3>Private Rooms</h3>
+
+                <p>
+                    Create a room and invite
+                    your friends to play.
+                </p>
+
+                <span class="feature-arrow">↗</span>
+
             </div>
+
         </div>
+
     </main>
+
+
+    <!-- Footer -->
     <footer class="footer">
+
         <div class="footer-content">
-            <p>🎮 Number Game | ورژن 1.0.0</p>
-            <p>ساخته شده با ❤️ توسط تیم Number Game</p>
-            <div class="footer-links">
-                <a href="#">درباره ما</a>
-                <a href="#">تماس</a>
-                <a href="#">قوانین</a>
+
+            <div class="footer-brand">
+                <span class="logo-symbol">N</span>
+                <span>NUMORA</span>
             </div>
+
+            <p>
+                Think Fast. Play Smart.
+            </p>
+
+            <div class="footer-links">
+                <a href="rules.html">Rules</a>
+                <a href="login.html">Account</a>
+                <a href="index.html">Home</a>
+            </div>
+
+            <p class="copyright">
+                © 2026 NUMORA. All rights reserved.
+            </p>
+
         </div>
+
     </footer>
+
+
+    <!-- Scripts -->
     <script src="particles.js"></script>
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=10"></script>
+
 </body>
 </html>
