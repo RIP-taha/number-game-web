@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Panel | NUMORA</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=13">
+</head>
+
+<body>
+
+    <main class="admin-container">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div>
+                <span class="admin-label">NUMORA / ADMINISTRATION</span>
+                <h1>Admin Panel</h1>
+                <p>Manage registered accounts and monitor the platform.</p>
+            </div>
+
+            <a href="lobby.html" class="admin-back-btn">
+                ← Back to Lobby
+            </a>
+        </header>
+
+        <!-- ACCESS STATUS -->
+        <div id="admin-message" class="admin-message" hidden></div>
+
+        <!-- DASHBOARD -->
+        <section id="admin-dashboard" hidden>
+
+            <div class="admin-stats">
+
+                <div class="admin-stat-card">
+                    <span class="admin-stat-label">TOTAL USERS</span>
+                    <strong id="total-users">0</strong>
+                    <span class="admin-stat-description">Registered accounts</span>
+                </div>
+
+                <div class="admin-stat-card">
+                    <span class="admin-stat-label">ADMINISTRATORS</span>
+                    <strong id="total-admins">0</strong>
+                    <span class="admin-stat-description">Admin accounts</span>
+                </div>
+
+                <div class="admin-stat-card">
+                    <span class="admin-stat-label">REGULAR USERS</span>
+                    <strong id="total-regular-users">0</strong>
+                    <span class="admin-stat-description">Standard accounts</span>
+                </div>
+
+            </div>
+
+            <!-- USERS TABLE -->
+            <section class="admin-users-section">
+
+                <div class="admin-section-header">
+                    <div>
+                        <span class="admin-label">USER MANAGEMENT</span>
+                        <h2>Registered Accounts</h2>
+                    </div>
+
+                    <button id="refresh-users" class="admin-refresh-btn">
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div class="admin-table-wrapper">
+
+                    <table class="admin-table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>USERNAME</th>
+                                <th>EMAIL</th>
+                                <th>ROLE</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="4" class="admin-empty">
+                                    Loading accounts...
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <p class="admin-footer-note">
+                    NUMORA Administration System
+                </p>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <script>
+        const API_URL = "https://number-game-api.onrender.com";
+
+        const messageBox = document.getElementById("admin-message");
+        const dashboard = document.getElementById("admin-dashboard");
+        const tableBody = document.getElementById("users-table-body");
+
+        function showMessage(message, type = "error") {
+            messageBox.textContent = message;
+            messageBox.className = "admin-message " + type;
+            messageBox.hidden = false;
+            dashboard.hidden = true;
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            })[character]);
+        }
+
+        async function loadUsers() {
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                showMessage(
+                    "Authentication required. Please log in again."
+                );
+                return;
+            }
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="admin-empty">
+                        Loading accounts...
+                    </td>
+                </tr>
+            `;
+
+            dashboard.hidden = false;
+            messageBox.hidden = true;
+
+            try {
+                const response = await fetch(
+                    API_URL + "/api/admin/users",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        }
+                    }
+                );
+
+                if (response.status === 401) {
+                    showMessage(
+                        "Your session is invalid or expired. Please log in again."
+                    );
+                    return;
+                }
+
+                if (response.status === 403) {
+                    showMessage(
+                        "Access denied. Your account is not an administrator."
+                    );
+                    return;
+                }
+
+                if (!response.ok) {
+                    showMessage(
+                        "Could not load accounts. Server error: " + response.status
+                    );
+                    return;
+                }
+
+                const data = await response.json();
+                const users = data.users || [];
+
+                const admins = users.filter(user => user.is_admin === true).length;
+                const regularUsers = users.length - admins;
+
+                document.getElementById("total-users").textContent = users.length;
+                document.getElementById("total-admins").textContent = admins;
+                document.getElementById("total-regular-users").textContent = regularUsers;
+
+                if (users.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="admin-empty">
+                                No registered accounts found.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tableBody.innerHTML = users.map(user => `
+                        <tr>
+                            <td>#${escapeHTML(user.id)}</td>
+                            <td>${escapeHTML(user.username)}</td>
+                            <td>${escapeHTML(user.email)}</td>
+                            <td>
+                                <span class="admin-role ${user.is_admin ? "admin-role-admin" : "admin-role-user"}">
+                                    ${user.is_admin ? "ADMIN" : "USER"}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join("");
+                }
+
+            } catch (error) {
+                console.error("Admin panel error:", error);
+                showMessage(
+                    "Could not connect to the server. Please try again."
+                );
+            }
+        }
+
+        document.getElementById("refresh-users").addEventListener(
+            "click",
+            loadUsers
+        );
+
+        loadUsers();
+    </script>
+
+</body>
+</html>
