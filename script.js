@@ -1045,9 +1045,6 @@ function renderTable() {
         for (let j = 0; j < gameState.numRounds; j++) {
             const val = p.numbers[j];
 
-            // Hide the current round's numbers in online games.
-            // The actual protection is handled by the backend.
-
             if (
                 isOnlineGame &&
                 !isGameOver &&
@@ -1421,8 +1418,6 @@ function endRound() {
 // =========================
 
 async function showFinalScreen() {
-    // Prevent the results screen from opening more than once.
-
     if (finalScreenShown) return;
 
     finalScreenShown = true;
@@ -1463,7 +1458,31 @@ async function showFinalScreen() {
     overlay.classList.remove("hidden");
 }
 
+
+// =========================
+// SAVE GAME RESULT
+// =========================
+
 async function saveGameResult() {
+    let config;
+
+    try {
+        config = JSON.parse(
+            localStorage.getItem("gameConfig") || "{}"
+        );
+    } catch (error) {
+        console.error("Could not read game configuration:", error);
+        return;
+    }
+
+    // بازی آنلاین توسط app.py ذخیره می‌شود.
+    // ذخیره دوباره از اینجا باعث ثبت نتیجه تکراری می‌شود.
+    if (config.roomCode) {
+        console.log("Online results are saved by the backend.");
+        return;
+    }
+
+    // ذخیره بازی آفلاین
     const userId = localStorage.getItem("currentUserId");
     const myName = localStorage.getItem("currentUser");
 
@@ -1482,7 +1501,7 @@ async function saveGameResult() {
     const myRank = sortedPlayers.indexOf(myPlayer) + 1;
 
     try {
-        await fetch(API_URL + "/api/save-result", {
+        const response = await fetch(API_URL + "/api/save-result", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -1496,8 +1515,19 @@ async function saveGameResult() {
             })
         });
 
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            console.error(
+                "Could not save offline game result:",
+                data.error || response.statusText
+            );
+            return;
+        }
+
+        console.log("Offline game result saved successfully.");
+
     } catch (e) {
-        console.log("Could not save game result:", e);
+        console.error("Could not save game result:", e);
     }
 }
 
