@@ -32,6 +32,8 @@ function checkLogin() {
 function logout() {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("currentUserId");
+    localStorage.removeItem("access_token");
+
     window.location.href = "index.html";
 }
 
@@ -668,12 +670,12 @@ async function loadAdminAccess() {
 
     if (!adminCard) return;
 
-    // Hide the admin card by default.
     adminCard.hidden = true;
 
     const userId = localStorage.getItem("currentUserId");
+    const token = localStorage.getItem("access_token");
 
-    if (!userId) return;
+    if (!userId || !token) return;
 
     try {
         const response = await fetch(
@@ -1659,6 +1661,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                if (!data.access_token) {
+                    showAuthMessage(
+                        "❌ Server did not provide an access token. Please try again.",
+                        "error"
+                    );
+                    return;
+                }
+
                 localStorage.setItem(
                     "currentUser",
                     data.user.username
@@ -1667,6 +1677,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem(
                     "currentUserId",
                     data.user.id
+                );
+
+                localStorage.setItem(
+                    "access_token",
+                    data.access_token
                 );
 
                 showAuthMessage(
@@ -1763,6 +1778,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                if (!data.access_token) {
+                    showAuthMessage(
+                        "❌ Server did not provide an access token. Please try again.",
+                        "error"
+                    );
+                    return;
+                }
+
                 localStorage.setItem(
                     "currentUser",
                     data.user.username
@@ -1771,6 +1794,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 localStorage.setItem(
                     "currentUserId",
                     data.user.id
+                );
+
+                localStorage.setItem(
+                    "access_token",
+                    data.access_token
                 );
 
                 showAuthMessage(
