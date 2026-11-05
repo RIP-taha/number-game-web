@@ -1,6 +1,4 @@
-
 const API_URL = "https://number-game-api.onrender.com";
-
 let socket;
 let timerInterval;
 let finalScreenShown = false;
@@ -497,8 +495,7 @@ function startBotGame() {
     );
 
     const difficulty = difficultyRadio
-        ? difficultyRadio.value
-        : "medium";
+        ? difficultyRadio.value        : "medium";
 
     if (isNaN(numRounds) || numRounds < 1 || numRounds > 20) {
         showModal(
@@ -712,7 +709,11 @@ let gameState = {
     questionActive: false,
     startTime: 0,
     difficulty: "medium",
-    gameOver: false
+    gameOver: false,
+    isSimultaneousRound: false,
+    submittedPlayers: [],
+    pendingSubmissionRound: null,
+    onlineUiKey: null
 };
 
 
@@ -825,6 +826,15 @@ function initGame() {
             gameState.currentPlayerIdx = state.current_player_idx;
             gameState.roundsWithMath = state.rounds_with_math;
             gameState.gameOver = state.game_over === true;
+            gameState.isSimultaneousRound = state.is_simultaneous_round === true;
+            gameState.submittedPlayers = Array.isArray(state.submitted_players)
+                ? state.submitted_players
+                : [];
+
+            if (gameState.pendingSubmissionRound !== null &&
+                gameState.pendingSubmissionRound !== gameState.currentRound) {
+                gameState.pendingSubmissionRound = null;
+            }
 
             // MATH QUESTION
 
@@ -918,6 +928,11 @@ function initGame() {
 
             const inputMessage = document.getElementById("input-message");
 
+            if (gameState.isSimultaneousRound) {
+                gameState.pendingSubmissionRound = null;
+                updateTurnOnline();
+            }
+
             if (inputMessage) {
                 inputMessage.textContent = "❌ " + message;
                 inputMessage.className = "input-message error";
@@ -978,9 +993,44 @@ function updateTurnOnline(text = "") {
         submitButton.classList.remove("pulse");
         numberInput.disabled = true;
         return;
+    }    const myUsername = localStorage.getItem("currentUser");
+
+    if (gameState.isSimultaneousRound) {
+        const hasSubmitted = gameState.submittedPlayers.includes(myUsername);
+        const isPending = gameState.pendingSubmissionRound === gameState.currentRound;
+        const uiKey = "math:" + gameState.currentRound;
+
+        if (gameState.onlineUiKey !== uiKey) {
+            gameState.onlineUiKey = uiKey;
+            numberInput.value = "";
+        }
+
+        if (hasSubmitted) {
+            turn.textContent = "✅ Answer submitted — waiting for the round to end.";
+            submitButton.disabled = true;
+            submitButton.classList.remove("pulse");
+            numberInput.disabled = true;
+            return;
+        }
+
+        if (isPending) {
+            turn.textContent = "⏳ Submitting your answer...";
+            submitButton.disabled = true;
+            submitButton.classList.remove("pulse");
+            numberInput.disabled = true;
+            return;
+        }
+
+        turn.textContent = "⚡ Math Round — answer now!";
+        submitButton.disabled = false;
+        submitButton.classList.add("pulse");
+        numberInput.disabled = false;
+        return;
     }
 
-    if (gameState.currentPlayerIdx >= gameState.players.length) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIdx];
+
+    if (!currentPlayer) {
         turn.textContent = "Calculating results...";
         submitButton.disabled = true;
         submitButton.classList.remove("pulse");
@@ -988,28 +1038,19 @@ function updateTurnOnline(text = "") {
         return;
     }
 
-    const currentPlayer = gameState.players[gameState.currentPlayerIdx];
-
-    const isMyTurn =
-        currentPlayer.name === localStorage.getItem("currentUser");
-
-    turn.textContent = "Turn: " + currentPlayer.name;
-
-    if (isMyTurn) {
-        submitButton.disabled = false;
-        submitButton.classList.add("pulse");
-
-        numberInput.disabled = false;
-        numberInput.value = "";
-        numberInput.focus();
-
-    } else {
-        submitButton.disabled = true;
-        submitButton.classList.remove("pulse");
-
-        numberInput.disabled = true;
+    const uiKey = "turn:" + gameState.currentRound + ":" + currentPlayer.name;
+    if (gameState.onlineUiKey !== uiKey) {
+        gameState.onlineUiKey = uiKey;
         numberInput.value = "";
     }
+
+    const isMyTurn = currentPlayer.name === myUsername;
+    turn.textContent = "Turn: " + currentPlayer.name;
+    submitButton.disabled = !isMyTurn;
+    numberInput.disabled = !isMyTurn;
+
+    if (isMyTurn) submitButton.classList.add("pulse");
+    else submitButton.classList.remove("pulse");
 }
 
 
@@ -1069,6 +1110,7 @@ function renderTable() {
             gameState.players[gameState.currentPlayerIdx];
 
         const isCurrent =
+            !gameState.isSimultaneousRound &&
             currentPlayer &&
             currentPlayer.name === p.name &&
             !p.isBot &&
@@ -1292,13 +1334,38 @@ function submitNumber() {
             return;
         }
 
+        const username = localStorage.getItem("currentUser");
+
+        if (gameState.isSimultaneousRound) {
+            if (gameState.submittedPlayers.includes(username) ||
+                gameState.pendingSubmissionRound === gameState.currentRound) {
+                msg.textContent = "✅ You have already submitted an answer for this round.";
+                msg.className = "input-message";
+                return;
+            }
+        } else {
+            const currentPlayer = gameState.players[gameState.currentPlayerIdx];
+            if (!currentPlayer || currentPlayer.name !== username) {
+                msg.textContent = "❌ It is not your turn.";
+                msg.className = "input-message error";
+                return;
+            }
+        }
+
         socket.emit("submit_number", {
             room_code: config.roomCode,
-            username: localStorage.getItem("currentUser"),
+            username: username,
             number: val
         });
 
-        msg.textContent = "⏳ Submitting your number...";
+        if (gameState.isSimultaneousRound) {
+            gameState.pendingSubmissionRound = gameState.currentRound;
+            updateTurnOnline();
+            msg.textContent = "⏳ Answer sent. Waiting for the round to end...";
+        } else {
+            msg.textContent = "⏳ Submitting your number...";
+        }
+
         msg.className = "input-message";
         input.value = "";
 
@@ -1425,8 +1492,7 @@ function endRound() {
         const num = gameState.players[i].numbers[r];
         let unique = true;
 
-        for (let k = 0; k < gameState.players.length; k++) {
-            if (
+        for (let k = 0; k < gameState.players.length; k++) {            if (
                 k !== i &&
                 gameState.players[k].numbers[r] === num
             ) {
