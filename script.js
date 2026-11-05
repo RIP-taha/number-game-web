@@ -660,6 +660,41 @@ async function loadProfile() {
 
 
 // =========================
+// ADMIN ACCESS
+// =========================
+
+async function loadAdminAccess() {
+    const adminCard = document.getElementById("admin-panel-card");
+
+    if (!adminCard) return;
+
+    // Hide the admin card by default.
+    adminCard.hidden = true;
+
+    const userId = localStorage.getItem("currentUserId");
+
+    if (!userId) return;
+
+    try {
+        const response = await fetch(
+            API_URL + "/api/user/" + encodeURIComponent(userId)
+        );
+
+        if (!response.ok) return;
+
+        const userData = await response.json();
+
+        if (userData.is_admin === true) {
+            adminCard.hidden = false;
+        }
+
+    } catch (error) {
+        console.error("Could not check admin access:", error);
+    }
+}
+
+
+// =========================
 // GAME STATE
 // =========================
 
@@ -1475,14 +1510,13 @@ async function saveGameResult() {
         return;
     }
 
-    // بازی آنلاین توسط app.py ذخیره می‌شود.
-    // ذخیره دوباره از اینجا باعث ثبت نتیجه تکراری می‌شود.
+    // Online results are saved by app.py.
     if (config.roomCode) {
         console.log("Online results are saved by the backend.");
         return;
     }
 
-    // ذخیره بازی آفلاین
+    // Save offline game result.
     const userId = localStorage.getItem("currentUserId");
     const myName = localStorage.getItem("currentUser");
 
@@ -1557,6 +1591,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (loginBtn) loginBtn.classList.remove("hidden");
             if (logoutBtn) logoutBtn.classList.add("hidden");
         }
+    }
+
+    // Check admin access on dashboard.
+    if (document.getElementById("admin-panel-card")) {
+        loadAdminAccess();
     }
 
     if (document.getElementById("profile-username")) {
