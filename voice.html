@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NUMORA VOICE — Where Every Voice Matters</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css?v=13">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="voice-page">
+
+    <main class="voice-container">
+
+        <!-- HEADER -->
+        <header class="voice-header">
+
+            <a href="lobby.html" class="voice-back">
+                <span>←</span>
+                BACK TO LOBBY
+            </a>
+
+            <div class="voice-brand">
+                <span class="voice-brand-mark">N</span>
+                <span>NUMORA</span>
+            </div>
+
+        </header>
+
+
+        <!-- HERO -->
+        <section class="voice-hero">
+
+            <div class="voice-eyebrow">
+                <span class="voice-live-dot"></span>
+                COMMUNITY FEEDBACK CENTER
+            </div>
+
+            <h1>
+                YOUR VOICE.
+                <span>OUR EVOLUTION.</span>
+            </h1>
+
+            <p class="voice-description">
+                Every idea matters. Share your thoughts, report issues,
+                and help us make NUMORA better with every update.
+            </p>
+
+            <div class="voice-hero-line"></div>
+
+            <div class="voice-stats">
+
+                <div>
+                    <strong>01</strong>
+                    <span>SHARE IDEAS</span>
+                </div>
+
+                <div>
+                    <strong>02</strong>
+                    <span>REPORT ISSUES</span>
+                </div>
+
+                <div>
+                    <strong>03</strong>
+                    <span>MAKE AN IMPACT</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FORM -->
+        <section class="voice-form-section">
+
+            <div class="voice-section-heading">
+                <div>
+                    <span class="voice-section-number">01 / SUBMISSION</span>
+                    <h2>Send a message</h2>
+                </div>
+
+                <span class="voice-required">* REQUIRED FIELDS</span>
+            </div>
+
+
+            <form id="voice-form" class="voice-form">
+
+                <!-- CATEGORY -->
+                <div class="voice-field">
+
+                    <label for="voice-category">
+                        MESSAGE CATEGORY
+                        <span>*</span>
+                    </label>
+
+                    <select id="voice-category" name="category" required>
+                        <option value="" disabled selected>
+                            Select a category
+                        </option>
+
+                        <option value="suggestion">Suggestion</option>
+                        <option value="criticism">Criticism</option>
+                        <option value="bug">Bug Report</option>
+                        <option value="feedback">General Feedback</option>
+                    </select>
+
+                </div>
+
+
+                <!-- SUBJECT -->
+                <div class="voice-field">
+
+                    <label for="voice-subject">
+                        SUBJECT
+                        <span class="voice-optional">OPTIONAL</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="voice-subject"
+                        name="subject"
+                        maxlength="100"
+                        placeholder="Give your message a title..."
+                    >
+
+                </div>
+
+
+                <!-- MESSAGE -->
+                <div class="voice-field">
+
+                    <div class="voice-label-row">
+                        <label for="voice-message">
+                            YOUR MESSAGE
+                            <span>*</span>
+                        </label>
+
+                        <span class="voice-counter">
+                            <strong id="voice-count">0</strong> / 2000
+                        </span>
+                    </div>
+
+                    <textarea
+                        id="voice-message"
+                        name="message"
+                        rows="7"
+                        minlength="10"
+                        maxlength="2000"
+                        placeholder="Tell us what's on your mind..."
+                        required
+                    ></textarea>
+
+                    <p class="voice-field-hint">
+                        Please provide enough details to help us understand your message.
+                    </p>
+
+                </div>
+
+
+                <!-- NOTICE -->
+                <div class="voice-notice">
+                    <span class="voice-notice-icon">✦</span>
+
+                    <p>
+                        Your message will be associated with your account.
+                        Please avoid sharing passwords or other private information.
+                    </p>
+                </div>
+
+
+                <!-- RESPONSE -->
+                <div
+                    id="voice-response"
+                    class="voice-response"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+
+                <!-- SUBMIT -->
+                <button type="submit" id="voice-submit" class="voice-submit">
+
+                    <span id="voice-submit-text">SUBMIT MESSAGE</span>
+
+                    <span class="voice-submit-arrow">↗</span>
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="voice-footer">
+
+            <div class="voice-footer-brand">
+                NUMORA <span>VOICE</span>
+            </div>
+
+            <p>WHERE EVERY VOICE MATTERS.</p>
+
+            <span class="voice-footer-code">COMMUNITY / 008</span>
+
+        </footer>
+
+    </main>
+
+
+    <script>
+        const API_URL = "https://number-game-api.onrender.com";
+
+        const voiceForm = document.getElementById("voice-form");
+        const voiceMessage = document.getElementById("voice-message");
+        const voiceCount = document.getElementById("voice-count");
+        const voiceResponse = document.getElementById("voice-response");
+        const voiceSubmit = document.getElementById("voice-submit");
+        const voiceSubmitText = document.getElementById("voice-submit-text");
+
+
+        // Character counter
+        voiceMessage.addEventListener("input", () => {
+            voiceCount.textContent = voiceMessage.value.length;
+        });
+
+
+        // Show response
+        function showVoiceResponse(message, type) {
+            voiceResponse.textContent = message;
+            voiceResponse.className = "voice-response " + type;
+            voiceResponse.hidden = false;
+        }
+
+
+        // Submit message
+        voiceForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                showVoiceResponse(
+                    "Please log in before submitting a message.",
+                    "voice-error"
+                );
+                return;
+            }
+
+            const category = document.getElementById("voice-category").value;
+            const subject = document.getElementById("voice-subject").value.trim();
+            const message = voiceMessage.value.trim();
+
+            if (!category || message.length < 10) {
+                showVoiceResponse(
+                    "Please select a category and write at least 10 characters.",
+                    "voice-error"
+                );
+                return;
+            }
+
+            voiceSubmit.disabled = true;
+            voiceSubmitText.textContent = "SUBMITTING...";
+
+            voiceResponse.hidden = true;
+
+            try {
+                const response = await fetch(`${API_URL}/api/voice/messages`, {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+
+                    body: JSON.stringify({
+                        category: category,
+                        subject: subject,
+                        message: message
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (response.status === 401) {
+                    throw new Error("Your session has expired. Please log in again.");
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.error || data.message || "Could not submit your message."
+                    );
+                }
+
+                showVoiceResponse(
+                    "Your message has been submitted successfully. Thank you for helping NUMORA grow!",
+                    "voice-success"
+                );
+
+                voiceForm.reset();
+                voiceCount.textContent = "0";
+
+            } catch (error) {
+                showVoiceResponse(
+                    error.message || "Something went wrong. Please try again.",
+                    "voice-error"
+                );
+
+            } finally {
+                voiceSubmit.disabled = false;
+                voiceSubmitText.textContent = "SUBMIT MESSAGE";
+            }
+        });
+    </script>
+
+</body>
+</html>

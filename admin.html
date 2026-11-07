@@ -1,8 +1,10 @@
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -13,85 +15,344 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 
 <body>
 
-    <main class="admin-container">
+<main class="admin-container">
 
-        <!-- HEADER -->
-        <header class="admin-header">
-            <div>
-                <span class="admin-label">NUMORA / ADMINISTRATION</span>
-                <h1>Admin Panel</h1>
-                <p>Manage registered accounts and monitor the platform.</p>
+    <!-- HEADER -->
+    <header class="admin-header">
+
+        <div>
+            <span class="admin-label">NUMORA / ADMINISTRATION</span>
+            <h1>Admin Panel</h1>
+            <p>Manage accounts, review community messages and monitor the platform.</p>
+        </div>
+
+        <a href="lobby.html" class="admin-back-btn">
+            ← Back to Lobby
+        </a>
+
+    </header>
+
+
+    <!-- ACCESS STATUS -->
+    <div id="admin-message" class="admin-message" hidden></div>
+
+
+    <!-- DASHBOARD -->
+    <section id="admin-dashboard" hidden>
+
+        <!-- STATISTICS -->
+        <div class="admin-stats">
+
+            <div class="admin-stat-card">
+                <span class="admin-stat-label">TOTAL USERS</span>
+                <strong id="total-users">0</strong>
+                <span class="admin-stat-description">Registered accounts</span>
             </div>
 
-            <a href="lobby.html" class="admin-back-btn">
-                ← Back to Lobby
-            </a>
-        </header>
+            <div class="admin-stat-card">
+                <span class="admin-stat-label">ADMINISTRATORS</span>
+                <strong id="total-admins">0</strong>
+                <span class="admin-stat-description">Admin accounts</span>
+            </div>
 
-        <!-- ACCESS STATUS -->
-        <div id="admin-message" class="admin-message" hidden></div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-label">REGULAR USERS</span>
+                <strong id="total-regular-users">0</strong>
+                <span class="admin-stat-description">Standard accounts</span>
+            </div>
 
-        <!-- DASHBOARD -->
-        <section id="admin-dashboard" hidden>
+            <div class="admin-stat-card voice-admin-stat">
+                <span class="admin-stat-label">VOICE MESSAGES</span>
+                <strong id="total-voice-messages">0</strong>
+                <span class="admin-stat-description">Community submissions</span>
+            </div>
 
-            <div class="admin-stats">
+        </div>
 
-                <div class="admin-stat-card">
-                    <span class="admin-stat-label">TOTAL USERS</span>
-                    <strong id="total-users">0</strong>
-                    <span class="admin-stat-description">Registered accounts</span>
+
+        <!-- USERS SECTION -->
+        <section class="admin-users-section">
+
+            <div class="admin-section-header">
+
+                <div>
+                    <span class="admin-label">USER MANAGEMENT</span>
+                    <h2>Registered Accounts</h2>
                 </div>
 
-                <div class="admin-stat-card">
-                    <span class="admin-stat-label">ADMINISTRATORS</span>
-                    <strong id="total-admins">0</strong>
-                    <span class="admin-stat-description">Admin accounts</span>
-                </div>
-
-                <div class="admin-stat-card">
-                    <span class="admin-stat-label">REGULAR USERS</span>
-                    <strong id="total-regular-users">0</strong>
-                    <span class="admin-stat-description">Standard accounts</span>
-                </div>
+                <button id="refresh-users" class="admin-refresh-btn">
+                    ↻ Refresh
+                </button>
 
             </div>
 
-            <!-- USERS TABLE -->
-            <section class="admin-users-section">
 
-                <div class="admin-section-header">
+            <div class="admin-table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USERNAME</th>
+                            <th>EMAIL</th>
+                            <th>ROLE</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="4" class="admin-empty">
+                                Loading accounts...
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             NUMORA VOICE MANAGEMENT
+        ================================== -->
+
+        <section class="admin-voice-section">
+
+            <div class="admin-section-header">
+
+                <div>
+                    <span class="admin-label">08 / COMMUNITY MANAGEMENT</span>
+                    <h2>NUMORA VOICE</h2>
+                    <p class="admin-voice-subtitle">
+                        Read, review and manage community submissions.
+                    </p>
+                </div>
+
+                <button id="refresh-voice" class="admin-refresh-btn">
+                    ↻ Refresh Messages
+                </button>
+
+            </div>
+
+
+            <!-- FILTERS -->
+            <div class="voice-admin-filters">
+
+                <div class="voice-admin-filter">
+
+                    <label for="voice-filter-category">
+                        CATEGORY
+                    </label>
+
+                    <select id="voice-filter-category">
+
+                        <option value="">All Categories</option>
+                        <option value="suggestion">Suggestions</option>
+                        <option value="criticism">Criticism</option>
+                        <option value="bug">Bug Reports</option>
+                        <option value="feedback">General Feedback</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="voice-admin-filter">
+
+                    <label for="voice-filter-status">
+                        STATUS
+                    </label>
+
+                    <select id="voice-filter-status">
+
+                        <option value="">All Statuses</option>
+                        <option value="new">New</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="replied">Replied</option>
+                        <option value="archived">Archived</option>
+
+                    </select>
+
+                </div>
+
+                <button id="apply-voice-filters" class="voice-filter-button">
+                    APPLY FILTERS
+                </button>
+
+                <button id="clear-voice-filters" class="voice-clear-button">
+                    CLEAR
+                </button>
+
+            </div>
+
+
+            <!-- MESSAGES TABLE -->
+            <div class="admin-table-wrapper voice-table-wrapper">
+
+                <table class="admin-table voice-admin-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>USER</th>
+                            <th>CATEGORY</th>
+                            <th>SUBJECT</th>
+                            <th>STATUS</th>
+                            <th>DATE</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="voice-table-body">
+
+                        <tr>
+                            <td colspan="7" class="admin-empty">
+                                Loading messages...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div id="voice-admin-message" class="voice-admin-message" hidden></div>
+
+
+            <!-- MESSAGE DETAILS -->
+            <section id="voice-detail-panel" class="voice-detail-panel" hidden>
+
+                <div class="voice-detail-header">
+
                     <div>
-                        <span class="admin-label">USER MANAGEMENT</span>
-                        <h2>Registered Accounts</h2>
+                        <span class="admin-label">MESSAGE DETAILS</span>
+                        <h3 id="voice-detail-title">Message</h3>
                     </div>
 
-                    <button id="refresh-users" class="admin-refresh-btn">
-                        ↻ Refresh
+                    <button id="close-voice-detail" class="voice-close-button">
+                        ✕
                     </button>
+
                 </div>
+
+
+                <div class="voice-detail-meta">
+
+                    <div>
+                        <span>MESSAGE ID</span>
+                        <strong id="detail-message-id">—</strong>
+                    </div>
+
+                    <div>
+                        <span>SENDER</span>
+                        <strong id="detail-username">—</strong>
+                    </div>
+
+                    <div>
+                        <span>EMAIL</span>
+                        <strong id="detail-email">—</strong>
+                    </div>
+
+                    <div>
+                        <span>CATEGORY</span>
+                        <strong id="detail-category">—</strong>
+                    </div>
+
+                    <div>
+                        <span>DATE</span>
+                        <strong id="detail-date">—</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="voice-detail-message-box">
+
+                    <span>MESSAGE CONTENT</span>
+
+                    <p id="detail-message-content"></p>
+
+                </div>
+
+
+                <div class="voice-detail-actions">
+
+                    <div class="voice-admin-filter">
+
+                        <label for="voice-detail-status">
+                            UPDATE MESSAGE STATUS
+                        </label>
+
+                        <select id="voice-detail-status">
+
+                            <option value="new">New</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="replied">Replied</option>
+                            <option value="archived">Archived</option>
+
+                        </select>
+
+                    </div>
+
+                    <button id="update-voice-status" class="voice-filter-button">
+                        SAVE STATUS
+                    </button>
+
+                    <button id="view-user-messages" class="voice-user-history-button">
+                        VIEW USER HISTORY
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- USER MESSAGE HISTORY -->
+            <section id="voice-user-history" class="voice-user-history" hidden>
+
+                <div class="voice-detail-header">
+
+                    <div>
+                        <span class="admin-label">ACCOUNT ACTIVITY</span>
+                        <h3 id="voice-history-title">User Messages</h3>
+                    </div>
+
+                    <button id="close-user-history" class="voice-close-button">
+                        ✕
+                    </button>
+
+                </div>
+
 
                 <div class="admin-table-wrapper">
 
-                    <table class="admin-table">
+                    <table class="admin-table voice-admin-table">
 
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>USERNAME</th>
-                                <th>EMAIL</th>
-                                <th>ROLE</th>
+                                <th>CATEGORY</th>
+                                <th>SUBJECT</th>
+                                <th>STATUS</th>
+                                <th>DATE</th>
+                                <th>ACTION</th>
                             </tr>
                         </thead>
 
-                        <tbody id="users-table-body">
+                        <tbody id="voice-history-body">
                             <tr>
-                                <td colspan="4" class="admin-empty">
-                                    Loading accounts...
+                                <td colspan="6" class="admin-empty">
+                                    Loading user history...
                                 </td>
                             </tr>
                         </tbody>
@@ -100,141 +361,621 @@
 
                 </div>
 
-                <p class="admin-footer-note">
-                    NUMORA Administration System
-                </p>
-
             </section>
 
         </section>
 
-    </main>
 
-    <script>
-        const API_URL = "https://number-game-api.onrender.com";
+        <!-- FOOTER -->
+        <p class="admin-footer-note">
+            NUMORA Administration System
+        </p>
 
-        const messageBox = document.getElementById("admin-message");
-        const dashboard = document.getElementById("admin-dashboard");
-        const tableBody = document.getElementById("users-table-body");
+    </section>
 
-        function showMessage(message, type = "error") {
-            messageBox.textContent = message;
-            messageBox.className = "admin-message " + type;
-            messageBox.hidden = false;
-            dashboard.hidden = true;
+</main>
+
+
+<script>
+    const API_URL = "https://number-game-api.onrender.com";
+
+    const messageBox = document.getElementById("admin-message");
+    const dashboard = document.getElementById("admin-dashboard");
+    const tableBody = document.getElementById("users-table-body");
+
+    const voiceTableBody = document.getElementById("voice-table-body");
+    const voiceAdminMessage = document.getElementById("voice-admin-message");
+
+    const voiceDetailPanel = document.getElementById("voice-detail-panel");
+    const voiceHistoryPanel = document.getElementById("voice-user-history");
+
+    let currentVoiceMessage = null;
+    let currentVoiceMessages = [];
+    let currentHistoryMessages = [];
+
+
+    // =====================================
+    // GENERAL HELPERS
+    // =====================================
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        })[character]);
+    }
+
+
+    function getToken() {
+        return localStorage.getItem("access_token");
+    }
+
+
+    function showMessage(message, type = "error") {
+        messageBox.textContent = message;
+        messageBox.className = "admin-message " + type;
+        messageBox.hidden = false;
+        dashboard.hidden = true;
+    }
+
+
+    function showVoiceMessage(message, type = "error") {
+        voiceAdminMessage.textContent = message;
+        voiceAdminMessage.className = "voice-admin-message " + type;
+        voiceAdminMessage.hidden = false;
+    }
+
+
+    function hideVoiceMessage() {
+        voiceAdminMessage.hidden = true;
+    }
+
+
+    function categoryLabel(category) {
+        const labels = {
+            suggestion: "SUGGESTION",
+            criticism: "CRITICISM",
+            bug: "BUG REPORT",
+            feedback: "FEEDBACK"
+        };
+
+        return labels[category] || String(category || "UNKNOWN").toUpperCase();
+    }
+
+
+    function statusLabel(status) {
+        const labels = {
+            new: "NEW",
+            reviewed: "REVIEWED",
+            replied: "REPLIED",
+            archived: "ARCHIVED"
+        };
+
+        return labels[status] || String(status || "NEW").toUpperCase();
+    }
+
+
+    function formatDate(value) {
+        if (!value) return "—";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
         }
 
-        function escapeHTML(value) {
-            return String(value ?? "").replace(/[&<>"']/g, character => ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-            })[character]);
+        return date.toLocaleString();
+    }
+
+
+    function statusClass(status) {
+        const allowed = ["new", "reviewed", "replied", "archived"];
+
+        return allowed.includes(status) ? status : "new";
+    }
+
+
+    async function adminFetch(path, options = {}) {
+        const token = getToken();
+
+        if (!token) {
+            throw new Error("AUTH_REQUIRED");
         }
 
-        async function loadUsers() {
-            const token = localStorage.getItem("access_token");
+        const response = await fetch(API_URL + path, {
+            ...options,
+            headers: {
+                "Authorization": "Bearer " + token,
+                ...(options.body ? { "Content-Type": "application/json" } : {}),
+                ...(options.headers || {})
+            }
+        });
 
-            if (!token) {
-                showMessage(
-                    "Authentication required. Please log in again."
-                );
+        if (response.status === 401) {
+            throw new Error("AUTH_REQUIRED");
+        }
+
+        if (response.status === 403) {
+            throw new Error("ACCESS_DENIED");
+        }
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || data.message || "Request failed: " + response.status
+            );
+        }
+
+        return data;
+    }
+
+
+    function handleAdminError(error, target = "general") {
+        console.error("NUMORA Admin:", error);
+
+        if (error.message === "AUTH_REQUIRED") {
+            showMessage("Your session has expired. Please log in again.");
+            return;
+        }
+
+        if (error.message === "ACCESS_DENIED") {
+            showMessage("Access denied. Administrator permission is required.");
+            return;
+        }
+
+        if (target === "voice") {
+            showVoiceMessage(error.message || "Could not complete the request.");
+            return;
+        }
+
+        showMessage(error.message || "Could not connect to the server.");
+    }
+
+
+    // =====================================
+    // USERS
+    // =====================================
+
+    async function loadUsers() {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="admin-empty">Loading accounts...</td>
+            </tr>
+        `;
+
+        try {
+            const data = await adminFetch("/api/admin/users");
+            const users = data.users || [];
+
+            const admins = users.filter(user => user.is_admin === true).length;
+            const regularUsers = users.length - admins;
+
+            document.getElementById("total-users").textContent = users.length;
+            document.getElementById("total-admins").textContent = admins;
+            document.getElementById("total-regular-users").textContent = regularUsers;
+
+            if (!users.length) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="admin-empty">
+                            No registered accounts found.
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
-            tableBody.innerHTML = `
+            tableBody.innerHTML = users.map(user => `
                 <tr>
-                    <td colspan="4" class="admin-empty">
-                        Loading accounts...
+                    <td>#${escapeHTML(user.id)}</td>
+                    <td>${escapeHTML(user.username)}</td>
+                    <td>${escapeHTML(user.email)}</td>
+                    <td>
+                        <span class="admin-role ${user.is_admin ? "admin-role-admin" : "admin-role-user"}">
+                            ${user.is_admin ? "ADMIN" : "USER"}
+                        </span>
+                    </td>
+                </tr>
+            `).join("");
+
+        } catch (error) {
+            handleAdminError(error);
+        }
+    }
+
+
+    // =====================================
+    // VOICE MESSAGES
+    // =====================================
+
+    async function loadVoiceMessages() {
+        hideVoiceMessage();
+
+        voiceTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="admin-empty">Loading messages...</td>
+            </tr>
+        `;
+
+        const category = document.getElementById("voice-filter-category").value;
+        const status = document.getElementById("voice-filter-status").value;
+
+        const params = new URLSearchParams();
+
+        if (category) params.set("category", category);
+        if (status) params.set("status", status);
+
+        const query = params.toString();
+        const endpoint = "/api/admin/voice/messages" + (query ? "?" + query : "");
+
+        try {
+            const data = await adminFetch(endpoint);
+
+            currentVoiceMessages = data.messages || [];
+
+            document.getElementById("total-voice-messages").textContent =
+                currentVoiceMessages.length;
+
+            renderVoiceMessages(currentVoiceMessages);
+
+        } catch (error) {
+            voiceTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="admin-empty">
+                        Could not load messages.
                     </td>
                 </tr>
             `;
 
-            dashboard.hidden = false;
-            messageBox.hidden = true;
+            handleAdminError(error, "voice");
+        }
+    }
 
-            try {
-                const response = await fetch(
-                    API_URL + "/api/admin/users",
-                    {
-                        method: "GET",
-                        headers: {
-                            "Authorization": "Bearer " + token
-                        }
-                    }
-                );
 
-                if (response.status === 401) {
-                    showMessage(
-                        "Your session is invalid or expired. Please log in again."
-                    );
-                    return;
-                }
-
-                if (response.status === 403) {
-                    showMessage(
-                        "Access denied. Your account is not an administrator."
-                    );
-                    return;
-                }
-
-                if (!response.ok) {
-                    showMessage(
-                        "Could not load accounts. Server error: " + response.status
-                    );
-                    return;
-                }
-
-                const data = await response.json();
-                const users = data.users || [];
-
-                const admins = users.filter(user => user.is_admin === true).length;
-                const regularUsers = users.length - admins;
-
-                document.getElementById("total-users").textContent = users.length;
-                document.getElementById("total-admins").textContent = admins;
-                document.getElementById("total-regular-users").textContent = regularUsers;
-
-                if (users.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="admin-empty">
-                                No registered accounts found.
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tableBody.innerHTML = users.map(user => `
-                        <tr>
-                            <td>#${escapeHTML(user.id)}</td>
-                            <td>${escapeHTML(user.username)}</td>
-                            <td>${escapeHTML(user.email)}</td>
-                            <td>
-                                <span class="admin-role ${user.is_admin ? "admin-role-admin" : "admin-role-user"}">
-                                    ${user.is_admin ? "ADMIN" : "USER"}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join("");
-                }
-
-            } catch (error) {
-                console.error("Admin panel error:", error);
-                showMessage(
-                    "Could not connect to the server. Please try again."
-                );
-            }
+    function renderVoiceMessages(messages) {
+        if (!messages.length) {
+            voiceTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="admin-empty">
+                        No messages found.
+                    </td>
+                </tr>
+            `;
+            return;
         }
 
-        document.getElementById("refresh-users").addEventListener(
-            "click",
-            loadUsers
+        voiceTableBody.innerHTML = messages.map(message => `
+            <tr>
+                <td>#${escapeHTML(message.id)}</td>
+
+                <td>
+                    <div class="voice-table-user">
+                        <strong>${escapeHTML(message.username || "Unknown")}</strong>
+                        <span>${escapeHTML(message.email || "")}</span>
+                    </div>
+                </td>
+
+                <td>
+                    <span class="voice-category-badge">
+                        ${escapeHTML(categoryLabel(message.category))}
+                    </span>
+                </td>
+
+                <td>${escapeHTML(message.subject || "No subject")}</td>
+
+                <td>
+                    <span class="voice-status-badge voice-status-${statusClass(message.status)}">
+                        ${escapeHTML(statusLabel(message.status))}
+                    </span>
+                </td>
+
+                <td>${escapeHTML(formatDate(message.created_at))}</td>
+
+                <td>
+                    <button
+                        class="voice-view-button"
+                        data-message-id="${escapeHTML(message.id)}"
+                    >
+                        VIEW
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+
+    // =====================================
+    // MESSAGE DETAILS
+    // =====================================
+
+    function openVoiceMessage(message) {
+        currentVoiceMessage = message;
+
+        document.getElementById("voice-detail-title").textContent =
+            message.subject || "Community Message";
+
+        document.getElementById("detail-message-id").textContent =
+            "#" + message.id;
+
+        document.getElementById("detail-username").textContent =
+            message.username || "Unknown";
+
+        document.getElementById("detail-email").textContent =
+            message.email || "—";
+
+        document.getElementById("detail-category").textContent =
+            categoryLabel(message.category);
+
+        document.getElementById("detail-date").textContent =
+            formatDate(message.created_at);
+
+        document.getElementById("detail-message-content").textContent =
+            message.message || "";
+
+        document.getElementById("voice-detail-status").value =
+            statusClass(message.status);
+
+        voiceDetailPanel.hidden = false;
+        voiceHistoryPanel.hidden = true;
+
+        voiceDetailPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+
+
+    // =====================================
+    // USER MESSAGE HISTORY
+    // =====================================
+
+    async function loadUserHistory(userId, username) {
+        voiceHistoryPanel.hidden = false;
+
+        document.getElementById("voice-history-title").textContent =
+            "Messages from " + (username || "User");
+
+        const historyBody = document.getElementById("voice-history-body");
+
+        historyBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="admin-empty">Loading user history...</td>
+            </tr>
+        `;
+
+        voiceHistoryPanel.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        try {
+            const data = await adminFetch(
+                "/api/admin/voice/users/" + encodeURIComponent(userId) + "/messages"
+            );
+
+            currentHistoryMessages = data.messages || [];
+
+            if (!currentHistoryMessages.length) {
+                historyBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="admin-empty">
+                            This account has not submitted any messages.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            historyBody.innerHTML = currentHistoryMessages.map(message => `
+                <tr>
+                    <td>#${escapeHTML(message.id)}</td>
+
+                    <td>${escapeHTML(categoryLabel(message.category))}</td>
+
+                    <td>${escapeHTML(message.subject || "No subject")}</td>
+
+                    <td>
+                        <span class="voice-status-badge voice-status-${statusClass(message.status)}">
+                            ${escapeHTML(statusLabel(message.status))}
+                        </span>
+                    </td>
+
+                    <td>${escapeHTML(formatDate(message.created_at))}</td>
+
+                    <td>
+                        <button
+                            class="voice-history-view-button"
+                            data-message-id="${escapeHTML(message.id)}"
+                        >
+                            VIEW
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+
+        } catch (error) {
+            historyBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="admin-empty">
+                        Could not load this account's messages.
+                    </td>
+                </tr>
+            `;
+
+            handleAdminError(error, "voice");
+        }
+    }
+
+
+    // =====================================
+    // UPDATE MESSAGE STATUS
+    // =====================================
+
+    async function updateVoiceStatus() {
+        if (!currentVoiceMessage) return;
+
+        const newStatus = document.getElementById("voice-detail-status").value;
+        const button = document.getElementById("update-voice-status");
+
+        button.disabled = true;
+        button.textContent = "SAVING...";
+
+        try {
+            await adminFetch(
+                "/api/admin/voice/messages/" +
+                encodeURIComponent(currentVoiceMessage.id),
+                {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                }
+            );
+
+            currentVoiceMessage.status = newStatus;
+
+            showVoiceMessage("Message status updated successfully.", "success");
+
+            await loadVoiceMessages();
+
+            if (!voiceHistoryPanel.hidden && currentVoiceMessage.user_id) {
+                const user = currentVoiceMessage;
+                await loadUserHistory(user.user_id, user.username);
+            }
+
+            openVoiceMessage(currentVoiceMessage);
+
+        } catch (error) {
+            handleAdminError(error, "voice");
+
+        } finally {
+            button.disabled = false;
+            button.textContent = "SAVE STATUS";
+        }
+    }
+
+
+    // =====================================
+    // EVENT LISTENERS
+    // =====================================
+
+    document.getElementById("refresh-users").addEventListener(
+        "click",
+        loadUsers
+    );
+
+    document.getElementById("refresh-voice").addEventListener(
+        "click",
+        loadVoiceMessages
+    );
+
+    document.getElementById("apply-voice-filters").addEventListener(
+        "click",
+        loadVoiceMessages
+    );
+
+    document.getElementById("clear-voice-filters").addEventListener(
+        "click",
+        () => {
+            document.getElementById("voice-filter-category").value = "";
+            document.getElementById("voice-filter-status").value = "";
+            loadVoiceMessages();
+        }
+    );
+
+    document.getElementById("close-voice-detail").addEventListener(
+        "click",
+        () => {
+            voiceDetailPanel.hidden = true;
+        }
+    );
+
+    document.getElementById("close-user-history").addEventListener(
+        "click",
+        () => {
+            voiceHistoryPanel.hidden = true;
+        }
+    );
+
+    document.getElementById("update-voice-status").addEventListener(
+        "click",
+        updateVoiceStatus
+    );
+
+    document.getElementById("view-user-messages").addEventListener(
+        "click",
+        () => {
+            if (!currentVoiceMessage) return;
+
+            loadUserHistory(
+                currentVoiceMessage.user_id,
+                currentVoiceMessage.username
+            );
+        }
+    );
+
+
+    // Open message from main table
+    voiceTableBody.addEventListener("click", event => {
+        const button = event.target.closest("[data-message-id]");
+
+        if (!button) return;
+
+        const message = currentVoiceMessages.find(
+            item => String(item.id) === button.dataset.messageId
         );
 
-        loadUsers();
-    </script>
+        if (message) {
+            openVoiceMessage(message);
+        }
+    });
+
+
+    // Open message from account history
+    document.getElementById("voice-history-body").addEventListener(
+        "click",
+        event => {
+            const button = event.target.closest("[data-message-id]");
+
+            if (!button) return;
+
+            const message = currentHistoryMessages.find(
+                item => String(item.id) === button.dataset.messageId
+            );
+
+            if (message) {
+                openVoiceMessage(message);
+            }
+        }
+    );
+
+
+    // =====================================
+    // INITIALIZATION
+    // =====================================
+
+    async function initializeAdminPanel() {
+        if (!getToken()) {
+            showMessage("Authentication required. Please log in again.");
+            return;
+        }
+
+        dashboard.hidden = false;
+        messageBox.hidden = true;
+
+        await Promise.all([
+            loadUsers(),
+            loadVoiceMessages()
+        ]);
+    }
+
+    initializeAdminPanel();
+
+</script>
 
 </body>
 </html>

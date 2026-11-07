@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -12,7 +13,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=12">
 </head>
 
 <body>
@@ -50,6 +51,7 @@
 
         <div class="lobby-grid">
 
+            <!-- 01 / SOLO -->
             <div class="lobby-card">
                 <div class="lobby-icon">🤖</div>
                 <span class="lobby-card-number">01 / SOLO</span>
@@ -63,6 +65,7 @@
                 </a>
             </div>
 
+            <!-- 02 / ONLINE -->
             <div class="lobby-card">
                 <div class="lobby-icon">🌐</div>
                 <span class="lobby-card-number">02 / ONLINE</span>
@@ -76,6 +79,7 @@
                 </button>
             </div>
 
+            <!-- 03 / PRIVATE -->
             <div class="lobby-card">
                 <div class="lobby-icon">✦</div>
                 <span class="lobby-card-number">03 / PRIVATE</span>
@@ -89,6 +93,7 @@
                 </a>
             </div>
 
+            <!-- 04 / INVITE -->
             <div class="lobby-card">
                 <div class="lobby-icon">⌘</div>
                 <span class="lobby-card-number">04 / INVITE</span>
@@ -102,6 +107,7 @@
                 </a>
             </div>
 
+            <!-- 05 / PERSONAL -->
             <div class="lobby-card">
                 <div class="lobby-icon">◉</div>
                 <span class="lobby-card-number">05 / PERSONAL</span>
@@ -115,6 +121,7 @@
                 </a>
             </div>
 
+            <!-- 06 / INFORMATION -->
             <div class="lobby-card">
                 <div class="lobby-icon">ⓘ</div>
                 <span class="lobby-card-number">06 / INFORMATION</span>
@@ -128,7 +135,7 @@
                 </a>
             </div>
 
-            <!-- ADMIN PANEL CARD -->
+            <!-- 07 / ADMINISTRATION -->
             <div class="lobby-card" id="admin-panel-card" hidden>
                 <div class="lobby-icon">⚙</div>
                 <span class="lobby-card-number">07 / ADMINISTRATION</span>
@@ -140,6 +147,45 @@
                     <span>OPEN ADMIN PANEL</span>
                     <span class="card-arrow">↗</span>
                 </a>
+            </div>
+
+            <!-- 08 / COMMUNITY - NUMORA VOICE -->
+            <div class="lobby-card voice-card">
+
+                <div class="voice-card-top">
+                    <div class="lobby-icon voice-icon">
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             xmlns="http://www.w3.org/2000/svg"
+                             aria-hidden="true">
+                            <path d="M21 11.5A8.38 8.38 0 0 1 12.5 20a8.3 8.3 0 0 1-4-.95L3 21l1.95-5.5A8.3 8.3 0 0 1 4 11.5 8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"
+                                  stroke="currentColor"
+                                  stroke-width="1.6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <path d="M8 11.5h9M8 15h6"
+                                  stroke="currentColor"
+                                  stroke-width="1.6"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <span class="voice-status">COMMUNITY</span>
+                </div>
+
+                <span class="lobby-card-number">08 / COMMUNITY</span>
+
+                <h2>NUMORA VOICE</h2>
+
+                <p>
+                    Share your ideas, report bugs, and help us improve NUMORA.
+                </p>
+
+                <a href="voice.html" class="btn-primary voice-button">
+                    <span>ENTER NUMORA VOICE</span>
+                    <span class="card-arrow">↗</span>
+                </a>
+
             </div>
 
         </div>
