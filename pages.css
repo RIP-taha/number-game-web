@@ -1,0 +1,54 @@
+/* NUMORA shared upgrade for login, bot-setup, room, profile and voice.
+   Load AFTER style.css. Uses the existing class names, so no markup changes are needed. */
+
+/* ---- Shared: focus + form feel ---- */
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid #b9a8ff; outline-offset: 3px; }
+select, .custom-select { color-scheme: dark; }
+
+/* ---- Login ---- */
+body.numora-auth-body .auth-card { border: 1px solid rgba(167, 139, 250, 0.28); border-radius: 24px; background: linear-gradient(150deg, rgba(23, 28, 46, 0.95), rgba(12, 15, 29, 0.98)); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4), 0 0 60px rgba(121, 87, 255, 0.12); }
+body.numora-auth-body .auth-tab.active { background: linear-gradient(115deg, #8968ff, #6844e8); color: #fff; box-shadow: 0 6px 20px rgba(104, 68, 232, 0.35); }
+body.numora-auth-body .auth-form input { border: 1px solid rgba(167, 139, 250, 0.22); border-radius: 12px; background: #090c18; transition: border-color 0.2s, box-shadow 0.2s; }
+body.numora-auth-body .auth-form input:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18); outline: none; }
+body.numora-auth-body .auth-submit .auth-submit-arrow { transition: transform 0.2s; }
+body.numora-auth-body .auth-submit:hover .auth-submit-arrow { transform: translateX(5px); }
+
+/* ---- Bot setup ---- */
+main.bot-setup-page input[type="range"] { accent-color: #8b6cff; }
+main.bot-setup-page .config-number span { color: #fff; font: 700 2.3rem 'Space Grotesk', sans-serif; }
+main.bot-setup-page .difficulty-card { transition: transform 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s; }
+main.bot-setup-page .difficulty-card:hover { transform: translateY(-4px); border-color: rgba(167, 139, 250, 0.55); }
+main.bot-setup-page .difficulty-option input:checked + .difficulty-card {
+    border-color: #a78bfa;
+    background: linear-gradient(145deg, rgba(104, 68, 232, 0.36), rgba(17, 21, 38, 0.96));
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2), 0 14px 34px rgba(0, 0, 0, 0.3);
+}
+main.bot-setup-page .bot-start-btn { background: linear-gradient(115deg, #8968ff, #6844e8); box-shadow: 0 10px 30px rgba(104, 68, 232, 0.35); transition: transform 0.2s, box-shadow 0.2s; }
+main.bot-setup-page .bot-start-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(121, 87, 255, 0.45); }
+main.bot-setup-page .bot-start-btn .start-arrow { display: inline-block; transition: transform 0.2s; }
+main.bot-setup-page .bot-start-btn:hover .start-arrow { transform: translateX(5px); }
+
+/* ---- Room ---- */
+main.numora-room-page .numora-room-card { border-radius: 24px; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35), 0 0 60px rgba(121, 87, 255, 0.1); }
+main.numora-room-page .room-code-display { color: #fff; font: 700 clamp(2.4rem, 7vw, 3.8rem) 'JetBrains Mono', monospace; letter-spacing: 0.35em; text-shadow: 0 0 30px rgba(139, 108, 255, 0.6); }
+main.numora-room-page #join-room-code { text-align: center; text-transform: uppercase; font: 700 2rem 'JetBrains Mono', monospace; letter-spacing: 0.4em; transition: border-color 0.2s, box-shadow 0.2s; }
+main.numora-room-page #join-room-code:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); outline: none; }
+main.numora-room-page .numora-player-list li { transition: transform 0.2s, background 0.2s, border-color 0.2s; }
+main.numora-room-page .numora-player-list li:hover { transform: translateX(4px); border-color: rgba(167, 139, 250, 0.45); }
+main.numora-room-page input[type="range"] { accent-color: #8b6cff; }
+
+/* ---- Profile ---- */
+main.numora-profile-page .profile-avatar { background: linear-gradient(145deg, #967cff, #6843ed); box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2), 0 12px 34px rgba(104, 67, 237, 0.4); }
+main.numora-profile-page .stat-card { transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; }
+main.numora-profile-page .stat-card:hover { transform: translateY(-6px); border-color: rgba(167, 139, 250, 0.5); box-shadow: 0 16px 38px rgba(0, 0, 0, 0.3), 0 0 26px rgba(121, 87, 255, 0.12); }
+main.numora-profile-page .stat-value { background: linear-gradient(95deg, #fff, #c4b5fd); -webkit-background-clip: text; background-clip: text; color: transparent; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums; }
+main.numora-profile-page .history-list > * { transition: transform 0.2s, background 0.2s; }
+main.numora-profile-page .history-list > *:hover { transform: translateX(4px); }
+
+/* ---- Voice ---- */
+body.voice-page .voice-field input, body.voice-page .voice-field select, body.voice-page .voice-field textarea { border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s; }
+body.voice-page .voice-field input:focus, body.voice-page .voice-field select:focus, body.voice-page .voice-field textarea:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18); outline: none; }
+body.voice-page .voice-submit { background: linear-gradient(115deg, #8968ff, #6844e8); box-shadow: 0 10px 30px rgba(104, 68, 232, 0.35); transition: transform 0.2s, box-shadow 0.2s; }
+body.voice-page .voice-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(121, 87, 255, 0.45); }
+body.voice-page .voice-submit .voice-submit-arrow { display: inline-block; transition: transform 0.2s; }
+body.voice-page .voice-submit:hover .voice-submit-arrow { transform: translate(4px, -4px); }

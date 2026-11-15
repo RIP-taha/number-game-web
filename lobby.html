@@ -1,19 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
     <link rel="icon" type="image/png" href="favicon.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090B14">
 
     <title>Lobby | NUMORA</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="lobby.css?v=2">
 </head>
 
 <body>
@@ -32,169 +32,157 @@
         </div>
     </nav>
 
-    <main class="lobby-page numora-lobby">
+    <main class="lobby-v2">
 
-        <div class="lobby-heading">
-            <div class="lobby-badge">
-                <span class="status-dot"></span>
-                GAME CENTER
-            </div>
+        <header class="lobby-head">
+            <p class="lobby-hello">Welcome back, <span id="greetName">player</span></p>
+            <h1>Choose your game mode.</h1>
+            <p class="lobby-sub">Pick your challenge. Make your move. Prove your skills.</p>
+        </header>
 
-            <h1 class="page-title">
-                CHOOSE YOUR <span>GAME MODE.</span>
-            </h1>
+        <h2 class="lobby-group">Play</h2>
 
-            <p class="page-subtitle">
-                Pick your challenge. Make your move. Prove your skills.
-            </p>
-        </div>
+        <!-- Featured: Random Match -->
+        <button class="mode-card mode-featured" onclick="startRandomMatch()">
+            <span class="ic-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+            </span>
+            <span>
+                <span class="tag">Online</span>
+                <h3>Random Match</h3>
+                <span class="swap">
+                    <p>Find an opponent and compete against real players.</p>
+                    <ul class="detail">
+                        <li>Matched with a real player</li>
+                        <li>Compete in real time</li>
+                        <li>One click to start</li>
+                    </ul>
+                </span>
+            </span>
+            <span class="cta">Find match<i>↗</i></span>
+            <span class="sat sat-a">Real players</span>
+            <span class="sat sat-c">Real time</span>
+            <span class="sat sat-b">One click</span>
+        </button>
 
-        <div class="lobby-grid">
+        <div class="mode-grid">
 
-            <!-- 01 / SOLO -->
-            <div class="lobby-card">
-                <div class="lobby-icon">🤖</div>
-                <span class="lobby-card-number">01 / SOLO</span>
-
-                <h2>Play vs Bots</h2>
-                <p>Challenge AI opponents and test your strategy.</p>
-
-                <a href="bot-setup.html" class="btn-primary">
-                    <span>PLAY NOW</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 02 / ONLINE -->
-            <div class="lobby-card">
-                <div class="lobby-icon">🌐</div>
-                <span class="lobby-card-number">02 / ONLINE</span>
-
-                <h2>Random Match</h2>
-                <p>Find an opponent and compete against real players.</p>
-
-                <button class="btn-primary" onclick="startRandomMatch()">
-                    <span>FIND MATCH</span>
-                    <span class="card-arrow">↗</span>
-                </button>
-            </div>
-
-            <!-- 03 / PRIVATE -->
-            <div class="lobby-card">
-                <div class="lobby-icon">✦</div>
-                <span class="lobby-card-number">03 / PRIVATE</span>
-
-                <h2>Create Room</h2>
-                <p>Set up a private room and invite your friends.</p>
-
-                <a href="room.html?action=create" class="btn-primary">
-                    <span>CREATE ROOM</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 04 / INVITE -->
-            <div class="lobby-card">
-                <div class="lobby-icon">⌘</div>
-                <span class="lobby-card-number">04 / INVITE</span>
-
-                <h2>Join Room</h2>
-                <p>Enter an invitation code and join the competition.</p>
-
-                <a href="room.html?action=join" class="btn-primary">
-                    <span>JOIN ROOM</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 05 / PERSONAL -->
-            <div class="lobby-card">
-                <div class="lobby-icon">◉</div>
-                <span class="lobby-card-number">05 / PERSONAL</span>
-
-                <h2>My Profile</h2>
-                <p>Track your performance, statistics and game history.</p>
-
-                <a href="profile.html" class="btn-primary">
-                    <span>VIEW PROFILE</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 06 / INFORMATION -->
-            <div class="lobby-card">
-                <div class="lobby-icon">ⓘ</div>
-                <span class="lobby-card-number">06 / INFORMATION</span>
-
-                <h2>How to Play</h2>
-                <p>Learn the rules and discover how NUMORA works.</p>
-
-                <a href="rules.html" class="btn-primary">
-                    <span>READ RULES</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 07 / ADMINISTRATION -->
-            <div class="lobby-card" id="admin-panel-card" hidden>
-                <div class="lobby-icon">⚙</div>
-                <span class="lobby-card-number">07 / ADMINISTRATION</span>
-
-                <h2>Admin Panel</h2>
-                <p>Manage NUMORA and view all registered accounts.</p>
-
-                <a href="admin.html" class="btn-primary">
-                    <span>OPEN ADMIN PANEL</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-            </div>
-
-            <!-- 08 / COMMUNITY - NUMORA VOICE -->
-            <div class="lobby-card voice-card">
-
-                <div class="voice-card-top">
-                    <div class="lobby-icon voice-icon">
-                        <svg viewBox="0 0 24 24"
-                             fill="none"
-                             xmlns="http://www.w3.org/2000/svg"
-                             aria-hidden="true">
-                            <path d="M21 11.5A8.38 8.38 0 0 1 12.5 20a8.3 8.3 0 0 1-4-.95L3 21l1.95-5.5A8.3 8.3 0 0 1 4 11.5 8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"
-                                  stroke="currentColor"
-                                  stroke-width="1.6"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"/>
-                            <path d="M8 11.5h9M8 15h6"
-                                  stroke="currentColor"
-                                  stroke-width="1.6"
-                                  stroke-linecap="round"/>
-                        </svg>
-                    </div>
-
-                    <span class="voice-status">COMMUNITY</span>
+            <a class="mode-card" href="bot-setup.html">
+                <div class="card-top">
+                    <span class="ic-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V5.5M9 13.5h.01M15 13.5h.01M9.5 16.5h5"/><circle cx="12" cy="4.5" r="1"/></svg>
+                    </span>
+                    <span class="tag">Solo</span>
                 </div>
+                <h3>Play vs Bots</h3>
+                <div class="swap">
+                    <p>Challenge AI opponents and test your strategy.</p>
+                    <ul class="detail">
+                        <li>Set up your own bot match</li>
+                        <li>No waiting for other players</li>
+                        <li>Perfect for practice</li>
+                    </ul>
+                </div>
+                <span class="go">Play now <i>↗</i></span>
+                <span class="sat sat-a">Solo</span>
+                <span class="sat sat-c">Practice</span>
+                <span class="sat sat-b">No waiting</span>
+            </a>
 
-                <span class="lobby-card-number">08 / COMMUNITY</span>
+            <a class="mode-card" href="room.html?action=create">
+                <div class="card-top">
+                    <span class="ic-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/></svg>
+                    </span>
+                    <span class="tag">Private</span>
+                </div>
+                <h3>Create Room</h3>
+                <div class="swap">
+                    <p>Set up a private room and invite your friends.</p>
+                    <ul class="detail">
+                        <li>Choose your room settings</li>
+                        <li>Share an invitation code</li>
+                        <li>Start when everyone is in</li>
+                    </ul>
+                </div>
+                <span class="go">Create room <i>↗</i></span>
+                <span class="sat sat-a">Invite code</span>
+                <span class="sat sat-c">Your rules</span>
+                <span class="sat sat-b">Friends only</span>
+            </a>
 
-                <h2>NUMORA VOICE</h2>
-
-                <p>
-                    Share your ideas, report bugs, and help us improve NUMORA.
-                </p>
-
-                <a href="voice.html" class="btn-primary voice-button">
-                    <span>ENTER NUMORA VOICE</span>
-                    <span class="card-arrow">↗</span>
-                </a>
-
-            </div>
+            <a class="mode-card" href="room.html?action=join">
+                <div class="card-top">
+                    <span class="ic-wrap">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H4M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
+                    </span>
+                    <span class="tag">Invite</span>
+                </div>
+                <h3>Join Room</h3>
+                <div class="swap">
+                    <p>Enter an invitation code and join the competition.</p>
+                    <ul class="detail">
+                        <li>Get the code from your host</li>
+                        <li>Type it in and jump in</li>
+                        <li>Play with friends</li>
+                    </ul>
+                </div>
+                <span class="go">Join room <i>↗</i></span>
+                <span class="sat sat-a">Code needed</span>
+                <span class="sat sat-c">Friends</span>
+                <span class="sat sat-b">Quick join</span>
+            </a>
 
         </div>
 
-        <div class="lobby-bottom-note">
-            <span class="note-line"></span>
-            <span>YOUR NEXT CHALLENGE STARTS HERE</span>
-            <span class="note-line"></span>
+        <h2 class="lobby-group">More</h2>
+
+        <div class="tile-grid">
+
+            <a class="tile" href="profile.html">
+                <span class="ic-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c1.4-4.2 14.6-4.2 15 0"/></svg>
+                </span>
+                <span><h3>My Profile</h3><span class="swap"><p>Track your performance, statistics and game history.</p><p class="detail">Your stats and past games, all in one place.</p></span></span>
+                <span class="arrow">↗</span>
+                <span class="sat sat-a">Stats</span>
+                <span class="sat sat-c">History</span>
+            </a>
+
+            <a class="tile" href="rules.html">
+                <span class="ic-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M8.5 8.5h6M8.5 12h6"/></svg>
+                </span>
+                <span><h3>How to Play</h3><span class="swap"><p>Learn the rules and discover how NUMORA works.</p><p class="detail">Read the rules before your next match.</p></span></span>
+                <span class="arrow">↗</span>
+                <span class="sat sat-a">Rules</span>
+                <span class="sat sat-c">Examples</span>
+            </a>
+
+            <a class="tile" href="voice.html">
+                <span class="ic-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5A8.38 8.38 0 0 1 12.5 20a8.3 8.3 0 0 1-4-.95L3 21l1.95-5.5A8.3 8.3 0 0 1 4 11.5 8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5Z"/><path d="M8 11.5h9M8 15h6"/></svg>
+                </span>
+                <span><h3>NUMORA Voice</h3><span class="swap"><p>Share ideas, report bugs and help us improve NUMORA.</p><p class="detail">Tell us what to fix or build next.</p></span></span>
+                <span class="arrow">↗</span>
+                <span class="sat sat-a">Ideas</span>
+                <span class="sat sat-c">Bugs</span>
+            </a>
+
+            <!-- Admin only: script.js reveals this card -->
+            <a class="tile" id="admin-panel-card" href="admin.html" hidden>
+                <span class="ic-wrap">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+                </span>
+                <span><h3>Admin Panel</h3><span class="swap"><p>Manage NUMORA and view all registered accounts.</p><p class="detail">See every registered account.</p></span></span>
+                <span class="arrow">↗</span>
+                <span class="sat sat-a">Accounts</span>
+                <span class="sat sat-c">Admin only</span>
+            </a>
+
         </div>
+
+        <p class="lobby-tip"><b>Tip</b><span id="tipText">Read the whole question before you start typing.</span></p>
 
     </main>
 
@@ -207,6 +195,7 @@
 
     <script src="particles.js"></script>
     <script src="script.js?v=11"></script>
+    <script src="lobby.js?v=1"></script>
 
 </body>
 </html>

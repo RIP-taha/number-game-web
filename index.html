@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -8,23 +7,26 @@
 
     <meta name="theme-color" content="#090B14">
     <meta name="description" content="NUMORA - Think fast, play smart. Challenge your mind and compete with players around the world.">
+    <meta property="og:title" content="NUMORA — Think Fast. Play Smart.">
+    <meta property="og:description" content="A fast number game. Play bots, match with random players, or invite friends.">
+    <meta property="og:type" content="website">
 
     <title>NUMORA — Think Fast. Play Smart.</title>
 
-    <!-- Fonts -->
+    <!-- Fonts (JetBrains Mono added: style.css already uses it but it was never loaded) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="home.css?v=1">
 </head>
 
 <body>
 
     <!-- Navigation -->
     <nav class="navbar">
-
         <a href="index.html" class="nav-logo">
             <span class="logo-symbol">N</span>
             <span>NUMORA</span>
@@ -35,54 +37,92 @@
             <a href="rules.html">How to Play</a>
             <a href="login.html" class="btn-nav">Sign In</a>
         </div>
-
     </nav>
 
 
-    <!-- Hero Section -->
     <main class="hero">
 
-        <div class="hero-content">
+        <div class="hero-stage">
 
-            <div class="hero-badge">
-                <span class="status-dot"></span>
-                THE NEXT LEVEL OF MIND GAMES
+            <div class="hero-content">
+
+                <div class="hero-badge">
+                    <span class="status-dot"></span>
+                    THE NEXT LEVEL OF MIND GAMES
+                </div>
+
+                <h1 class="hero-title">
+                    THINK FAST.
+                    <span>PLAY SMART.</span>
+                </h1>
+
+                <p class="hero-subtitle">Welcome to NUMORA</p>
+
+                <p class="hero-desc">
+                    Solve number challenges against the clock, beat bots or
+                    real players, and climb the scoreboard.
+                    Every number counts. Every second matters.
+                </p>
+
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="startGame()">
+                        Start Playing
+                        <span class="btn-arrow">→</span>
+                    </button>
+
+                    <a class="btn-secondary" href="rules.html">How to Play</a>
+                </div>
+
+                <div class="hero-note">
+                    <span class="note-line"></span>
+                    YOUR MIND IS YOUR GREATEST WEAPON
+                    <span class="note-line"></span>
+                </div>
+
             </div>
 
-            <h1 class="hero-title">
-                THINK FAST.
-                <span>PLAY SMART.</span>
-            </h1>
 
-            <p class="hero-subtitle">
-                Welcome to NUMORA
-            </p>
+            <!-- Live game preview: shows what a round looks like -->
+            <aside class="game-preview" aria-label="Preview of a NUMORA match">
 
-            <p class="hero-desc">
-                Challenge your mind, test your skills, and compete
-                with players around the world.
-                Every number counts. Every second matters.
-            </p>
+                <div class="gp-top">
+                    <span class="gp-live"><i></i>Live match</span>
+                    <span>Round <span id="gpRound">3</span>/10</span>
+                </div>
 
-            <div class="hero-buttons">
+                <div class="gp-timer"><span id="gpBar"></span></div>
 
-                <button class="btn-primary" onclick="startGame()">
-                    Start Playing
-                    <span class="btn-arrow">→</span>
-                </button>
+                <div class="gp-question">
+                    <small>Solve it before time runs out</small>
+                    <div id="gpQ">7 × 8 − 6</div>
+                </div>
 
-                <button class="btn-secondary"
-                        onclick="location.href='rules.html'">
-                    How to Play
-                </button>
+                <div class="gp-answer" id="gpBox">
+                    <span class="gp-eq">=</span>
+                    <span id="gpA"></span>
+                    <span class="gp-caret"></span>
+                    <span class="gp-toast" id="gpToast">+120</span>
+                </div>
 
-            </div>
+                <ul class="gp-board">
+                    <li class="me">
+                        <span>You</span>
+                        <span class="gp-bar"><b id="gpMeBar" style="width:70%"></b></span>
+                        <span class="gp-score" id="gpMe">840</span>
+                    </li>
+                    <li>
+                        <span>NovaBot</span>
+                        <span class="gp-bar"><b style="width:63%"></b></span>
+                        <span class="gp-score">760</span>
+                    </li>
+                    <li>
+                        <span>Player_2174</span>
+                        <span class="gp-bar"><b style="width:57%"></b></span>
+                        <span class="gp-score">690</span>
+                    </li>
+                </ul>
 
-            <div class="hero-note">
-                <span class="note-line"></span>
-                YOUR MIND IS YOUR GREATEST WEAPON
-                <span class="note-line"></span>
-            </div>
+            </aside>
 
         </div>
 
@@ -90,61 +130,62 @@
         <!-- Game Modes -->
         <div class="hero-features">
 
-            <div class="feature-card">
-
-                <div class="feature-icon">01</div>
-
+            <a class="feature-card" href="login.html" onclick="if (typeof startGame === 'function') { startGame(); return false; }">
+                <span class="feature-tag">Solo</span>
+                <div class="feature-icon">VS</div>
                 <h3>Play vs Bots</h3>
-
-                <p>
-                    Challenge intelligent bots
-                    and sharpen your skills.
-                </p>
-
+                <p>Challenge intelligent bots and sharpen your skills.</p>
                 <span class="feature-arrow">↗</span>
+            </a>
 
-            </div>
-
-
-            <div class="feature-card">
-
-                <div class="feature-icon">02</div>
-
+            <a class="feature-card" href="login.html" onclick="if (typeof startGame === 'function') { startGame(); return false; }">
+                <span class="feature-tag">Online</span>
+                <div class="feature-icon">⚡</div>
                 <h3>Random Match</h3>
-
-                <p>
-                    Find online opponents
-                    and compete in real time.
-                </p>
-
+                <p>Find online opponents and compete in real time.</p>
                 <span class="feature-arrow">↗</span>
+            </a>
 
-            </div>
-
-
-            <div class="feature-card">
-
-                <div class="feature-icon">03</div>
-
+            <a class="feature-card" href="login.html" onclick="if (typeof startGame === 'function') { startGame(); return false; }">
+                <span class="feature-tag">Friends</span>
+                <div class="feature-icon">#</div>
                 <h3>Private Rooms</h3>
-
-                <p>
-                    Create a room and invite
-                    your friends to play.
-                </p>
-
+                <p>Create a room and invite your friends to play.</p>
                 <span class="feature-arrow">↗</span>
-
-            </div>
+            </a>
 
         </div>
+
+
+        <!-- How a match works -->
+        <section class="how">
+            <h2>How a match works</h2>
+            <p>Three steps from the first click to the final scoreboard.</p>
+
+            <ol class="how-steps">
+                <li>
+                    <b>1</b>
+                    <strong>Pick a mode</strong>
+                    <span>Play a bot, jump into a random match, or open a private room.</span>
+                </li>
+                <li>
+                    <b>2</b>
+                    <strong>Solve fast</strong>
+                    <span>Type the answer before the timer runs out. Quick answers score more.</span>
+                </li>
+                <li>
+                    <b>3</b>
+                    <strong>Top the scoreboard</strong>
+                    <span>Finish the rounds and see where you rank.</span>
+                </li>
+            </ol>
+        </section>
 
     </main>
 
 
     <!-- Footer -->
     <footer class="footer">
-
         <div class="footer-content">
 
             <div class="footer-brand">
@@ -152,9 +193,7 @@
                 <span>NUMORA</span>
             </div>
 
-            <p>
-                Think Fast. Play Smart.
-            </p>
+            <p>Think Fast. Play Smart.</p>
 
             <div class="footer-links">
                 <a href="rules.html">Rules</a>
@@ -162,18 +201,16 @@
                 <a href="index.html">Home</a>
             </div>
 
-            <p class="copyright">
-                © 2026 NUMORA. All rights reserved.
-            </p>
+            <p class="copyright">© 2026 NUMORA. All rights reserved.</p>
 
         </div>
-
     </footer>
 
 
     <!-- Scripts -->
     <script src="particles.js"></script>
     <script src="script.js?v=10"></script>
+    <script src="home.js?v=1"></script>
 
 </body>
 </html>
