@@ -664,34 +664,33 @@ async function loadProfile() {
 
 async function loadAdminAccess() {
     const adminCard = document.getElementById("admin-panel-card");
-
     if (!adminCard) return;
 
     adminCard.hidden = true;
 
-    const userId = localStorage.getItem("currentUserId");
     const token = localStorage.getItem("access_token");
-
-    if (!userId || !token) return;
+    if (!token) return;
 
     try {
-        const response = await fetch(
-            API_URL + "/api/user/" + encodeURIComponent(userId)
-        );
+        const response = await fetch(API_URL + "/api/me/admin-status", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
 
-        if (!response.ok) return;
-
-        const userData = await response.json();
-
-        if (userData.is_admin === true) {
-            adminCard.hidden = false;
+        if (!response.ok) {
+            console.error("Admin check failed:", response.status);
+            return;
         }
 
+        const data = await response.json();
+        adminCard.hidden = data.is_admin !== true;
+
     } catch (error) {
-        console.error("Could not check admin access:", error);
+        console.error("Admin access error:", error);
     }
 }
-
 
 // =========================
 // GAME STATE
