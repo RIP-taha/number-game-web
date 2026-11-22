@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", resize);
 
     // CONFIGURATION
-    const PARTICLE_COUNT = 10;
+    const PARTICLE_COUNT = 100;
     const CONNECT_DISTANCE = 125;
     const KEEP_DISTANCE = 145;
     const SPEED = 1;
