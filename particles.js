@@ -1,264 +1,240 @@
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Canvas setup
     const canvas = document.createElement("canvas");
     canvas.id = "particles-canvas";
     document.body.prepend(canvas);
 
     const ctx = canvas.getContext("2d");
 
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    let width, height;
 
-    window.addEventListener("resize", function () {
+    function resize() {
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
-    });
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
 
     // CONFIGURATION
-    const particleCount = 300;
+    const PARTICLE_COUNT = 300;
+    const CONNECT_DISTANCE = 155;
+    const KEEP_DISTANCE = 185;
+    const SPEED = 0.8;
 
-    const colors = [
-        "#00d9ff",
-        "#ff006e",
-        "#ffd700"
+    const COLORS = [
+        "#a855f7",
+        "#c026d3",
+        "#d946ef",
+        "#e879f9",
+        "#9333ea"
     ];
 
     const particles = [];
+    let edges = new Set();
 
-    // CREATE PARTICLES
-    for (let i = 0; i < particleCount; i++) {
+    // Create particles
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
             x: Math.random() * width,
             y: Math.random() * height,
 
-            vx: (Math.random() - 0.5) * 0.8,
-            vy: (Math.random() - 0.5) * 0.8,
+            vx: (Math.random() - 0.5) * SPEED,
+            vy: (Math.random() - 0.5) * SPEED,
 
             radius: Math.random() * 2 + 1,
 
-            color: colors[
-                Math.floor(Math.random() * colors.length)
+            color: COLORS[
+                Math.floor(Math.random() * COLORS.length)
             ],
 
-            links: []
+            glow: Math.random() * 5 + 3
         });
     }
 
-    // FIND A NEW NEIGHBOR
-    function findTarget(source, current, excluded) {
-        const candidates = [];
+    // Edge key
+    function edgeKey(a, b) {
+        return a < b ? `${a}_${b}` : `${b}_${a}`;
+    }
 
-        const p = particles[source];
+    // Update particle positions
+    function updateParticles() {
+        for (const p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x <= 0 || p.x >= width) {
+                p.vx *= -1;
+                p.x = Math.max(0, Math.min(width, p.x));
+            }
+
+            if (p.y <= 0 || p.y >= height) {
+                p.vy *= -1;
+                p.y = Math.max(0, Math.min(height, p.y));
+            }
+        }
+    }
+
+    // Dynamic connections with persistence
+    function updateNetwork() {
+        const nextEdges = new Set();
+        const adjacency = Array.from(
+            { length: particles.length },
+            () => []
+        );
 
         for (let i = 0; i < particles.length; i++) {
-            if (
-                i === source ||
-                i === current ||
-                i === excluded
-            ) continue;
+            const a = particles[i];
 
-            const other = particles[i];
+            for (let j = i + 1; j < particles.length; j++) {
+                const b = particles[j];
 
-            const dx = p.x - other.x;
-            const dy = p.y - other.y;
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
-            candidates.push({
-                index: i,
-                distance: dx * dx + dy * dy
-            });
+                const key = edgeKey(i, j);
+
+                const limit = edges.has(key)
+                    ? KEEP_DISTANCE
+                    : CONNECT_DISTANCE;
+
+                if (distance < limit) {
+                    nextEdges.add(key);
+
+                    adjacency[i].push(j);
+                    adjacency[j].push(i);
+                }
+            }
         }
 
-        candidates.sort((a, b) =>
-            a.distance - b.distance
-        );
+        edges = nextEdges;
 
-        const pool = candidates.slice(
-            0,
-            Math.min(12, candidates.length)
-        );
-
-        if (!pool.length) return current;
-
-        return pool[
-            Math.floor(Math.random() * pool.length)
-        ].index;
+        return adjacency;
     }
 
-    // CREATE PERSISTENT CONNECTIONS
-    for (let i = 0; i < particles.length; i++) {
-        const first = findTarget(i, -1, -1);
-
-        const second = findTarget(i, -1, first);
-
-        particles[i].links = [
-            {
-                target: first,
-                from: first,
-                to: first,
-                progress: 1,
-                transitioning: false,
-                nextChange: Math.random() * 2
-            },
-            {
-                target: second,
-                from: second,
-                to: second,
-                progress: 1,
-                transitioning: false,
-                nextChange: Math.random() * 3
-            }
-        ];
-    }
-
-    // START CONNECTION TRANSITION
-    function startTransition(link, source, otherTarget) {
-        const next = findTarget(
-            source,
-            link.target,
-            otherTarget
-        );
-
-        if (next === link.target) return;
-
-        link.from = link.target;
-        link.to = next;
-
-        link.progress = 0;
-        link.transitioning = true;
-    }
-
-    // UPDATE CONNECTIONS
-    function updateConnections(delta, elapsed) {
+    // Draw translucent geometric triangles
+    function drawTriangles(adjacency) {
         for (let i = 0; i < particles.length; i++) {
-            const links = particles[i].links;
+            const neighbors = adjacency[i];
 
-            for (let j = 0; j < links.length; j++) {
-                const link = links[j];
+            for (let a = 0; a < neighbors.length; a++) {
+                const j = neighbors[a];
 
-                const otherTarget =
-                    links[1 - j].target;
+                if (j <= i) continue;
 
-                if (!link.transitioning) {
-                    if (elapsed >= link.nextChange) {
-                        startTransition(
-                            link,
-                            i,
-                            otherTarget
-                        );
-                    }
-                } else {
-                    link.progress += delta / 1.8;
+                for (let b = a + 1; b < neighbors.length; b++) {
+                    const k = neighbors[b];
 
-                    if (link.progress >= 1) {
-                        link.progress = 1;
+                    if (k <= j) continue;
 
-                        link.target = link.to;
-                        link.from = link.to;
+                    if (!edges.has(edgeKey(j, k))) continue;
 
-                        link.transitioning = false;
+                    const p1 = particles[i];
+                    const p2 = particles[j];
+                    const p3 = particles[k];
 
-                        link.nextChange =
-                            elapsed + 2.2 + Math.random() * 3;
-                    }
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.lineTo(p3.x, p3.y);
+                    ctx.closePath();
+
+                    const gradient = ctx.createLinearGradient(
+                        p1.x, p1.y,
+                        p3.x, p3.y
+                    );
+
+                    gradient.addColorStop(
+                        0, "rgba(192, 38, 211, 0.10)"
+                    );
+
+                    gradient.addColorStop(
+                        1, "rgba(168, 85, 247, 0.025)"
+                    );
+
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
                 }
             }
         }
     }
 
-    // DRAW THE NETWORK
-    function drawConnections() {
+    // Draw network lines
+    function drawLines() {
+        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = "rgba(192, 90, 255, 0.38)";
+
+        ctx.beginPath();
+
+        for (const key of edges) {
+            const [i, j] = key.split("_").map(Number);
+
+            const a = particles[i];
+            const b = particles[j];
+
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+        }
+
+        ctx.stroke();
+    }
+
+    // Draw glowing particles
+    function drawParticles() {
+        for (const p of particles) {
+            ctx.save();
+
+            ctx.shadowBlur = p.glow + 5;
+            ctx.shadowColor = p.color;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = 0.9;
+            ctx.fill();
+
+            ctx.restore();
+        }
+    }
+
+    // Extra neon highlights
+    function drawHighlights() {
         for (let i = 0; i < particles.length; i++) {
             const p = particles[i];
 
-            for (const link of p.links) {
-                const oldTarget = particles[link.from];
-                const newTarget = particles[link.to];
+            if (i % 17 !== 0) continue;
 
-                // Smooth movement between connections
-                const t = link.transitioning
-                    ? link.progress * link.progress *
-                      (3 - 2 * link.progress)
-                    : 1;
+            ctx.save();
 
-                const targetX =
-                    oldTarget.x +
-                    (newTarget.x - oldTarget.x) * t;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#e879f9";
 
-                const targetY =
-                    oldTarget.y +
-                    (newTarget.y - oldTarget.y) * t;
-
-                ctx.beginPath();
-
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(targetX, targetY);
-
-                // Constant line visibility
-                ctx.strokeStyle = p.color;
-                ctx.globalAlpha = 0.55;
-                ctx.lineWidth = 0.5;
-
-                ctx.stroke();
-            }
-        }
-    }
-
-    // DRAW PARTICLES
-    function drawParticles() {
-        for (const p of particles) {
             ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius + 1, 0, Math.PI * 2);
 
-            ctx.arc(
-                p.x,
-                p.y,
-                p.radius,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.fillStyle = p.color;
-            ctx.globalAlpha = 0.7;
-
+            ctx.fillStyle = "#f0abfc";
+            ctx.globalAlpha = 0.85;
             ctx.fill();
+
+            ctx.restore();
         }
     }
 
-    // MAIN ANIMATION
-    let lastTime = 0;
-    let elapsed = 0;
-
-    function animate(timestamp) {
-        const delta = lastTime
-            ? Math.min((timestamp - lastTime) / 1000, 0.05)
-            : 0;
-
-        lastTime = timestamp;
-        elapsed += delta;
-
+    // Animation loop
+    function animate() {
         ctx.clearRect(0, 0, width, height);
 
-        // Move particles
-        for (const p of particles) {
-            p.x += p.vx;
-            p.y += p.vy;
+        updateParticles();
 
-            if (p.x < 0 || p.x > width) {
-                p.vx *= -1;
-            }
+        const adjacency = updateNetwork();
 
-            if (p.y < 0 || p.y > height) {
-                p.vy *= -1;
-            }
-        }
-
-        // Change network structure
-        updateConnections(delta, elapsed);
-
-        // Draw everything
-        drawConnections();
+        drawTriangles(adjacency);
+        drawLines();
         drawParticles();
-
-        ctx.globalAlpha = 1;
+        drawHighlights();
 
         requestAnimationFrame(animate);
     }
