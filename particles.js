@@ -1,7 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     // =====================================
-    // NUMORA - Single Large Energy Glow
+    // NUMORA - Single Continuous Energy Glow
     // =====================================
 
     const canvas = document.createElement("canvas");
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const MAX_WAVES = 1;
     const ENERGY_RADIUS = 168;
 
-    // Glow colors
+    // Virus colors
     const VIRUS_RGB = "176, 140, 198";
     const VIRUS_CORE_RGB = "214, 200, 160";
     const VIRUS_COLOR = "#b08cc6";
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =====================================
-    // Single Energy System
+    // Single Continuous Energy System
     // =====================================
 
     const energyWaves = [];
@@ -164,11 +164,15 @@ document.addEventListener("DOMContentLoaded", function () {
             to,
             progress: 0,
             intensity,
-            age: 0
+            age: 0,
+            previousNode: null,
+            waiting: false
         });
     }
 
     function startEnergy() {
+        // Only the first spawn is random.
+        // After that, the glow never jumps elsewhere.
         if (energyStarted) return;
 
         const availableEdges = Array.from(edges);
@@ -193,23 +197,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const wave = energyWaves[0];
 
-        wave.age += deltaTime;
-
-        const from = wave.from;
-        const to = wave.to;
-
+        // If the current connection disappears,
+        // keep the glow at the nearest endpoint.
         if (
-            from === null ||
-            to === null ||
-            !edges.has(edgeKey(from, to))
+            !wave.waiting &&
+            !edges.has(edgeKey(wave.from, wave.to))
         ) {
-            energyWaves.length = 0;
-            energyStarted = false;
+            const currentNode = wave.progress >= 0.5
+                ? wave.to
+                : wave.from;
+
+            wave.previousNode = currentNode === wave.from
+                ? wave.to
+                : wave.from;
+
+            wave.from = currentNode;
+            wave.to = currentNode;
+            wave.progress = 0;
+            wave.waiting = true;
+        }
+
+        // Wait at the same node until a new connection appears.
+        if (wave.waiting) {
+            const currentNode = wave.from;
+
+            const neighbors = adjacency[currentNode] || [];
+
+            let options = neighbors.filter(node =>
+                node !== wave.previousNode &&
+                edges.has(edgeKey(currentNode, node))
+            );
+
+            // If there is no other direction,
+            // allow reversing along the previous connection.
+            if (
+                options.length === 0 &&
+                wave.previousNode !== null
+            ) {
+                options = neighbors.filter(node =>
+                    edges.has(edgeKey(currentNode, node))
+                );
+            }
+
+            if (options.length > 0) {
+                const nextNode = options[
+                    Math.floor(Math.random() * options.length)
+                ];
+
+                wave.from = currentNode;
+                wave.to = nextNode;
+                wave.progress = 0;
+                wave.waiting = false;
+            }
+
             return;
         }
 
-        const a = particles[from];
-        const b = particles[to];
+        const a = particles[wave.from];
+        const b = particles[wave.to];
+
+        if (!a || !b) return;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -220,25 +267,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
         wave.progress += (ENERGY_SPEED * deltaTime) / distance;
 
-        // Continue along exactly one connected edge.
+        // Reached the end of the current connection.
         if (wave.progress >= 1) {
-            const currentNode = to;
+            const currentNode = wave.to;
 
-            const options = (adjacency[currentNode] || []).filter(
-                node => node !== from
+            const neighbors = adjacency[currentNode] || [];
+
+            let options = neighbors.filter(node =>
+                node !== wave.from &&
+                edges.has(edgeKey(currentNode, node))
             );
 
-            energyWaves.length = 0;
+            // At a dead end, reverse if the previous edge still exists.
+            if (options.length === 0) {
+                options = neighbors.filter(node =>
+                    edges.has(edgeKey(currentNode, node))
+                );
+            }
+
+            wave.previousNode = wave.from;
 
             if (options.length > 0) {
                 const nextNode = options[
                     Math.floor(Math.random() * options.length)
                 ];
 
-                createWave(currentNode, nextNode, 1);
+                wave.from = currentNode;
+                wave.to = nextNode;
+                wave.progress = 0;
             } else {
-                energyStarted = false;
-                startEnergy();
+                // Stay here instead of disappearing or respawning.
+                wave.from = currentNode;
+                wave.to = currentNode;
+                wave.progress = 0;
+                wave.waiting = true;
             }
         }
     }
@@ -293,7 +355,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Infect the network around the single moving glow.
         for (const wave of energyWaves) {
             const a = particles[wave.from];
-            const b = particles[wave.to];
+            const b = wave.waiting
+                ? a
+                : particles[wave.to];
 
             if (!a || !b) continue;
 
@@ -332,7 +396,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Nearby connections.
-            const ownKey = edgeKey(wave.from, wave.to);
+            const ownKey = wave.waiting
+                ? null
+                : edgeKey(wave.from, wave.to);
 
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 const neighbors = adjacency[i];
@@ -384,19 +450,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function drawEnergyGlow(wave) {
         const a = particles[wave.from];
-        const b = particles[wave.to];
 
-        if (!a || !b) return;
+        if (!a) return;
 
-        const progress = Math.max(
-            0,
-            Math.min(1, wave.progress)
-        );
+        let x = a.x;
+        let y = a.y;
 
-        const x = a.x + (b.x - a.x) * progress;
-        const y = a.y + (b.y - a.y) * progress;
+        // While moving, calculate the position on the connection.
+        if (!wave.waiting) {
+            const b = particles[wave.to];
 
-        // One large, soft light cloud.
+            if (!b) return;
+
+            const progress = Math.max(
+                0,
+                Math.min(1, wave.progress)
+            );
+
+            x = a.x + (b.x - a.x) * progress;
+            y = a.y + (b.y - a.y) * progress;
+        }
+
         const radius = ENERGY_RADIUS;
 
         ctx.save();
@@ -421,7 +495,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.fillStyle = halo;
         ctx.fill();
 
-        // Second soft layer for a fuller glow.
+        // Second soft layer.
         const softHalo = ctx.createRadialGradient(
             x, y, 0,
             x, y, radius * 0.58
@@ -485,13 +559,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             ctx.stroke();
 
-            // Hot center of the line.
+            // Bright center of the line.
             if (t > 0.5) {
                 ctx.beginPath();
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
 
                 ctx.lineWidth = 0.6;
+
                 ctx.strokeStyle =
                     `rgba(${VIRUS_CORE_RGB}, ${(t - 0.5) * 1.1})`;
 
