@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     const particles = [];
-    const particleCount = 80;
+    const particleCount = 180;
     const maxDistance = 120;
     const colors = ["#00d9ff", "#ff006e", "#ffd700"];
 
