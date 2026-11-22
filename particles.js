@@ -1,7 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     // =====================================
-    // NUMORA - Living Energy Network + Virus Glow
+    // NUMORA - Single Large Energy Glow
     // =====================================
 
     const canvas = document.createElement("canvas");
@@ -18,26 +18,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const MAX_NEIGHBORS = 5;
     const MAX_TRIANGLES = 4;
 
-    // Energy spreading
+    // Single energy glow
     const ENERGY_SPEED = 95;
-    const MAX_WAVES = 16;
-    const BRANCH_CHANCE = 0.75;
-    const MAX_BRANCHES = 2;
-    const ENERGY_RADIUS = 42;
-    const ENERGY_TAIL = 0.24;
+    const MAX_WAVES = 1;
+    const ENERGY_RADIUS = 168;
 
-    // Virus look (olive leaning purple) - tweak these freely
-    const VIRUS_RGB = "176, 140, 198";       // main glow: olive-lavender
-    const VIRUS_CORE_RGB = "214, 200, 160";  // bright core: pale olive
+    // Glow colors
+    const VIRUS_RGB = "176, 140, 198";
+    const VIRUS_CORE_RGB = "214, 200, 160";
     const VIRUS_COLOR = "#b08cc6";
     const VIRUS_CORE_COLOR = "#d6c8a0";
 
-    // Infection (how the virus colors the network around it)
-    const INFECT_RADIUS = 115;   // how far ahead/around the head it infects
-    const INFECT_DECAY = 1.6;    // higher = network returns to normal faster
-    const PULSE_LIFE = 0.9;      // seconds
-    const PULSE_SPEED = 150;     // px per second
-    const MAX_PULSES = 24;
+    // Infection
+    const INFECT_RADIUS = 115;
+    const INFECT_DECAY = 1.6;
 
     const COLORS = [
         "#a855f7",
@@ -139,7 +133,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const limit = edges.has(key)
                     ? KEEP_DISTANCE
-                    : CONNECT_DISTANCE;if (distanceSquared < limit * limit) {
+                    : CONNECT_DISTANCE;
+
+                if (distanceSquared < limit * limit) {
                     nextEdges.add(key);
                     adjacency[i].push(j);
                     adjacency[j].push(i);
@@ -153,11 +149,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =====================================
-    // Energy spreading system (the virus head)
+    // Single Energy System
     // =====================================
 
     const energyWaves = [];
-    const pulses = [];
 
     let energyStarted = false;
 
@@ -171,11 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
             intensity,
             age: 0
         });
-    }
-
-    function addPulse(x, y, intensity) {
-        if (pulses.length >= MAX_PULSES) pulses.shift();
-        pulses.push({ x, y, age: 0, intensity });
     }
 
     function startEnergy() {
@@ -199,97 +189,62 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateEnergy(deltaTime, adjacency) {
         startEnergy();
 
-        for (let i = energyWaves.length - 1; i >= 0; i--) {
-            const wave = energyWaves[i];
+        if (energyWaves.length === 0) return;
 
-            wave.age += deltaTime;
+        const wave = energyWaves[0];
 
-            const from = wave.from;
-            const to = wave.to;
+        wave.age += deltaTime;
 
-            if (from === null || to === null) {
-                energyWaves.splice(i, 1);
-                continue;
-            }
+        const from = wave.from;
+        const to = wave.to;
 
-            // The wave can only travel on existing connections.
-            if (!edges.has(edgeKey(from, to))) {
-                energyWaves.splice(i, 1);
-                continue;
-            }
-
-            const a = particles[from];
-            const b = particles[to];
-
-            const dx = b.x - a.x;
-            const dy = b.y - a.y;
-
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < 1) continue;
-
-            wave.progress += (ENERGY_SPEED * deltaTime) / distance;
-
-            // Reached a junction.
-            if (wave.progress >= 1) {
-                const previousNode = from;
-                const currentNode = to;
-
-                // Ring pulse where the virus lands on a node.
-                addPulse(b.x, b.y, wave.intensity);
-
-                const neighbors = adjacency[currentNode] || [];
-
-                const options = neighbors.filter(
-                    node => node !== previousNode
-                );
-
-                energyWaves.splice(i, 1);
-
-                if (options.length === 0) {
-                    continue;
-                }
-
-                const canBranch =
-                    Math.random() < BRANCH_CHANCE &&
-                    options.length > 1;
-
-                let selectedOptions = [];
-
-                if (canBranch) {
-                    const shuffled = [...options].sort(
-                        () => Math.random() - 0.5
-                    );
-
-                    selectedOptions = shuffled.slice(
-                        0,
-                        Math.min(MAX_BRANCHES, shuffled.length)
-                    );
-                } else {
-                    selectedOptions = [
-                        options[Math.floor(Math.random() * options.length)]
-                    ];
-                }
-
-                for (const nextNode of selectedOptions) {
-                    if (energyWaves.length >= MAX_WAVES) break;
-
-                    createWave(
-                        currentNode,
-                        nextNode,
-                        wave.intensity * 0.88
-                    );
-                }
-            }
-        }
-
-        // If all branches die out, a new infection starts.
-        if (energyWaves.length === 0) {
+        if (
+            from === null ||
+            to === null ||
+            !edges.has(edgeKey(from, to))
+        ) {
+            energyWaves.length = 0;
             energyStarted = false;
+            return;
         }
-    }// =====================================
-    // Infection: the virus tints the network around it,
-    // then everything fades back to normal.
+
+        const a = particles[from];
+        const b = particles[to];
+
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 1) return;
+
+        wave.progress += (ENERGY_SPEED * deltaTime) / distance;
+
+        // Continue along exactly one connected edge.
+        if (wave.progress >= 1) {
+            const currentNode = to;
+
+            const options = (adjacency[currentNode] || []).filter(
+                node => node !== from
+            );
+
+            energyWaves.length = 0;
+
+            if (options.length > 0) {
+                const nextNode = options[
+                    Math.floor(Math.random() * options.length)
+                ];
+
+                createWave(currentNode, nextNode, 1);
+            } else {
+                energyStarted = false;
+                startEnergy();
+            }
+        }
+    }
+
+    // =====================================
+    // Infection System
     // =====================================
 
     const nodeInfection = new Float32Array(PARTICLE_COUNT);
@@ -298,6 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function pointSegmentDistance(px, py, ax, ay, bx, by) {
         const abx = bx - ax;
         const aby = by - ay;
+
         const lengthSquared = abx * abx + aby * aby;
 
         let t = 0;
@@ -317,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateInfection(deltaTime, adjacency) {
-        // 1) Fade everything back toward normal.
+        // Fade infection back toward normal.
         const decay = Math.exp(-INFECT_DECAY * deltaTime);
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -334,21 +290,24 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        // 2) Every virus head infects what is around it.
+        // Infect the network around the single moving glow.
         for (const wave of energyWaves) {
             const a = particles[wave.from];
             const b = particles[wave.to];
 
             if (!a || !b) continue;
 
-            const progress = Math.max(0, Math.min(1, wave.progress));
+            const progress = Math.max(
+                0,
+                Math.min(1, wave.progress)
+            );
 
             const hx = a.x + (b.x - a.x) * progress;
             const hy = a.y + (b.y - a.y) * progress;
 
             const strength = Math.max(0.35, wave.intensity);
 
-            // Nodes near the head.
+            // Nearby nodes.
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 const p = particles[i];
 
@@ -357,9 +316,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const distanceSquared = dx * dx + dy * dy;
 
-                if (distanceSquared > INFECT_RADIUS * INFECT_RADIUS) continue;
+                if (
+                    distanceSquared >
+                    INFECT_RADIUS * INFECT_RADIUS
+                ) continue;
 
-                const falloff = 1 - Math.sqrt(distanceSquared) / INFECT_RADIUS;
+                const falloff =
+                    1 - Math.sqrt(distanceSquared) / INFECT_RADIUS;
+
                 const value = Math.pow(falloff, 1.6) * strength;
 
                 if (value > nodeInfection[i]) {
@@ -367,7 +331,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Connections near the head.
+            // Nearby connections.
             const ownKey = edgeKey(wave.from, wave.to);
 
             for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -383,22 +347,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     let value;
 
                     if (key === ownKey) {
-                        // The edge the virus is crossing right now
-                        // lights up gradually as the head advances.
                         value = (0.35 + 0.65 * progress) * strength;
                     } else {
                         const p1 = particles[i];
                         const p2 = particles[j];
 
                         const d = pointSegmentDistance(
-                            hx, hy,
-                            p1.x, p1.y,
-                            p2.x, p2.y
+                            hx,
+                            hy,
+                            p1.x,
+                            p1.y,
+                            p2.x,
+                            p2.y
                         );
 
                         if (d > INFECT_RADIUS) continue;
 
                         const falloff = 1 - d / INFECT_RADIUS;
+
                         value = Math.pow(falloff, 1.5) * strength;
                     }
 
@@ -410,18 +376,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         }
-
-        // 3) Expand ring pulses.
-        for (let i = pulses.length - 1; i >= 0; i--) {
-            pulses[i].age += deltaTime;
-            if (pulses[i].age >= PULSE_LIFE) {
-                pulses.splice(i, 1);
-            }
-        }
     }
 
     // =====================================
-    // Draw: virus head
+    // Draw Single Large Glow
     // =====================================
 
     function drawEnergyGlow(wave) {
@@ -430,85 +388,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!a || !b) return;
 
-        const progress = Math.max(0, Math.min(1, wave.progress));
+        const progress = Math.max(
+            0,
+            Math.min(1, wave.progress)
+        );
 
         const x = a.x + (b.x - a.x) * progress;
         const y = a.y + (b.y - a.y) * progress;
 
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 1) return;
-
-        const intensity = Math.max(0.25, wave.intensity);
-
-        // Luminous trail behind the head.
-        const tailProgress = Math.max(
-            0,
-            progress - ENERGY_TAIL / distance
-        );
-
-        const tailX = a.x + dx * tailProgress;
-        const tailY = a.y + dy * tailProgress;
+        // One large, soft light cloud.
+        const radius = ENERGY_RADIUS;
 
         ctx.save();
 
-        ctx.globalAlpha = intensity;
+        ctx.globalCompositeOperation = "lighter";
 
-        // Large soft halo.
-        const radius = ENERGY_RADIUS * (0.85 + intensity * 0.25);
+        // Main large halo.
+        const halo = ctx.createRadialGradient(
+            x, y, 0,
+            x, y, radius
+        );
 
-        const halo = ctx.createRadialGradient(x, y, 0, x, y, radius);
-
-        halo.addColorStop(0, `rgba(${VIRUS_RGB}, 0.30)`);
-        halo.addColorStop(0.25, `rgba(${VIRUS_RGB}, 0.20)`);
-        halo.addColorStop(0.6, `rgba(${VIRUS_RGB}, 0.08)`);
+        halo.addColorStop(0, `rgba(${VIRUS_CORE_RGB}, 0.30)`);
+        halo.addColorStop(0.18, `rgba(${VIRUS_RGB}, 0.25)`);
+        halo.addColorStop(0.48, `rgba(${VIRUS_RGB}, 0.13)`);
+        halo.addColorStop(0.76, `rgba(${VIRUS_RGB}, 0.045)`);
         halo.addColorStop(1, `rgba(${VIRUS_RGB}, 0)`);
 
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
+
         ctx.fillStyle = halo;
         ctx.fill();
 
-        // Wide blurred trail along the real line.
-        ctx.beginPath();
-        ctx.moveTo(tailX, tailY);
-        ctx.lineTo(x, y);
+        // Second soft layer for a fuller glow.
+        const softHalo = ctx.createRadialGradient(
+            x, y, 0,
+            x, y, radius * 0.58
+        );
 
-        ctx.lineCap = "round";
-        ctx.lineWidth = 19;
-
-        ctx.strokeStyle = `rgba(${VIRUS_RGB}, 0.12)`;
-        ctx.shadowBlur = 28;
-        ctx.shadowColor = VIRUS_COLOR;
-
-        ctx.stroke();
-
-        // Inner glow.
-        ctx.beginPath();
-        ctx.moveTo(tailX, tailY);
-        ctx.lineTo(x, y);
-
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = `rgba(${VIRUS_RGB}, 0.26)`;
-        ctx.shadowBlur = 17;
-        ctx.shadowColor = VIRUS_COLOR;
-
-        ctx.stroke();
-
-        // Bright pale-olive center.
-        const centerGlow = ctx.createRadialGradient(x, y, 0, x, y, 14);
-
-        centerGlow.addColorStop(0, `rgba(${VIRUS_CORE_RGB}, 0.42)`);
-        centerGlow.addColorStop(0.5, `rgba(${VIRUS_RGB}, 0.20)`);
-        centerGlow.addColorStop(1, `rgba(${VIRUS_RGB}, 0)`);
+        softHalo.addColorStop(0, `rgba(${VIRUS_CORE_RGB}, 0.16)`);
+        softHalo.addColorStop(0.42, `rgba(${VIRUS_RGB}, 0.10)`);
+        softHalo.addColorStop(1, `rgba(${VIRUS_RGB}, 0)`);
 
         ctx.beginPath();
-        ctx.arc(x, y, 14, 0, Math.PI * 2);
+        ctx.arc(x, y, radius * 0.58, 0, Math.PI * 2);
 
-        ctx.fillStyle = centerGlow;
+        ctx.fillStyle = softHalo;
         ctx.fill();
 
         ctx.restore();
@@ -521,11 +447,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =====================================
-    // Draw: infected connections, nodes, pulses
+    // Draw Infected Connections
     // =====================================
 
     function drawInfectedEdges() {
         ctx.save();
+
         ctx.lineCap = "round";
 
         for (const [key, value] of edgeInfection) {
@@ -542,30 +469,42 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
+
             ctx.lineWidth = 5 + 5 * t;
             ctx.strokeStyle = `rgba(${VIRUS_RGB}, ${0.10 * t})`;
+
             ctx.stroke();
 
             // Colored core line.
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
+
             ctx.lineWidth = 0.9 + 1.2 * t;
             ctx.strokeStyle = `rgba(${VIRUS_RGB}, ${0.25 + 0.6 * t})`;
+
             ctx.stroke();
-            // Hot center of the line when strongly infected.
+
+            // Hot center of the line.
             if (t > 0.5) {
                 ctx.beginPath();
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
+
                 ctx.lineWidth = 0.6;
-                ctx.strokeStyle = `rgba(${VIRUS_CORE_RGB}, ${(t - 0.5) * 1.1})`;
+                ctx.strokeStyle =
+                    `rgba(${VIRUS_CORE_RGB}, ${(t - 0.5) * 1.1})`;
+
                 ctx.stroke();
             }
         }
 
         ctx.restore();
     }
+
+    // =====================================
+    // Draw Infected Particles
+    // =====================================
 
     function drawInfectedParticles() {
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -581,33 +520,23 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.shadowColor = VIRUS_COLOR;
 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius + 2.4 * t, 0, Math.PI * 2);
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius + 2.4 * t,
+                0,
+                Math.PI * 2
+            );
 
-            ctx.fillStyle = t > 0.6 ? VIRUS_CORE_COLOR : VIRUS_COLOR;
+            ctx.fillStyle =
+                t > 0.6 ? VIRUS_CORE_COLOR : VIRUS_COLOR;
+
             ctx.globalAlpha = 0.35 + 0.6 * t;
 
             ctx.fill();
 
             ctx.restore();
         }
-    }
-
-    function drawPulses() {
-        ctx.save();
-
-        for (const pulse of pulses) {
-            const life = pulse.age / PULSE_LIFE;
-            const radius = 4 + pulse.age * PULSE_SPEED;
-            const alpha = Math.pow(1 - life, 2) * 0.5 * Math.max(0.4, pulse.intensity);
-
-            ctx.beginPath();
-            ctx.arc(pulse.x, pulse.y, radius, 0, Math.PI * 2);
-            ctx.lineWidth = 1.6 * (1 - life) + 0.4;
-            ctx.strokeStyle = `rgba(${VIRUS_RGB}, ${alpha})`;
-            ctx.stroke();
-        }
-
-        ctx.restore();
     }
 
     // =====================================
@@ -664,25 +593,42 @@ document.addEventListener("DOMContentLoaded", function () {
                     ctx.closePath();
 
                     const gradient = ctx.createLinearGradient(
-                        p1.x, p1.y, p3.x, p3.y
+                        p1.x,
+                        p1.y,
+                        p3.x,
+                        p3.y
                     );
 
-                    gradient.addColorStop(0, "rgba(192, 38, 211, 0.045)");
-                    gradient.addColorStop(1, "rgba(168, 85, 247, 0.008)");
+                    gradient.addColorStop(
+                        0,
+                        "rgba(192, 38, 211, 0.045)"
+                    );
+
+                    gradient.addColorStop(
+                        1,
+                        "rgba(168, 85, 247, 0.008)"
+                    );
 
                     ctx.fillStyle = gradient;
                     ctx.fill();
 
-                    // Infected triangles glow in the virus color.
+                    // Infected triangles.
                     const infection =
-                        (nodeInfection[i] + nodeInfection[j] + nodeInfection[k]) / 3;
+                        (
+                            nodeInfection[i] +
+                            nodeInfection[j] +
+                            nodeInfection[k]
+                        ) / 3;
 
                     if (infection > 0.04) {
-                        ctx.fillStyle = `rgba(${VIRUS_RGB}, ${Math.min(1, infection) * 0.17})`;
+                        ctx.fillStyle =
+                            `rgba(${VIRUS_RGB}, ${Math.min(1, infection) * 0.17})`;
+
                         ctx.fill();
                     }
 
                     triangleCount++;
+
                     if (triangleCount >= MAX_TRIANGLES) break;
                 }
 
@@ -692,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =====================================
-    // Network lines
+    // Network Lines
     // =====================================
 
     function drawLines() {
@@ -710,6 +656,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         ctx.strokeStyle = "rgba(192, 90, 255, 0.32)";
         ctx.lineWidth = 0.7;
+
         ctx.stroke();
     }
 
@@ -725,7 +672,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.shadowColor = p.color;
 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius,
+                0,
+                Math.PI * 2
+            );
 
             ctx.fillStyle = p.color;
             ctx.globalAlpha = 0.9;
@@ -746,7 +699,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.shadowColor = "#e879f9";
 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius + 0.8, 0, Math.PI * 2);
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius + 0.8,
+                0,
+                Math.PI * 2
+            );
 
             ctx.fillStyle = "#f0abfc";
             ctx.globalAlpha = 0.85;
@@ -758,7 +717,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =====================================
-    // Animation loop
+    // Animation Loop
     // =====================================
 
     let animationId = null;
@@ -783,7 +742,6 @@ document.addEventListener("DOMContentLoaded", function () {
         drawTriangles(adjacency);
         drawLines();
         drawInfectedEdges();
-        drawPulses();
         drawEnergy();
         drawParticles();
         drawInfectedParticles();
