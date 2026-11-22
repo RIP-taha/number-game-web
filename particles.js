@@ -1,8 +1,8 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    // ==============================
-    // NUMORA - Animated Network
-    // ==============================
+    // =====================================
+    // NUMORA - Living Energy Network
+    // =====================================
 
     const canvas = document.createElement("canvas");
     canvas.id = "particles-canvas";
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const ctx = canvas.getContext("2d", { alpha: true });
 
-    // Network settings
+    // Network
     const PARTICLE_COUNT = 180;
     const CONNECT_DISTANCE = 125;
     const KEEP_DISTANCE = 145;
@@ -18,11 +18,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const MAX_NEIGHBORS = 5;
     const MAX_TRIANGLES = 4;
 
-    // Energy light settings
-    const ENERGY_SPEED = 85; // pixels per second
-    const ENERGY_COLOR = "#a59a76";
-    const ENERGY_GLOW = "#85804b";
-    const ENERGY_TAIL_LENGTH = 28;
+    // Energy spreading
+    const ENERGY_SPEED = 95;
+    const MAX_WAVES = 16;
+    const BRANCH_CHANCE = 0.75;
+    const MAX_BRANCHES = 2;
+    const ENERGY_RADIUS = 42;
+    const ENERGY_TAIL = 0.24;
+
+    // Olive energy colors
+    const ENERGY_COLOR = "#a49b65";
+    const ENERGY_LIGHT = "#c3b987";
+    const ENERGY_DARK = "#747345";
 
     const COLORS = [
         "#a855f7",
@@ -54,9 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
     resize();
     window.addEventListener("resize", resize);
 
-    // ==============================
-    // Create particles
-    // ==============================
+    // =====================================
+    // Particles
+    // =====================================
 
     const particles = [];
 
@@ -74,148 +81,15 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ==============================
-    // Energy light
-    // ==============================
+    // =====================================
+    // Network
+    // =====================================
 
-    const energyLight = {
-        from: null,
-        to: null,
-        progress: 0,
-        speed: ENERGY_SPEED,
-        active: false
-    };
+    let edges = new Set();
 
     function edgeKey(a, b) {
         return a < b ? `${a}_${b}` : `${b}_${a}`;
     }
-
-    function randomItem(array) {
-        if (!array || array.length === 0) return null;
-
-        return array[Math.floor(Math.random() * array.length)];
-    }
-
-    function startEnergyLight(adjacency) {
-        // If the light has no starting point,
-        // select one real connection from the network.
-
-        if (energyLight.from === null) {
-            const availableEdges = Array.from(edges);
-
-            const selectedEdge = randomItem(availableEdges);
-
-            if (!selectedEdge) return;
-
-            const [a, b] = selectedEdge.split("_").map(Number);
-
-            energyLight.from = a;
-            energyLight.to = b;
-            energyLight.progress = 0;
-            energyLight.active = true;
-
-            return;
-        }
-
-        // If the previous connection disappeared,
-        // continue from the closest endpoint.
-
-        const neighbors = adjacency[energyLight.from] || [];
-
-        if (neighbors.length > 0) {
-            const next = randomItem(neighbors);
-
-            energyLight.to = next;
-            energyLight.progress = 0;
-            energyLight.active = true;
-        }
-    }
-
-    function updateEnergyLight(deltaTime, adjacency) {
-        if (!energyLight.active) {
-            startEnergyLight(adjacency);
-            return;
-        }
-
-        const from = energyLight.from;
-        const to = energyLight.to;
-
-        if (from === null || to === null) {
-            energyLight.active = false;
-            return;
-        }
-
-        const key = edgeKey(from, to);
-
-        // Never move through a connection
-        // that is no longer part of the network.
-
-        if (!edges.has(key)) {
-            const anchor =
-                energyLight.progress < 0.5 ? from : to;
-
-            energyLight.from = anchor;
-            energyLight.to = null;
-            energyLight.progress = 0;
-            energyLight.active = false;
-
-            return;
-        }
-
-        const a = particles[from];
-        const b = particles[to];
-
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 1) return;
-
-        // Move at a consistent speed.
-
-        energyLight.progress +=
-            (energyLight.speed * deltaTime) / distance;
-
-        // Reached the next junction.
-
-        if (energyLight.progress >= 1) {
-            const previousNode = from;
-            const currentNode = to;
-
-            const neighbors = adjacency[currentNode] || [];
-
-            // Prefer a different connection.
-            // If there isn't one, reverse direction.
-
-            let options = neighbors.filter(
-                index => index !== previousNode
-            );
-
-            if (options.length === 0) {
-                options = neighbors.filter(
-                    index => index === previousNode
-                );
-            }
-
-            const nextNode = randomItem(options);
-
-            energyLight.from = currentNode;
-            energyLight.progress = 0;
-
-            if (nextNode === null) {
-                energyLight.to = null;
-                energyLight.active = false;
-            } else {
-                energyLight.to = nextNode;
-                energyLight.active = true;
-            }
-        }
-    }
-
-    // ==============================
-    // Update particle positions
-    // ==============================
 
     function updateParticles() {
         for (const p of particles) {
@@ -233,12 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
-
-    // ==============================
-    // Build network connections
-    // ==============================
-
-    let edges = new Set();
 
     function updateNetwork() {
         const nextEdges = new Set();
@@ -267,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (distanceSquared < limit * limit) {
                     nextEdges.add(key);
-
                     adjacency[i].push(j);
                     adjacency[j].push(i);
                 }
@@ -279,9 +146,288 @@ document.addEventListener("DOMContentLoaded", function () {
         return adjacency;
     }
 
-    // ==============================
-    // Draw geometric triangles
-    // ==============================
+    // =====================================
+    // Energy spreading system
+    // =====================================
+
+    // One original energy source.
+    // It can create branches when it reaches junctions.
+
+    const energyWaves = [];
+
+    let energyStarted = false;
+
+    function createWave(from, to, intensity = 1) {
+        if (energyWaves.length >= MAX_WAVES) return;
+
+        energyWaves.push({
+            from,
+            to,
+            progress: 0,
+            intensity,
+            age: 0
+        });
+    }
+
+    function startEnergy(adjacency) {
+        if (energyStarted) return;
+
+        const availableEdges = Array.from(edges);
+
+        if (availableEdges.length === 0) return;
+
+        const selected = availableEdges[
+            Math.floor(Math.random() * availableEdges.length)
+        ];
+
+        const [from, to] = selected.split("_").map(Number);
+
+        createWave(from, to, 1);
+
+        energyStarted = true;
+    }
+
+    function updateEnergy(deltaTime, adjacency) {
+        startEnergy(adjacency);
+
+        for (let i = energyWaves.length - 1; i >= 0; i--) {
+            const wave = energyWaves[i];
+
+            wave.age += deltaTime;
+
+            const from = wave.from;
+            const to = wave.to;
+
+            if (from === null || to === null) {
+                energyWaves.splice(i, 1);
+                continue;
+            }
+
+            // The wave can only use existing network connections.
+
+            if (!edges.has(edgeKey(from, to))) {
+                energyWaves.splice(i, 1);
+                continue;
+            }
+
+            const a = particles[from];
+            const b = particles[to];
+
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 1) continue;
+
+            wave.progress +=
+                (ENERGY_SPEED * deltaTime) / distance;
+
+            // Reached a junction.
+            if (wave.progress >= 1) {
+                const previousNode = from;
+                const currentNode = to;
+
+                const neighbors = adjacency[currentNode] || [];
+
+                // Only connected paths are possible.
+                const options = neighbors.filter(
+                    node => node !== previousNode
+                );
+
+                // Remove the current wave.
+                energyWaves.splice(i, 1);
+
+                if (options.length === 0) {
+                    continue;
+                }
+
+                // Sometimes spread into multiple paths.
+                // This creates the spreading / infection effect.
+
+                const canBranch =
+                    Math.random() < BRANCH_CHANCE &&
+                    options.length > 1;
+
+                let selectedOptions = [];
+
+                if (canBranch) {
+                    const shuffled = [...options].sort(
+                        () => Math.random() - 0.5
+                    );
+
+                    selectedOptions = shuffled.slice(
+                        0,
+                        Math.min(MAX_BRANCHES, shuffled.length)
+                    );
+                } else {
+                    selectedOptions = [
+                        options[Math.floor(Math.random() * options.length)]
+                    ];
+                }
+
+                for (const nextNode of selectedOptions) {
+                    if (energyWaves.length >= MAX_WAVES) break;
+
+                    createWave(
+                        currentNode,
+                        nextNode,
+                        wave.intensity * 0.88
+                    );
+                }
+            }
+        }
+
+        // If all branches disappear, start a new wave.
+        if (energyWaves.length === 0) {
+            energyStarted = false;
+        }
+    }
+
+    // =====================================
+    // Draw energy glow
+    // =====================================
+
+    function drawEnergyGlow(wave) {
+        const a = particles[wave.from];
+        const b = particles[wave.to];
+
+        if (!a || !b) return;
+
+        const progress = Math.max(
+            0,
+            Math.min(1, wave.progress)
+        );
+
+        const x = a.x + (b.x - a.x) * progress;
+        const y = a.y + (b.y - a.y) * progress;
+
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < 1) return;
+
+        const intensity = Math.max(0.25, wave.intensity);
+
+        // Length of the luminous trail.
+        const tailProgress = Math.max(
+            0,
+            progress - ENERGY_TAIL / distance
+        );
+
+        const tailX = a.x + dx * tailProgress;
+        const tailY = a.y + dy * tailProgress;
+
+        ctx.save();
+
+        ctx.globalAlpha = intensity;
+
+        // Large diffuse halo around the energy.
+        // This is intentionally soft, not a small glowing dot.
+
+        const radius = ENERGY_RADIUS * (0.85 + intensity * 0.25);
+
+        const halo = ctx.createRadialGradient(
+            x, y, 0,
+            x, y, radius
+        );
+
+        halo.addColorStop(
+            0,
+            "rgba(195, 185, 135, 0.28)"
+        );
+
+        halo.addColorStop(
+            0.22,
+            "rgba(164, 155, 101, 0.20)"
+        );
+
+        halo.addColorStop(
+            0.55,
+            "rgba(133, 128, 75, 0.10)"
+        );
+
+        halo.addColorStop(
+            1,
+            "rgba(116, 115, 69, 0)"
+        );
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = halo;
+        ctx.fill();
+
+        // Wide blurred energy trail along the actual line.
+
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(x, y);
+
+        ctx.lineCap = "round";
+        ctx.lineWidth = 19;
+
+        ctx.strokeStyle = "rgba(133, 128, 75, 0.12)";
+        ctx.shadowBlur = 28;
+        ctx.shadowColor = ENERGY_DARK;
+
+        ctx.stroke();
+
+        // Soft inner glow.
+
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(x, y);
+
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = "rgba(164, 155, 101, 0.22)";
+        ctx.shadowBlur = 17;
+        ctx.shadowColor = ENERGY_COLOR;
+
+        ctx.stroke();
+
+        // Very subtle bright center.
+        // No visible hard particle.
+
+        const centerGlow = ctx.createRadialGradient(
+            x, y, 0,
+            x, y, 13
+        );
+
+        centerGlow.addColorStop(
+            0,
+            "rgba(220, 211, 164, 0.30)"
+        );
+
+        centerGlow.addColorStop(
+            0.5,
+            "rgba(164, 155, 101, 0.18)"
+        );
+
+        centerGlow.addColorStop(
+            1,
+            "rgba(133, 128, 75, 0)"
+        );
+
+        ctx.beginPath();
+        ctx.arc(x, y, 13, 0, Math.PI * 2);
+
+        ctx.fillStyle = centerGlow;
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    function drawEnergy() {
+        for (const wave of energyWaves) {
+            drawEnergyGlow(wave);
+        }
+    }
+
+    // =====================================
+    // Triangles
+    // =====================================
 
     function drawTriangles(adjacency) {
         for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -314,7 +460,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const k = neighbors[b];
 
                     if (k <= j) continue;
-
                     if (!edges.has(edgeKey(j, k))) continue;
 
                     const p2 = particles[j];
@@ -360,9 +505,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ==============================
-    // Draw network lines
-    // ==============================
+    // =====================================
+    // Network lines
+    // =====================================
 
     function drawLines() {
         ctx.beginPath();
@@ -382,118 +527,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.stroke();
     }
 
-    // ==============================
-    // Draw the moving energy light
-    // ==============================
-
-    function drawEnergyLight() {
-        if (!energyLight.active) return;
-
-        const a = particles[energyLight.from];
-        const b = particles[energyLight.to];
-
-        if (!a || !b) return;
-
-        const progress = Math.max(
-            0,
-            Math.min(1, energyLight.progress)
-        );
-
-        // Position on the actual network line.
-
-        const x = a.x + (b.x - a.x) * progress;
-        const y = a.y + (b.y - a.y) * progress;
-
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 1) return;
-
-        // Tail remains on the same real connection.
-
-        const tailProgress = Math.max(
-            0,
-            progress - ENERGY_TAIL_LENGTH / distance
-        );
-
-        const tailX = a.x + dx * tailProgress;
-        const tailY = a.y + dy * tailProgress;
-
-        ctx.save();
-
-        // Outer energy trail.
-
-        ctx.beginPath();
-        ctx.moveTo(tailX, tailY);
-        ctx.lineTo(x, y);
-
-        ctx.lineCap = "round";
-        ctx.lineWidth = 3.5;
-
-        ctx.strokeStyle = "rgba(133, 128, 75, 0.55)";
-        ctx.shadowBlur = 18;
-        ctx.shadowColor = ENERGY_GLOW;
-
-        ctx.stroke();
-
-        // Inner luminous trail.
-
-        ctx.beginPath();
-        ctx.moveTo(tailX, tailY);
-        ctx.lineTo(x, y);
-
-        ctx.lineWidth = 1.2;
-        ctx.strokeStyle = "rgba(190, 180, 125, 0.9)";
-        ctx.shadowBlur = 8;
-
-        ctx.stroke();
-
-        // Energy core glow.
-
-        const glow = ctx.createRadialGradient(
-            x, y, 0,
-            x, y, 11
-        );
-
-        glow.addColorStop(
-            0,
-            "rgba(235, 225, 170, 0.95)"
-        );
-
-        glow.addColorStop(
-            0.25,
-            "rgba(165, 154, 118, 0.75)"
-        );
-
-        glow.addColorStop(
-            1,
-            "rgba(133, 128, 75, 0)"
-        );
-
-        ctx.beginPath();
-        ctx.arc(x, y, 11, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
-
-        // Bright center.
-
-        ctx.beginPath();
-        ctx.arc(x, y, 2.4, 0, Math.PI * 2);
-
-        ctx.fillStyle = "#eee6bd";
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = ENERGY_COLOR;
-
-        ctx.fill();
-
-        ctx.restore();
-    }
-
-    // ==============================
-    // Draw particles
-    // ==============================
+    // =====================================
+    // Particles
+    // =====================================
 
     function drawParticles() {
         for (const p of particles) {
@@ -513,10 +549,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.restore();
         }
     }
-
-    // ==============================
-    // Extra particle highlights
-    // ==============================
 
     function drawHighlights() {
         for (let i = 0; i < PARTICLE_COUNT; i += 17) {
@@ -545,9 +577,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // ==============================
-    // Main animation loop
-    // ==============================
+    // =====================================
+    // Animation loop
+    // =====================================
 
     let animationId = null;
     let lastTime = 0;
@@ -565,11 +597,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const adjacency = updateNetwork();
 
-        updateEnergyLight(deltaTime, adjacency);
+        updateEnergy(deltaTime, adjacency);
 
         drawTriangles(adjacency);
         drawLines();
-        drawEnergyLight();
+        drawEnergy();
         drawParticles();
         drawHighlights();
 
@@ -578,9 +610,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     animate();
 
-    // ==============================
+    // =====================================
     // Cleanup
-    // ==============================
+    // =====================================
 
     window.addEventListener("pagehide", function () {
         if (animationId !== null) {
