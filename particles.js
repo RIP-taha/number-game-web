@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("resize", resize);
 
     // CONFIGURATION
-    const PARTICLE_COUNT = 300;
-    const CONNECT_DISTANCE = 155;
-    const KEEP_DISTANCE = 185;
-    const SPEED = 0.8;
+    const PARTICLE_COUNT = 180;
+    const CONNECT_DISTANCE = 125;
+    const KEEP_DISTANCE = 145;
+    const SPEED = 1;
 
     const COLORS = [
         "#a855f7",
