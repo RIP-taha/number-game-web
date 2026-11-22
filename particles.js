@@ -1,27 +1,26 @@
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Canvas setup
+
+    // ==========================================
+    // NUMORA - DYNAMIC NEON PARTICLE NETWORK
+    // ==========================================
+
     const canvas = document.createElement("canvas");
     canvas.id = "particles-canvas";
     document.body.prepend(canvas);
 
-    const ctx = canvas.getContext("2d");
-
-    let width, height;
-
-    function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-    }
-
-    resize();
-    window.addEventListener("resize", resize);
+    const ctx = canvas.getContext("2d", {
+        alpha: true
+    });
 
     // CONFIGURATION
-    const PARTICLE_COUNT = 100;
+    const PARTICLE_COUNT = 180;
     const CONNECT_DISTANCE = 125;
     const KEEP_DISTANCE = 145;
-    const SPEED = 1;
+    const SPEED = 0.9;
+
+    const MAX_NEIGHBORS = 5;
+    const MAX_TRIANGLES = 4;
 
     const COLORS = [
         "#a855f7",
@@ -31,10 +30,34 @@ document.addEventListener("DOMContentLoaded", function () {
         "#9333ea"
     ];
 
-    const particles = [];
-    let edges = new Set();
+    // CANVAS SIZE
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
 
-    // Create particles
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+
+        // Limit rendering resolution for performance
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+
+    window.addEventListener("resize", resize);
+
+    // PARTICLES
+    const particles = [];
+
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         particles.push({
             x: Math.random() * width,
@@ -49,16 +72,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 Math.floor(Math.random() * COLORS.length)
             ],
 
-            glow: Math.random() * 5 + 3
+            glow: Math.random() * 4 + 2
         });
     }
 
-    // Edge key
+    // CONNECTION STORAGE
+    let edges = new Set();
+
     function edgeKey(a, b) {
-        return a < b ? `${a}_${b}` : `${b}_${a}`;
+        return a < b
+            ? `${a}_${b}`
+            : `${b}_${a}`;
     }
 
-    // Update particle positions
+    // MOVE PARTICLES
     function updateParticles() {
         for (const p of particles) {
             p.x += p.vx;
@@ -76,23 +103,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Dynamic connections with persistence
+    // UPDATE NETWORK
     function updateNetwork() {
         const nextEdges = new Set();
+
         const adjacency = Array.from(
-            { length: particles.length },
+            { length: PARTICLE_COUNT },
             () => []
         );
 
-        for (let i = 0; i < particles.length; i++) {
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
             const a = particles[i];
 
-            for (let j = i + 1; j < particles.length; j++) {
+            for (let j = i + 1; j < PARTICLE_COUNT; j++) {
                 const b = particles[j];
 
                 const dx = a.x - b.x;
                 const dy = a.y - b.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                const distanceSquared = dx * dx + dy * dy;
 
                 const key = edgeKey(i, j);
 
@@ -100,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? KEEP_DISTANCE
                     : CONNECT_DISTANCE;
 
-                if (distance < limit) {
+                if (distanceSquared < limit * limit) {
                     nextEdges.add(key);
 
                     adjacency[i].push(j);
@@ -114,61 +143,110 @@ document.addEventListener("DOMContentLoaded", function () {
         return adjacency;
     }
 
-    // Draw translucent geometric triangles
+    // DRAW TRANSPARENT TRIANGLES
     function drawTriangles(adjacency) {
-        for (let i = 0; i < particles.length; i++) {
-            const neighbors = adjacency[i];
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+
+            const p1 = particles[i];
+
+            // Find closest neighbors
+            const neighbors = adjacency[i]
+                .map(index => {
+                    const p = particles[index];
+
+                    const dx = p.x - p1.x;
+                    const dy = p.y - p1.y;
+
+                    return {
+                        index,
+                        distance: dx * dx + dy * dy
+                    };
+                })
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, MAX_NEIGHBORS)
+                .map(item => item.index);
+
+            let triangleCount = 0;
 
             for (let a = 0; a < neighbors.length; a++) {
+
                 const j = neighbors[a];
 
                 if (j <= i) continue;
 
                 for (let b = a + 1; b < neighbors.length; b++) {
+
                     const k = neighbors[b];
 
                     if (k <= j) continue;
 
-                    if (!edges.has(edgeKey(j, k))) continue;
+                    if (!edges.has(edgeKey(j, k))) {
+                        continue;
+                    }
 
-                    const p1 = particles[i];
                     const p2 = particles[j];
                     const p3 = particles[k];
 
+                    // Calculate triangle area
+                    const area = Math.abs(
+                        (p2.x - p1.x) * (p3.y - p1.y) -
+                        (p3.x - p1.x) * (p2.y - p1.y)
+                    ) / 2;
+
+                    // Avoid oversized triangles
+                    if (area > 4000) continue;
+
                     ctx.beginPath();
+
                     ctx.moveTo(p1.x, p1.y);
                     ctx.lineTo(p2.x, p2.y);
                     ctx.lineTo(p3.x, p3.y);
+
                     ctx.closePath();
 
+                    // Subtle purple gradient
                     const gradient = ctx.createLinearGradient(
-                        p1.x, p1.y,
-                        p3.x, p3.y
+                        p1.x,
+                        p1.y,
+                        p3.x,
+                        p3.y
                     );
 
                     gradient.addColorStop(
-                        0, "rgba(192, 38, 211, 0.10)"
+                        0,
+                        "rgba(192, 38, 211, 0.045)"
                     );
 
                     gradient.addColorStop(
-                        1, "rgba(168, 85, 247, 0.025)"
+                        1,
+                        "rgba(168, 85, 247, 0.008)"
                     );
 
                     ctx.fillStyle = gradient;
                     ctx.fill();
+
+                    triangleCount++;
+
+                    if (triangleCount >= MAX_TRIANGLES) {
+                        break;
+                    }
+                }
+
+                if (triangleCount >= MAX_TRIANGLES) {
+                    break;
                 }
             }
         }
     }
 
-    // Draw network lines
+    // DRAW CONNECTION LINES
     function drawLines() {
-        ctx.lineWidth = 0.8;
-        ctx.strokeStyle = "rgba(192, 90, 255, 0.38)";
 
         ctx.beginPath();
 
         for (const key of edges) {
+
             const [i, j] = key.split("_").map(Number);
 
             const a = particles[i];
@@ -178,53 +256,77 @@ document.addEventListener("DOMContentLoaded", function () {
             ctx.lineTo(b.x, b.y);
         }
 
+        ctx.strokeStyle = "rgba(192, 90, 255, 0.32)";
+        ctx.lineWidth = 0.7;
+
         ctx.stroke();
     }
 
-    // Draw glowing particles
+    // DRAW PARTICLES
     function drawParticles() {
+
         for (const p of particles) {
+
             ctx.save();
 
-            ctx.shadowBlur = p.glow + 5;
+            ctx.shadowBlur = p.glow;
             ctx.shadowColor = p.color;
 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius,
+                0,
+                Math.PI * 2
+            );
 
             ctx.fillStyle = p.color;
             ctx.globalAlpha = 0.9;
+
             ctx.fill();
 
             ctx.restore();
         }
     }
 
-    // Extra neon highlights
+    // EXTRA LIGHT POINTS
     function drawHighlights() {
-        for (let i = 0; i < particles.length; i++) {
-            const p = particles[i];
 
-            if (i % 17 !== 0) continue;
+        for (let i = 0; i < PARTICLE_COUNT; i += 17) {
+
+            const p = particles[i];
 
             ctx.save();
 
-            ctx.shadowBlur = 15;
+            ctx.shadowBlur = 12;
             ctx.shadowColor = "#e879f9";
 
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius + 1, 0, Math.PI * 2);
+
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius + 0.8,
+                0,
+                Math.PI * 2
+            );
 
             ctx.fillStyle = "#f0abfc";
             ctx.globalAlpha = 0.85;
+
             ctx.fill();
 
             ctx.restore();
         }
     }
 
-    // Animation loop
+    // ANIMATION LOOP
+    let animationId = null;
+
     function animate() {
+
         ctx.clearRect(0, 0, width, height);
 
         updateParticles();
@@ -236,8 +338,17 @@ document.addEventListener("DOMContentLoaded", function () {
         drawParticles();
         drawHighlights();
 
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
 
+    // START
     animate();
+
+    // CLEANUP IF NEEDED
+    window.addEventListener("pagehide", function () {
+        if (animationId !== null) {
+            cancelAnimationFrame(animationId);
+        }
+    });
+
 });
